@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="24" fill="#FEF5E4" stroke="#E0C375" stroke-width="2"/>
+  <!-- Origami Flat Folding Spoon Illustration -->
+  <polygon points="25,45 60,30 95,45 80,85 40,85" fill="#D92143" />
+  <polygon points="60,30 95,45 60,75" fill="#BF1A37" />
+  <polygon points="25,45 60,75 40,85" fill="#F69D39" />
+  <!-- Fold Lines -->
+  <line x1="60" y1="30" x2="60" y2="75" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="2,2"/>
+  <line x1="40" y1="85" x2="60" y2="75" stroke="#FFFFFF" stroke-width="1.5"/>
+  <line x1="80" y1="85" x2="60" y2="75" stroke="#FFFFFF" stroke-width="1.5"/>
+  <!-- Handle -->
+  <rect x="52" y="85" width="16" height="24" rx="4" fill="#D92143"/>
+  <circle x="60" y="101" r="3" fill="#FFFFFF"/>
+  <!-- Winner Star Badge -->
+  <circle cx="96" cy="24" r="14" fill="#D92143"/>
+  <text x="96" y="29" font-size="14" font-weight="900" fill="#FFFFFF" text-anchor="middle">✓</text>
+</svg>

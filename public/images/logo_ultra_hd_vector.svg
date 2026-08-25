@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-label="Red square logo with two silver-white geometric forms">
+  <defs>
+    <linearGradient id="silver" x1="0" y1="345" x2="0" y2="974" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.18" stop-color="#f3f3f3"/>
+      <stop offset="0.47" stop-color="#dedede"/>
+      <stop offset="0.73" stop-color="#cecece"/>
+      <stop offset="1" stop-color="#c3c3c3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1254" height="1254" fill="#ca0b2a"/>
+  <path d="M447 345H892L669 644Z" fill="url(#silver)"/>
+  <path d="M421 377L646 676L421 974Z" fill="url(#silver)"/>
+</svg>

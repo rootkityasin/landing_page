@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40">
+  <rect width="120" height="40" rx="8" fill="#F7941D" />
+  <!-- Nagad Swirl Icon -->
+  <g transform="translate(14, 8)">
+    <circle cx="12" cy="12" r="10" fill="#ED1C24" />
+    <path d="M 12 4 A 8 8 0 0 1 20 12 L 12 12 Z" fill="#FFFFFF" />
+    <circle cx="12" cy="12" r="4" fill="#F7941D" />
+  </g>
+  <!-- Nagad Text -->
+  <text x="46" y="26" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="17" fill="#FFFFFF" letter-spacing="-0.5">Nagad</text>
+</svg>

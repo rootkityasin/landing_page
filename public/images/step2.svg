@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="step2-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF7ED"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="step2-honey" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="20" fill="url(#step2-bg)"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <g stroke="#F69D39" stroke-width="0.7" opacity="0.3">
+    <line x1="40" y1="50" x2="360" y2="50"/>
+    <line x1="40" y1="150" x2="360" y2="150"/>
+    <line x1="40" y1="250" x2="360" y2="250"/>
+  </g>
+
+  <!-- 3D Folded Scoop Holding Ingredients -->
+  <g transform="translate(200, 130)">
+    <!-- Shadow -->
+    <ellipse cx="0" cy="80" rx="60" ry="12" fill="#0F172A" opacity="0.08"/>
+
+    <!-- Folded 3D Scoop Body -->
+    <polygon points="-55,-50 55,-50 35,65 0,85 -35,65" fill="#D92143" stroke="#E0C375" stroke-width="1.5"/>
+    <polygon points="-40,-40 40,-40 25,55 0,70 -25,55" fill="#BF1A37"/>
+
+    <!-- Ingredients/Honey/Spices Filled in Scoop -->
+    <path d="M -35,-25 Q 0,-15 35,-25 L 20,45 Q 0,60 -20,45 Z" fill="url(#step2-honey)"/>
+    <ellipse cx="0" cy="-22" rx="34" ry="10" fill="#FBBF24"/>
+    
+    <!-- Measurement Level Line Guide -->
+    <line x1="-70" y1="-22" x2="70" y2="-22" stroke="#EA580C" stroke-width="2" stroke-dasharray="5,3"/>
+    
+    <!-- Measure Tick Callout -->
+    <g transform="translate(75, -22)">
+      <rect x="0" y="-10" width="48" height="20" rx="4" fill="#0F172A"/>
+      <text x="24" y="4" fill="#FEF5E4" font-family="'Plus Jakarta Sans', sans-serif" font-weight="bold" font-size="10" text-anchor="middle">5.0 ml</text>
+    </g>
+
+    <!-- Handle -->
+    <rect x="-14" y="65" width="28" height="35" rx="6" fill="#D92143" stroke="#E0C375" stroke-width="1.5"/>
+    <circle cx="0" cy="86" r="3.5" fill="#FEF5E4"/>
+
+    <!-- Interactive Step Badge -->
+    <rect x="-65" y="105" width="130" height="26" rx="13" fill="#FFF7ED" stroke="#F69D39" stroke-width="1.5"/>
+    <text x="0" y="122" fill="#EA580C" font-family="'Hind Siliguri', sans-serif" font-weight="bold" font-size="12" text-anchor="middle">🥄 নিখুঁত মাপে তুলুন</text>
+  </g>
+</svg>

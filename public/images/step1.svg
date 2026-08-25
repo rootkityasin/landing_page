@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="step1-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF5E4"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="step1-spoon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D92143"/>
+      <stop offset="100%" stop-color="#BF1A37"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="20" fill="url(#step1-bg)"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <g stroke="#E0C375" stroke-width="0.7" opacity="0.35">
+    <line x1="40" y1="50" x2="360" y2="50"/>
+    <line x1="40" y1="150" x2="360" y2="150"/>
+    <line x1="40" y1="250" x2="360" y2="250"/>
+  </g>
+
+  <!-- Origami Spoon Pinch Illustration -->
+  <g transform="translate(200, 130)">
+    <!-- Base Flat Spoon Body -->
+    <rect x="-45" y="-95" width="90" height="190" rx="14" fill="#0F172A" opacity="0.08" transform="translate(0, 8)"/>
+    
+    <!-- Outer Polygons Sheet -->
+    <rect x="-45" y="-95" width="90" height="190" rx="14" fill="url(#step1-spoon)" stroke="#E0C375" stroke-width="2"/>
+    
+    <!-- Hinged Folding Facets -->
+    <polygon points="-45,-25 0,-70 45,-25 0,20" fill="#F69D39" opacity="0.95"/>
+    <polygon points="-45,-25 0,-70 -45,-75" fill="#BF1A37"/>
+    <polygon points="45,-25 0,-70 45,-75" fill="#BF1A37"/>
+    <polygon points="-45,-25 0,20 -45,20" fill="#9B111E"/>
+    <polygon points="45,-25 0,20 45,20" fill="#9B111E"/>
+
+    <!-- Crease Folding Guide Lines -->
+    <line x1="-22" y1="-95" x2="-22" y2="95" stroke="#FEF5E4" stroke-width="1.8" stroke-dasharray="4,3"/>
+    <line x1="22" y1="-95" x2="22" y2="95" stroke="#FEF5E4" stroke-width="1.8" stroke-dasharray="4,3"/>
+    <line x1="0" y1="-70" x2="0" y2="20" stroke="#FFFFFF" stroke-width="2"/>
+
+    <!-- Scale Markings on Handle -->
+    <rect x="-24" y="38" width="48" height="18" rx="4" fill="#0F172A" opacity="0.3"/>
+    <text x="0" y="51" fill="#FEF5E4" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="10" text-anchor="middle">1 TBSP • 1 TSP</text>
+    
+    <circle cx="0" cy="74" r="5" fill="#FEF5E4" stroke="#E0C375" stroke-width="1.5"/>
+
+    <!-- Left Pinch Arrow -->
+    <g transform="translate(-85, -25)">
+      <circle cx="0" cy="0" r="18" fill="#FEF5E4" stroke="#D92143" stroke-width="2"/>
+      <path d="M -6 0 L 6 0 M 2 -4 L 6 0 L 2 4" stroke="#D92143" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+
+    <!-- Right Pinch Arrow -->
+    <g transform="translate(85, -25)">
+      <circle cx="0" cy="0" r="18" fill="#FEF5E4" stroke="#D92143" stroke-width="2"/>
+      <path d="M 6 0 L -6 0 M -2 -4 L -6 0 L -2 4" stroke="#D92143" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+
+    <!-- Interactive Step Badge -->
+    <rect x="-65" y="105" width="130" height="26" rx="13" fill="#FEF5E4" stroke="#E0C375" stroke-width="1.5"/>
+    <text x="0" y="122" fill="#D92143" font-family="'Hind Siliguri', sans-serif" font-weight="bold" font-size="12" text-anchor="middle">👉 সাইজ অনুযায়ী চাপ দিন</text>
+  </g>
+</svg>

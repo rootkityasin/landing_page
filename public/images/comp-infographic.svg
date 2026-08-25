@@ -1,0 +1,241 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="100%" height="100%">
+  <defs>
+    <!-- Background & Gradients -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF5E4"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FFF7ED"/>
+    </linearGradient>
+    <linearGradient id="winner-card-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF9"/>
+      <stop offset="100%" stop-color="#FEF5E4"/>
+    </linearGradient>
+    <linearGradient id="crimson-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D92143"/>
+      <stop offset="100%" stop-color="#BF1A37"/>
+    </linearGradient>
+    <linearGradient id="slate-card-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#F1F5F9"/>
+    </linearGradient>
+    <!-- Drop Shadow Filters -->
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#D92143" flood-opacity="0.15"/>
+    </filter>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Container Box -->
+  <rect width="1000" height="620" rx="28" fill="url(#bg-grad)" stroke="#E0C375" stroke-width="2"/>
+
+  <!-- Subtle Top Banner Accent -->
+  <path d="M 0 28 Q 0 0 28 0 L 972 0 Q 1000 0 1000 28 L 1000 65 L 0 65 Z" fill="#0F172A"/>
+  <text x="500" y="42" fill="#FEF5E4" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="18" text-anchor="middle" letter-spacing="1">
+    ⚡ 4-IN-1 ORIGAMI SPOON VS TRADITIONAL MEASURING TOOLS ⚡
+  </text>
+
+  <!-- 3 COMPARISON COLUMNS -->
+
+  <!-- ==============================================
+       COLUMN 1: POLYGONS ORIGAMI (WINNER COLUMN)
+       ============================================== -->
+  <g transform="translate(40, 85)">
+    <!-- Main Card Body -->
+    <rect width="300" height="505" rx="24" fill="url(#winner-card-bg)" stroke="#D92143" stroke-width="3" filter="url(#card-shadow)"/>
+    
+    <!-- Winner Badge Header -->
+    <rect x="0" y="0" width="300" height="48" rx="20" fill="url(#crimson-grad)"/>
+    <text x="150" y="30" fill="#FFFFFF" font-family="'Hind Siliguri', sans-serif" font-weight="900" font-size="16" text-anchor="middle">
+      🏆 Polygons® ৪-ইন-১ অরিগামি চামচ
+    </text>
+
+    <!-- Product Illustration Circle -->
+    <circle cx="150" cy="115" r="50" fill="#FFFFFF" stroke="#E0C375" stroke-width="2"/>
+    <image href="/images/comp-origami.svg" x="110" y="75" width="80" height="80" preserveAspectRatio="xMidYMid meet"/>
+    <rect x="75" y="172" width="150" height="24" rx="12" fill="#D92143"/>
+    <text x="150" y="188" fill="#FFFFFF" font-family="'Hind Siliguri', sans-serif" font-weight="bold" font-size="11" text-anchor="middle">
+      ১০০% সেরা ও আধুনিক চয়েস
+    </text>
+
+    <!-- Features Checkmarks List -->
+    <g transform="translate(20, 215)" font-family="'Hind Siliguri', sans-serif" font-size="13">
+      <!-- Feature 1 -->
+      <g transform="translate(0, 0)">
+        <circle cx="12" cy="12" r="12" fill="#D92143"/>
+        <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">১টি চামচে ৪টি সাইজ (১/৪ tsp - ১ tbsp)</text>
+      </g>
+
+      <!-- Feature 2 -->
+      <g transform="translate(0, 50)">
+        <circle cx="12" cy="12" r="12" fill="#D92143"/>
+        <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">১ সেকেন্ডে ফ্ল্যাট ওয়াইপ ও পরিষ্কার</text>
+      </g>
+
+      <!-- Feature 3 -->
+      <g transform="translate(0, 100)">
+        <circle cx="12" cy="12" r="12" fill="#D92143"/>
+        <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">ড্রয়ারে শূন্য (০%) জায়গা নষ্ট</text>
+      </g>
+
+      <!-- Feature 4 -->
+      <g transform="translate(0, 150)">
+        <circle cx="12" cy="12" r="12" fill="#D92143"/>
+        <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">তেল, ঘি ও মধুর শূন্য অপচয়</text>
+      </g>
+
+      <!-- Feature 5 -->
+      <g transform="translate(0, 200)">
+        <circle cx="12" cy="12" r="12" fill="#D92143"/>
+        <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">১০০,০০০+ বার ফোল্ডিং গ্যারান্টি</text>
+      </g>
+
+      <!-- Feature 6 -->
+      <g transform="translate(0, 245)">
+        <circle cx="12" cy="12" r="12" fill="#D92143"/>
+        <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">কোনো ব্যাটারি বা বিদ্যুৎ লাগে না</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==============================================
+       COLUMN 2: OLD PLASTIC SPOONS SET
+       ============================================== -->
+  <g transform="translate(365, 85)">
+    <!-- Main Card Body -->
+    <rect width="285" height="505" rx="24" fill="url(#slate-card-bg)" stroke="#CBD5E1" stroke-width="1.5" filter="url(#soft-shadow)"/>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="285" height="48" rx="20" fill="#475569"/>
+    <text x="142" y="30" fill="#FFFFFF" font-family="'Hind Siliguri', sans-serif" font-weight="bold" font-size="15" text-anchor="middle">
+      ✕ পুরনো প্লাস্টিক চামচ সেট
+    </text>
+
+    <!-- Product Illustration Circle -->
+    <circle cx="142" cy="115" r="50" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <image href="/images/comp-plastic.svg" x="107" y="80" width="70" height="70" preserveAspectRatio="xMidYMid meet"/>
+    <rect x="71" y="172" width="142" height="24" rx="12" fill="#64748B"/>
+    <text x="142" y="188" fill="#FFFFFF" font-family="'Hind Siliguri', sans-serif" font-weight="bold" font-size="11" text-anchor="middle">
+      ঝামেলা ও অপচয়যুক্ত
+    </text>
+
+    <!-- Features Disadvantages List -->
+    <g transform="translate(18, 215)" font-family="'Hind Siliguri', sans-serif" font-size="12.5">
+      <!-- Point 1 -->
+      <g transform="translate(0, 0)">
+        <circle cx="12" cy="12" r="12" fill="#E2E8F0"/>
+        <text x="12" y="16" fill="#EF4444" font-weight="bold" font-size="12" text-anchor="middle">✕</text>
+        <text x="32" y="16" fill="#475569">৪-৫টি আলাদা চামচ খুঁজতে হয়</text>
+      </g>
+
+      <!-- Point 2 -->
+      <g transform="translate(0, 50)">
+        <circle cx="12" cy="12" r="12" fill="#E2E8F0"/>
+        <text x="12" y="16" fill="#EF4444" font-weight="bold" font-size="12" text-anchor="middle">✕</text>
+        <text x="32" y="16" fill="#475569">কোণায় তেল ও মসলা জমে থাকে</text>
+      </g>
+
+      <!-- Point 3 -->
+      <g transform="translate(0, 100)">
+        <circle cx="12" cy="12" r="12" fill="#E2E8F0"/>
+        <text x="12" y="16" fill="#EF4444" font-weight="bold" font-size="12" text-anchor="middle">✕</text>
+        <text x="32" y="16" fill="#475569">ড্রয়ারে রিং জটলা পাকায় ও আটকায়</text>
+      </g>
+
+      <!-- Point 4 -->
+      <g transform="translate(0, 150)">
+        <circle cx="12" cy="12" r="12" fill="#E2E8F0"/>
+        <text x="12" y="16" fill="#EF4444" font-weight="bold" font-size="12" text-anchor="middle">✕</text>
+        <text x="32" y="16" fill="#475569">চামচের গায়ে আঠালো উপাদান নষ্ট হয়</text>
+      </g>
+
+      <!-- Point 5 -->
+      <g transform="translate(0, 200)">
+        <circle cx="12" cy="12" r="12" fill="#E2E8F0"/>
+        <text x="12" y="16" fill="#EF4444" font-weight="bold" font-size="12" text-anchor="middle">✕</text>
+        <text x="32" y="16" fill="#475569">সহজে হাতল ভেঙে যায় ও দাগ পড়ে</text>
+      </g>
+
+      <!-- Point 6 -->
+      <g transform="translate(0, 245)">
+        <circle cx="12" cy="12" r="12" fill="#E2E8F0"/>
+        <text x="12" y="16" fill="#94A3B8" font-weight="bold" font-size="11" text-anchor="middle">—</text>
+        <text x="32" y="16" fill="#64748B">কোনো আধুনিক সুবিধা নেই</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==============================================
+       COLUMN 3: BULKY DIGITAL SCALE
+       ============================================== -->
+  <g transform="translate(675, 85)">
+    <!-- Main Card Body -->
+    <rect width="285" height="505" rx="24" fill="url(#slate-card-bg)" stroke="#CBD5E1" stroke-width="1.5" filter="url(#soft-shadow)"/>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="285" height="48" rx="20" fill="#334155"/>
+    <text x="142" y="30" fill="#FFFFFF" font-family="'Hind Siliguri', sans-serif" font-weight="bold" font-size="15" text-anchor="middle">
+      ⚠ ডিজিটাল কিচেন স্কেল
+    </text>
+
+    <!-- Product Illustration Circle -->
+    <circle cx="142" cy="115" r="50" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <image href="/images/comp-digital.svg" x="107" y="80" width="70" height="70" preserveAspectRatio="xMidYMid meet"/>
+    <rect x="71" y="172" width="142" height="24" rx="12" fill="#D97706"/>
+    <text x="142" y="188" fill="#FFFFFF" font-family="'Hind Siliguri', sans-serif" font-weight="bold" font-size="11" text-anchor="middle">
+      ব্যয়বহুল ও ব্যাটারি নির্ভর
+    </text>
+
+    <!-- Features Disadvantages List -->
+    <g transform="translate(18, 215)" font-family="'Hind Siliguri', sans-serif" font-size="12.5">
+      <!-- Point 1 -->
+      <g transform="translate(0, 0)">
+        <circle cx="12" cy="12" r="12" fill="#FEF3C7"/>
+        <text x="12" y="16" fill="#D97706" font-weight="bold" font-size="12" text-anchor="middle">⚠</text>
+        <text x="32" y="16" fill="#475569">আলাদা বাটি ছাড়া তরল মাপা যায় না</text>
+      </g>
+
+      <!-- Point 2 -->
+      <g transform="translate(0, 50)">
+        <circle cx="12" cy="12" r="12" fill="#FEF3C7"/>
+        <text x="12" y="16" fill="#D97706" font-weight="bold" font-size="12" text-anchor="middle">⚠</text>
+        <text x="32" y="16" fill="#475569">পানিতে ধোয়া যায় না (সার্কিট নষ্ট)</text>
+      </g>
+
+      <!-- Point 3 -->
+      <g transform="translate(0, 100)">
+        <circle cx="12" cy="12" r="12" fill="#FEF3C7"/>
+        <text x="12" y="16" fill="#D97706" font-weight="bold" font-size="12" text-anchor="middle">⚠</text>
+        <text x="32" y="16" fill="#475569">বড় সাইজ ও ভারী স্টোরেজ</text>
+      </g>
+
+      <!-- Point 4 -->
+      <g transform="translate(0, 150)">
+        <circle cx="12" cy="12" r="12" fill="#FEF3C7"/>
+        <text x="12" y="16" fill="#D97706" font-weight="bold" font-size="12" text-anchor="middle">⚠</text>
+        <text x="32" y="16" fill="#475569">রিডিং ও জিরো হওয়ার দীর্ঘ অপেক্ষা</text>
+      </g>
+
+      <!-- Point 5 -->
+      <g transform="translate(0, 200)">
+        <circle cx="12" cy="12" r="12" fill="#FEF3C7"/>
+        <text x="12" y="16" fill="#D97706" font-weight="bold" font-size="12" text-anchor="middle">⚠</text>
+        <text x="32" y="16" fill="#475569">হাত থেকে পড়লেই সেন্সর নষ্ট</text>
+      </g>
+
+      <!-- Point 6 -->
+      <g transform="translate(0, 245)">
+        <circle cx="12" cy="12" r="12" fill="#FEF3C7"/>
+        <text x="12" y="16" fill="#D97706" font-weight="bold" font-size="12" text-anchor="middle">⚠</text>
+        <text x="32" y="16" fill="#475569">ঘন ঘন ব্যাটারি শেষ হয়ে ঝামেলা</text>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard & Landing Page CMS | Polygons</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#ecfdf5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col md:flex-row font-sans antialiased">
+
+  <!-- ==========================================
+       LOGIN OVERLAY MODAL (Shown if unauthenticated)
+       ========================================== -->
+  <div id="login-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 text-center space-y-6">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto text-3xl font-extrabold shadow-sm">
+        🔐
+      </div>
+      <div>
+        <h2 class="text-2xl font-extrabold text-slate-900">Admin Dashboard Login</h2>
+        <p class="text-slate-500 text-sm mt-1">Enter your admin password to access the panel</p>
+      </div>
+
+      <form id="admin-login-form" class="space-y-4 text-left">
+        <div id="login-error" class="hidden bg-rose-50 border-l-4 border-rose-500 p-3 rounded-r-xl text-rose-700 text-xs font-semibold"></div>
+        <div>
+          <label class="block font-bold text-slate-700 text-xs mb-1">Admin Password (Default: admin123)</label>
+          <input type="password" id="admin-pass-input" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 outline-none text-base" />
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 px-4 rounded-xl shadow-md transition">
+          Sign In →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="admin-toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 text-sm font-semibold transition transform duration-300">
+    <span id="toast-icon">✓</span>
+    <span id="toast-message">Operation successful!</span>
+  </div>
+
+  <!-- ==========================================
+       LEFT SIDEBAR NAVIGATION
+       ========================================== -->
+  <aside class="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 flex flex-col justify-between border-r border-slate-800 md:sticky md:top-0 md:h-screen z-40">
+    
+    <div>
+      <!-- Brand Logo Header -->
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="bg-white px-3.5 py-2 rounded-2xl flex items-center justify-center shadow-xs">
+          <img src="/images/polygons_logo.png" alt="Polygons" class="h-7 sm:h-8 w-auto object-contain" />
+        </div>
+        <span class="text-[10px] uppercase font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800 font-latin">CMS v2</span>
+      </div>
+
+      <!-- Navigation Links (Left Side) -->
+      <nav class="p-4 space-y-1.5">
+        
+        <button onclick="switchTab('orders')" id="tab-btn-orders" class="tab-btn w-full text-left px-4 py-3 rounded-2xl transition bg-emerald-600 text-white shadow-sm flex items-center gap-3 text-sm font-bold">
+          <span class="text-lg">🛒</span>
+          <span>Orders & Fulfillment</span>
+        </button>
+
+        <button onclick="switchTab('products')" id="tab-btn-products" class="tab-btn w-full text-left px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-3 text-sm font-bold">
+          <span class="text-lg">📦</span>
+          <span>Products & Funnels</span>
+        </button>
+
+        <button onclick="switchTab('editor')" id="tab-btn-editor" class="tab-btn w-full text-left px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-3 text-sm font-bold">
+          <span class="text-lg">✏️</span>
+          <span>Page CMS Editor</span>
+        </button>
+
+        <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn w-full text-left px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-3 text-sm font-bold">
+          <span class="text-lg">⚙️</span>
+          <span>Global Settings</span>
+        </button>
+
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom Actions -->
+    <div class="p-4 border-t border-slate-800 space-y-2">
+      <a href="/" target="_blank" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 border border-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-between transition">
+        <span>👁️ View Storefront</span>
+        <span>↗</span>
+      </a>
+      <button onclick="logoutAdmin()" class="w-full bg-slate-800/80 hover:bg-rose-900/60 text-rose-300 border border-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center justify-center gap-2">
+        <span>🚪 Sign Out</span>
+      </button>
+      <div class="pt-1 text-center">
+        <span class="text-[10px] text-slate-500 font-latin">🟢 Live Server Connected</span>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ==========================================
+       RIGHT MAIN CONTENT AREA
+       ========================================== -->
+  <main class="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- ==========================================
+         TAB 1: ORDERS & PATHAO FULFILLMENT
+         ========================================== -->
+    <section id="tab-content-orders" class="tab-pane max-w-7xl mx-auto space-y-6">
+      
+      <!-- Page Header -->
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Orders & Fulfillment</h1>
+          <p class="text-slate-500 text-sm">Manage live customer orders and dispatch to Pathao Courier in 1 click</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="fetchOrders()" class="px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold flex items-center gap-1.5 transition shadow-xs">
+            <span>🔄</span> <span>Refresh</span>
+          </button>
+          <a id="export-csv-btn" href="/api/admin/export-csv" target="_blank" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold flex items-center gap-1.5 transition shadow-xs">
+            <span>📥</span> <span>Export CSV</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <p class="text-xs text-slate-500 font-semibold">Total Orders</p>
+          <h3 id="stat-total-orders" class="text-2xl font-black text-slate-900 font-latin mt-1">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <p class="text-xs text-amber-600 font-semibold">Pending</p>
+          <h3 id="stat-pending-orders" class="text-2xl font-black text-amber-600 font-latin mt-1">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <p class="text-xs text-blue-600 font-semibold">Confirmed</p>
+          <h3 id="stat-confirmed-orders" class="text-2xl font-black text-blue-600 font-latin mt-1">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <p class="text-xs text-purple-600 font-semibold">Pathao Dispatched</p>
+          <h3 id="stat-dispatched-orders" class="text-2xl font-black text-purple-600 font-latin mt-1">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <p class="text-xs text-emerald-600 font-semibold">Delivered</p>
+          <h3 id="stat-delivered-orders" class="text-2xl font-black text-emerald-600 font-latin mt-1">0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <p class="text-xs text-slate-500 font-semibold">Total Revenue</p>
+          <h3 id="stat-total-revenue" class="text-2xl font-black text-emerald-700 font-latin mt-1">৳0</h3>
+        </div>
+      </div>
+
+      <!-- Filters & Actions Bar -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+          <!-- Search Box -->
+          <div class="relative flex-1 min-w-[200px]">
+            <input type="text" id="order-search-input" oninput="debounceFetchOrders()" placeholder="Search by customer name, phone, or order ID..." class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-emerald-600 outline-none" />
+            <span class="absolute left-3 top-3 text-slate-400 text-sm">🔍</span>
+          </div>
+
+          <!-- Status Filter -->
+          <select id="order-status-filter" onchange="fetchOrders()" class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 focus:border-emerald-600 outline-none">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="dispatched">Pathao Dispatched</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <th class="p-4">Order ID & Date</th>
+                <th class="p-4">Customer Details & Address</th>
+                <th class="p-4">Product & Bundle</th>
+                <th class="p-4">Total Amount</th>
+                <th class="p-4">Status</th>
+                <th class="p-4 text-center">Pathao Courier</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody" class="divide-y divide-slate-100">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+        <div id="orders-empty-msg" class="hidden p-12 text-center text-slate-400">
+          No orders found.
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB 2: PRODUCTS & URL LINKS MANAGER
+         ========================================== -->
+    <section id="tab-content-products" class="tab-pane hidden max-w-7xl mx-auto space-y-6">
+      
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Products & Dedicated Funnel Links</h1>
+          <p class="text-slate-500 text-sm">Copy unique landing page URLs to run in targeted Meta/TikTok ad campaigns</p>
+        </div>
+        <button onclick="openNewProductModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm px-5 py-2.5 rounded-2xl shadow-sm flex items-center gap-2 transition">
+          <span>+ Add New Product</span>
+        </button>
+      </div>
+
+      <!-- Products List -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
+                <th class="p-4">Product Name</th>
+                <th class="p-4">Unique Funnel URL</th>
+                <th class="p-4">Default Homepage</th>
+                <th class="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody" class="divide-y divide-slate-100">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB 3: SECTION-BY-SECTION VISUAL EDITOR
+         ========================================== -->
+    <section id="tab-content-editor" class="tab-pane hidden max-w-5xl mx-auto space-y-6">
+      
+      <!-- Top Editor Header & Product Selector -->
+      <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">✏️</span>
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900">Landing Page Visual Editor</h2>
+            <p class="text-xs text-slate-500">Edit copy, images, pricing, comparison table, and offer bundles</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <select id="editor-product-select" onchange="loadProductIntoEditor(this.value)" class="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-800 outline-none bg-slate-50">
+            <!-- Populated dynamically -->
+          </select>
+          <a id="editor-view-live-btn" href="/" target="_blank" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs flex items-center gap-1.5 transition">
+            <span>🔗 Live Preview</span>
+          </a>
+          <button onclick="saveCurrentPageData()" class="bg-[#D92143] hover:bg-[#BF1A37] text-white font-extrabold text-sm px-6 py-2.5 rounded-xl shadow-md transition pulse-glow flex items-center gap-1.5">
+            <span>💾 Save Changes</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Accordions Form -->
+      <div id="editor-sections-container" class="space-y-4">
+        
+        <!-- 1. Meta & SEO -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>🌐 1. Meta SEO & Tracking Pixels (Meta Pixel & CAPI)</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Browser Tab Title (Page Title)</label>
+              <input type="text" id="edit-meta-title" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none focus:border-emerald-600" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Meta Pixel ID</label>
+              <input type="text" id="edit-meta-pixel" placeholder="e.g. 123456789012345" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none font-latin" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Top Urgency Bar -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>📢 2. Top Urgency Banner</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-slate-700 text-xs mb-1">Banner Text</label>
+              <input type="text" id="edit-topbar-text" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none focus:border-emerald-600" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Visibility Status</label>
+              <select id="edit-topbar-show" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none">
+                <option value="true">Visible (Show)</option>
+                <option value="false">Hidden (Hide)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Hero Section -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>🔥 3. Hero Section (Above the Fold)</span>
+          </h3>
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Top Urgency Badge Text</label>
+              <input type="text" id="edit-hero-badge" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Main Headline</label>
+              <textarea id="edit-hero-headline" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none"></textarea>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Sub-Headline</label>
+              <textarea id="edit-hero-subheadline" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none"></textarea>
+            </div>
+            
+            <!-- Pricing & Button -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Discounted Price (৳)</label>
+                <input type="number" id="edit-hero-discount-price" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none font-latin" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Regular Price (৳)</label>
+                <input type="number" id="edit-hero-regular-price" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none font-latin" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Discount Badge Text</label>
+                <input type="text" id="edit-hero-discount-badge" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Rating Text</label>
+                <input type="text" id="edit-hero-rating" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Primary CTA Button Text</label>
+              <input type="text" id="edit-hero-cta" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+            </div>
+
+            <!-- Hero Primary Image (Media 1) -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="block font-bold text-slate-800 text-xs">1. Primary Hero Image</label>
+                <div class="flex items-center gap-3">
+                  <!-- Show/Hide Toggle -->
+                  <label class="flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-700 select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:bg-slate-50 transition">
+                    <input type="checkbox" id="edit-hero-show-1" checked onchange="toggleHeroPrimaryShow(this.checked)" class="rounded text-[#D92143] cursor-pointer" />
+                    <span id="label-hero-show-1">👁️ Shown on Site</span>
+                  </label>
+                  <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                    <span>Quick Select:</span>
+                    <button type="button" onclick="setQuickImage('edit-hero-media-url', 'hero-preview-img', '/images/post1.jpeg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post1.jpeg</button>
+                    <button type="button" onclick="setQuickImage('edit-hero-media-url', 'hero-preview-img', '/images/post2.png')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post2.png</button>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="file" id="hero-media-file-input" accept="image/*,video/*" onchange="uploadMediaFile(this, 'edit-hero-media-url', 'hero-preview-img')" class="text-xs text-slate-500" />
+                <input type="text" id="edit-hero-media-url" placeholder="/images/post1.jpeg" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-latin" />
+              </div>
+              <div class="pt-1">
+                <img id="hero-preview-img" src="/images/post1.jpeg" alt="Preview" class="h-28 w-auto rounded-xl border border-slate-200 object-contain bg-white shadow-xs" />
+              </div>
+            </div>
+
+            <!-- Hero Secondary Image (Media 2) -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="block font-bold text-slate-800 text-xs">2. Secondary Showcase Image</label>
+                <div class="flex items-center gap-3">
+                  <!-- Show/Hide Toggle -->
+                  <label class="flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-700 select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:bg-slate-50 transition">
+                    <input type="checkbox" id="edit-hero-show-2" checked onchange="toggleHeroSecondaryShow(this.checked)" class="rounded text-[#D92143] cursor-pointer" />
+                    <span id="label-hero-show-2">👁️ Shown on Site</span>
+                  </label>
+                  <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                    <span>Quick Select:</span>
+                    <button type="button" onclick="setQuickImage('edit-hero-sec-media-url', 'hero-sec-preview-img', '/images/post2.png')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post2.png</button>
+                    <button type="button" onclick="setQuickImage('edit-hero-sec-media-url', 'hero-sec-preview-img', '/images/post1.jpeg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post1.jpeg</button>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="file" id="hero-sec-file-input" accept="image/*" onchange="uploadMediaFile(this, 'edit-hero-sec-media-url', 'hero-sec-preview-img')" class="text-xs text-slate-500" />
+                <input type="text" id="edit-hero-sec-media-url" placeholder="/images/post2.png" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-latin" />
+              </div>
+              <div class="pt-1">
+                <img id="hero-sec-preview-img" src="/images/post2.png" alt="Secondary Preview" class="h-28 w-auto rounded-xl border border-slate-200 object-contain bg-white shadow-xs" />
+              </div>
+            </div>
+
+            <!-- Additional Showcase Images Gallery Manager -->
+            <div class="space-y-3 pt-2">
+              <div class="flex items-center justify-between border-t pt-3">
+                <div>
+                  <label class="block font-bold text-slate-800 text-xs">📸 Additional Showcase Images (Add/Remove Gallery)</label>
+                  <span class="text-[11px] text-slate-500">Add or remove more gallery pictures with individual Show/Hide toggle switches.</span>
+                </div>
+                <button type="button" onclick="addHeroGalleryItem()" class="text-xs bg-[#FEF5E4] hover:bg-[#FDE68A] text-[#D92143] font-bold px-3 py-1.5 rounded-xl border border-[#E0C375] transition inline-flex items-center gap-1.5 shadow-xs">
+                  <span>+ Add Showcase Image</span>
+                </button>
+              </div>
+              <div id="hero-gallery-editor-container" class="space-y-3">
+                <!-- Dynamic additional gallery items -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Problem vs Solution Cards -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>❌ vs 👉 4. Problem vs Solution Cards</span>
+          </h3>
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Section Title</label>
+              <input type="text" id="edit-probsol-title" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+            </div>
+            <div id="probsol-cards-editor" class="space-y-3">
+              <!-- Dynamic Problem vs Solution inputs -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. How It Works Steps & Images -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>⚙️ 5. How It Works (3 Steps & Media)</span>
+          </h3>
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Section Title</label>
+              <input type="text" id="edit-howitworks-title" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+            </div>
+            <div id="howitworks-steps-editor" class="space-y-4">
+              <!-- Dynamic Steps with image uploaders -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. What's Included in 1 Set (1 সেটে কী কী পাচ্ছেন) -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>📦 6. What's in 1 Set (1 সেটে কী কী পাচ্ছেন)</span>
+          </h3>
+          <div class="space-y-4 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Section Title</label>
+                <input type="text" id="edit-included-title" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Section Subtitle</label>
+                <input type="text" id="edit-included-subtitle" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Large Spoon Controls -->
+              <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
+                <span class="font-bold text-xs text-[#D92143]">🥄 Large Spoon (বড় চামচ)</span>
+                <input type="text" id="edit-included-large-title" placeholder="1. বড় মেজারিং চামচ" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+                <input type="text" id="edit-included-large-badge" placeholder="৪টি মাপ (Tablespoon)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+                <input type="text" id="edit-included-large-usage" placeholder="তেল, সস, বেকিং ব্যাটার, ময়দা ও চিনির সঠিক মাপের জন্য।" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+              </div>
+
+              <!-- Small Spoon Controls -->
+              <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
+                <span class="font-bold text-xs text-[#EA580C]">🥄 Small Spoon (ছোট চামচ)</span>
+                <input type="text" id="edit-included-small-title" placeholder="২. ছোট মেজারিং চামচ" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+                <input type="text" id="edit-included-small-badge" placeholder="৪টি মাপ (Teaspoon)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+                <input type="text" id="edit-included-small-usage" placeholder="লবণ, গুঁড়া মসলা, বেকিং পাউডার ও শিশুদের ওষুধের সঠিক মাপ।" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+              </div>
+            </div>
+
+            <!-- Bottom Value Banner -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+              <label class="block font-bold text-slate-700 text-xs">Bottom Value Banner Copy</label>
+              <input type="text" id="edit-included-banner-title" placeholder="মোট ৮টি ভিন্ন পরিমাপ মাত্র ২টি ফ্ল্যাট চামচে!" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+              <input type="text" id="edit-included-banner-desc" placeholder="কোনো বাড়তি বাটি বা ভারী স্কেলের ঝামেলা ছাড়াই রান্নাঘরের যেকোনো ড্রয়ারে ফ্ল্যাট রেখে দিন।" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Comparison Section (Infographic Image Showcase) -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>📊 7. Comparison Section (Showcase Image)</span>
+          </h3>
+          <div class="space-y-4 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Section Title</label>
+                <input type="text" id="edit-comp-title" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Section Subtitle</label>
+                <input type="text" id="edit-comp-subtitle" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+            </div>
+
+            <!-- Comparison Image Uploader -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="block font-bold text-slate-800 text-xs">Comparison Showcase / Comparison Infographic Image</label>
+                <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                  <span>Quick Default:</span>
+                  <button type="button" onclick="setQuickImage('edit-comp-image-url', 'comp-preview-img', '/images/comp-infographic.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">comp-infographic.svg</button>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="file" id="comp-image-file-input" accept="image/*" onchange="uploadMediaFile(this, 'edit-comp-image-url', 'comp-preview-img')" class="text-xs text-slate-500" />
+                <input type="text" id="edit-comp-image-url" placeholder="/images/comp-infographic.svg" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-latin" />
+              </div>
+              <div class="pt-2">
+                <img id="comp-preview-img" src="/images/comp-infographic.svg" alt="Comparison Preview" class="max-h-48 w-auto rounded-xl border border-slate-200 object-contain bg-white shadow-xs" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Offer Bundles & Package Pricing -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>🎁 8. Unified Package Offers & Checkout Section</span>
+          </h3>
+          <div class="space-y-4 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Section Title</label>
+                <input type="text" id="edit-checkout-title" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Section Subtitle</label>
+                <input type="text" id="edit-checkout-subtitle" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
+              </div>
+            </div>
+            
+            <div id="bundles-editor-container" class="space-y-4 pt-1">
+              <!-- Dynamic Bundles fields -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Delivery Charges -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>🚚 9. Delivery Charge Rates</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Inside Dhaka Rate (৳)</label>
+              <input type="number" id="edit-delivery-dhaka" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none font-latin" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 text-xs mb-1">Outside Dhaka Rate (৳)</label>
+              <input type="number" id="edit-delivery-outside" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none font-latin" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. Customer Reviews -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>⭐ 10. Customer Reviews (UGC Social Proof)</span>
+          </h3>
+          <div id="reviews-editor-container" class="space-y-4">
+            <!-- Dynamic Reviews -->
+          </div>
+        </div>
+
+        <!-- 11. FAQs -->
+        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
+            <span>❓ 11. Frequently Asked Questions (FAQs)</span>
+          </h3>
+          <div id="faq-editor-container" class="space-y-3">
+            <!-- Dynamic FAQs -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Save Action -->
+      <div class="pt-4 text-right">
+        <button onclick="saveCurrentPageData()" class="bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-base px-8 py-3.5 rounded-2xl shadow-xl transition pulse-glow">
+          💾 Save All Changes
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB 4: INTEGRATION SETTINGS
+         ========================================== -->
+    <section id="tab-content-settings" class="tab-pane hidden max-w-4xl mx-auto space-y-6">
+      
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Global Integrations & Security</h1>
+          <p class="text-slate-500 text-sm">Configure Pathao Courier API, Meta Conversions API (CAPI), and WhatsApp support</p>
+        </div>
+
+        <form id="global-settings-form" class="space-y-6 text-sm">
+          
+          <!-- Pathao Courier Credentials -->
+          <div class="border-t border-slate-200 pt-5 space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+              <span>🚚</span> <span>Pathao Courier API Credentials</span>
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-slate-700 text-xs mb-1">Pathao API Base URL</label>
+                <input type="text" id="set-pathao-base-url" placeholder="https://courier-api-sandbox.pathao.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+                <p class="text-[11px] text-slate-400 mt-1">Sandbox: https://courier-api-sandbox.pathao.com | Production: https://api-hermes.pathao.com</p>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Client ID</label>
+                <input type="text" id="set-pathao-client-id" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Client Secret</label>
+                <input type="password" id="set-pathao-client-secret" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Username / Registered Email</label>
+                <input type="text" id="set-pathao-username" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Password</label>
+                <input type="password" id="set-pathao-password" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Store ID (Pathao Store ID)</label>
+                <input type="text" id="set-pathao-store-id" placeholder="e.g. 1234" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Meta CAPI & Pixel -->
+          <div class="border-t border-slate-200 pt-5 space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+              <span>🎯</span> <span>Meta Pixel & Server-Side Conversions API (CAPI)</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Global Meta Pixel ID</label>
+                <input type="text" id="set-meta-pixel-id" placeholder="e.g. 1234567890" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Test Event Code (Optional)</label>
+                <input type="text" id="set-meta-test-code" placeholder="e.g. TEST12345" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-slate-700 text-xs mb-1">CAPI Access Token (Server-Side)</label>
+                <input type="password" id="set-meta-capi-token" placeholder="EAAB..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+            </div>
+          </div>
+
+          <!-- WhatsApp & Security -->
+          <div class="border-t border-slate-200 pt-5 space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+              <span>🔒</span> <span>WhatsApp Support & Admin Password</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">WhatsApp Number (With Country Code)</label>
+                <input type="text" id="set-whatsapp-number" placeholder="88017XXXXXXXX" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-xs mb-1">New Admin Password</label>
+                <input type="password" id="set-admin-password" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs" />
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-8 py-3 rounded-xl shadow-sm transition">
+            💾 Save Settings
+          </button>
+
+        </form>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       MODAL: ADD NEW PRODUCT
+       ========================================== -->
+  <div id="new-product-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-200 space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-extrabold text-slate-900">Create New Product Landing Funnel</h3>
+        <button onclick="closeNewProductModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">✕</button>
+      </div>
+
+      <form id="new-product-form" class="space-y-4 text-sm">
+        <div>
+          <label class="block font-bold text-slate-700 text-xs mb-1">Product Title <span class="text-rose-500">*</span></label>
+          <input type="text" id="new-prod-title" required placeholder="e.g. Smart Stainless Knife Set" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none" />
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 text-xs mb-1">Unique URL Slug <span class="text-rose-500">*</span></label>
+          <div class="flex items-center">
+            <span class="bg-slate-100 border border-r-0 border-slate-200 px-3 py-2.5 rounded-l-xl text-xs text-slate-500 font-latin">/p/</span>
+            <input type="text" id="new-prod-slug" required placeholder="smart-knife" class="flex-1 px-4 py-2.5 rounded-r-xl border border-slate-200 outline-none font-latin" />
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Live URL: http://yourdomain.com/p/smart-knife</p>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeNewProductModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold">Cancel</button>
+          <button type="submit" class="px-6 py-2 rounded-xl bg-emerald-600 text-white text-xs font-extrabold shadow-sm">Create Funnel →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/admin.js?v=2.6"></script>
+</body>
+</html>

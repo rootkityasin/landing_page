@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>অর্ডার সফল হয়েছে! | Polygons® Store</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" href="/images/polygons_logo.png" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-[#FFFDF9] text-[#1C1917] min-h-screen flex flex-col justify-between antialiased selection:bg-[#D92143] selection:text-white">
+
+  <!-- Minimal Header -->
+  <header class="bg-white border-b border-[#E0C375]/30 py-4 text-center">
+    <div class="flex items-center justify-center">
+      <img src="/images/polygons_logo.png" alt="Polygons" class="h-10 sm:h-12 w-auto object-contain" />
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-8 sm:py-12 w-full">
+    
+    <!-- Success Card -->
+    <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-lg border border-[#E0C375]/40 text-center space-y-6">
+      
+      <!-- Checkmark Icon -->
+      <div class="w-16 h-16 bg-[#FEF5E4] text-[#D92143] border border-[#E0C375] rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-inner">
+        ✓
+      </div>
+
+      <div class="space-y-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#1C1917]">
+          ধন্যবাদ! আপনার অর্ডারটি গ্রহণ করা হয়েছে
+        </h1>
+        <p class="text-[#44403C] text-sm sm:text-base">
+          আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করে ডেলিভারি নিশ্চিত করবেন।
+        </p>
+      </div>
+
+      <!-- Order ID & Status Badge -->
+      <div class="bg-[#FEF5E4]/60 rounded-2xl p-4 border border-[#E0C375]/50 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div>
+          <span class="text-[#44403C] font-medium">অর্ডার নম্বর:</span>
+          <span id="order-number-display" class="font-extrabold text-[#D92143] text-base font-latin ml-1">লোড হচ্ছে...</span>
+        </div>
+        <span class="bg-[#1C1917] text-[#E0C375] text-xs font-bold px-3 py-1 rounded-full font-latin border border-[#E0C375]/30">
+          PROCESSING (COD)
+        </span>
+      </div>
+
+      <!-- WhatsApp VIP Priority Confirmation CTA -->
+      <div class="bg-[#1C1917] text-white rounded-2xl p-5 text-left space-y-3 border border-[#E0C375]/40 shadow-md">
+        <div class="flex items-start gap-3">
+          <span class="text-2xl">📲</span>
+          <div>
+            <h4 class="font-extrabold text-white text-base">তাড়াতাড়ি ডেলিভারি নিশ্চিত করতে চান?</h4>
+            <p class="text-[#E0C375] text-xs sm:text-sm mt-0.5">
+              WhatsApp-এ 1-ক্লিকে মেসেজ পাঠিয়ে ভিআইপি এক্সপ্রেস শিপিং সার্ভিস পান।
+            </p>
+          </div>
+        </div>
+        <a id="whatsapp-confirm-btn" href="#" target="_blank" class="w-full bg-[#D92143] hover:bg-[#BF1A37] text-white font-extrabold text-sm sm:text-base py-3.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition">
+          <span>WhatsApp-এ মেসেজ পাঠান</span>
+          <span>→</span>
+        </a>
+      </div>
+
+      <!-- Invoice Details Table -->
+      <div class="text-left space-y-3 pt-2">
+        <h3 class="font-extrabold text-[#1C1917] text-base border-b border-[#E0C375]/40 pb-2">
+          অর্ডার ইনভয়েস ও ডেলিভারি বিবরণ
+        </h3>
+        
+        <div class="space-y-2 text-sm text-[#44403C]">
+          <div class="flex justify-between">
+            <span class="text-[#44403C]/70">গ্রাহকের নাম:</span>
+            <span id="inv-cust-name" class="font-bold text-[#1C1917]">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#44403C]/70">মোবাইল নম্বর:</span>
+            <span id="inv-cust-phone" class="font-bold text-[#1C1917] font-latin">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#44403C]/70">ডেলিভারি ঠিকানা:</span>
+            <span id="inv-cust-address" class="font-medium text-[#1C1917] text-right max-w-xs">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#44403C]/70">প্যাকেজ:</span>
+            <span id="inv-bundle-name" class="font-bold text-[#1C1917]">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#44403C]/70">প্রোডাক্ট মূল্য:</span>
+            <span id="inv-item-price" class="font-bold text-[#1C1917] font-latin">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#44403C]/70">ডেলিভারি চার্জ:</span>
+            <span id="inv-delivery-charge" class="font-bold text-[#1C1917] font-latin">-</span>
+          </div>
+          <div class="flex justify-between text-base font-extrabold text-[#1C1917] border-t border-[#E0C375]/30 pt-2">
+            <span>Total:</span>
+            <span id="inv-total-amount" class="text-[#D92143] text-lg font-latin font-black">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Timeline Notice -->
+      <div class="bg-[#FEF5E4]/50 rounded-2xl p-4 text-xs text-[#44403C] text-left space-y-1 border border-[#E0C375]/40">
+        <p class="font-bold text-[#1C1917]">🚚 ডেলিভারি সময়সীমা:</p>
+        <p>• ঢাকা সিটি: ২৪ থেকে ৪৮ ঘণ্টার মধ্যে হোম ডেলিভারি।</p>
+        <p>• ঢাকার বাইরে: ২ থেকে ৩ কার্যদিবসের মধ্যে ডেলিভারি।</p>
+      </div>
+
+      <div class="pt-2">
+        <a href="/" class="inline-block text-[#D92143] hover:underline font-bold text-sm">
+          ← হোমপেজে ফিরে যান
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer with Payment Trust Logos -->
+  <footer class="bg-[#1C1917] text-slate-300 py-10 text-center text-xs space-y-4 border-t border-[#E0C375]/30">
+    <!-- Footer Logo -->
+    <div class="flex items-center justify-center">
+      <img src="/images/polygons_logo.png" alt="Polygons" style="height: 30px !important; max-height: 30px !important; width: auto !important; max-width: 170px !important; object-fit: contain !important;" class="brightness-0 invert opacity-95" />
+    </div>
+    <div class="max-w-md mx-auto flex flex-wrap items-center justify-center gap-2 pt-1">
+      <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <img src="/images/payments/bkash.png" alt="bKash" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:52px !important; object-fit:contain !important; display:block;" />
+      </div>
+      <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <img src="/images/payments/nagad.png" alt="Nagad" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:52px !important; object-fit:contain !important; display:block;" />
+      </div>
+      <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <img src="/images/payments/visa.png" alt="Visa" style="height:14px !important; max-height:14px !important; width:auto !important; max-width:44px !important; object-fit:contain !important; display:block;" />
+      </div>
+      <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <img src="/images/payments/mastercard.png" alt="Mastercard" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:44px !important; object-fit:contain !important; display:block;" />
+      </div>
+      <div style="background:#1E293B; border:1px solid rgba(224,195,117,0.45); color:#E0C375; font-size:11px; font-weight:800; border-radius:8px; padding:0 10px; height:34px; display:inline-flex; align-items:center; gap:4px;">
+        <span>💵 ক্যাশ অন ডেলিভারি</span>
+      </div>
+    </div>
+    <p class="text-slate-300 pt-1 text-xs">কাস্টমার সাপোর্ট: <a href="mailto:info.polygonsbd@gmail.com" class="text-[#F69D39] hover:underline font-latin">info.polygonsbd@gmail.com</a></p>
+    <p class="text-slate-400 font-latin text-xs">© 2026 Polygons LLC. All Rights Reserved.</p>
+  </footer>
+
+  <script src="/js/thankyou.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="24" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="2"/>
+  <!-- Keyring holder -->
+  <circle cx="60" cy="30" r="14" fill="none" stroke="#64748B" stroke-width="4"/>
+  <!-- Tangled 4 plastic spoons in various messy angles -->
+  <!-- Spoon 1 -->
+  <path d="M50,42 C40,55 30,70 28,92 C36,98 48,94 48,82 C46,65 52,50 54,42 Z" fill="#94A3B8"/>
+  <ellipse cx="38" cy="88" rx="8" ry="12" fill="#64748B"/>
+  <!-- Spoon 2 -->
+  <path d="M56,42 C54,58 52,75 56,96 C64,100 72,96 70,85 C66,70 64,55 62,42 Z" fill="#CBD5E1"/>
+  <ellipse cx="63" cy="90" rx="7" ry="11" fill="#94A3B8"/>
+  <!-- Spoon 3 -->
+  <path d="M66,42 C72,55 80,68 88,88 C96,92 100,85 96,75 C88,62 78,50 72,42 Z" fill="#E2E8F0"/>
+  <ellipse cx="92" cy="82" rx="6" ry="9" fill="#CBD5E1"/>
+  <!-- Red Cross Badge -->
+  <circle cx="96" cy="24" r="14" fill="#EF4444"/>
+  <text x="96" y="29" font-size="14" font-weight="900" fill="#FFFFFF" text-anchor="middle">✕</text>
+</svg>

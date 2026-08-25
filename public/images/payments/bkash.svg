@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40">
+  <rect width="120" height="40" rx="8" fill="#E2136E" />
+  <!-- bKash Bird Origami Icon -->
+  <g transform="translate(12, 8)">
+    <path d="M 0 12 L 14 0 L 14 18 Z" fill="#FFFFFF" opacity="0.95" />
+    <path d="M 14 0 L 22 10 L 14 14 Z" fill="#FFFFFF" opacity="0.8" />
+    <path d="M 14 14 L 20 22 L 6 22 Z" fill="#FFFFFF" opacity="0.9" />
+  </g>
+  <!-- bKash Text -->
+  <text x="46" y="26" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="18" fill="#FFFFFF" letter-spacing="-0.5">bKash</text>
+</svg>
