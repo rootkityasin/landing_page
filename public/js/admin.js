@@ -624,25 +624,93 @@ function populateEditorFields(d) {
   document.getElementById('edit-delivery-outside').value = d.checkout?.deliveryOutside || 130;
 
   // 9. Customer Reviews
-  const reviewsContainer = document.getElementById('reviews-editor-container');
-  reviewsContainer.innerHTML = (d.reviews || []).map((rev, i) => `
-    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <input type="text" id="edit-rev-name-${i}" value="${rev.name}" placeholder="Customer Name" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
-        <input type="text" id="edit-rev-loc-${i}" value="${rev.location}" placeholder="Location / City" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
-      </div>
-      <textarea id="edit-rev-comment-${i}" rows="2" placeholder="Review Quote" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs">${rev.comment}</textarea>
-    </div>
-  `).join('');
+  renderReviewsEditor(d);
 
   // 10. FAQs
-  const faqContainer = document.getElementById('faq-editor-container');
-  faqContainer.innerHTML = (d.faq || []).map((f, i) => `
-    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-      <input type="text" id="edit-faq-q-${i}" value="${f.q}" placeholder="Question" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
-      <textarea id="edit-faq-a-${i}" rows="2" placeholder="Answer" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs">${f.a}</textarea>
+  renderFaqEditor(d);
+}
+
+function renderReviewsEditor(d) {
+  const reviewsContainer = document.getElementById('reviews-editor-container');
+  if (!reviewsContainer) return;
+  
+  reviewsContainer.innerHTML = `
+    <div class="space-y-3">
+      ${(d.reviews || []).map((rev, i) => `
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5 relative">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-slate-800 flex items-center gap-1">⭐ Review #${i + 1}</span>
+            <button type="button" onclick="deleteReview(${i})" class="text-rose-600 hover:text-rose-800 text-[11px] font-bold px-2 py-0.5 rounded bg-rose-50 border border-rose-200 transition">✕ Delete</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" id="edit-rev-name-${i}" value="${rev.name || ''}" placeholder="Customer Name" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+            <input type="text" id="edit-rev-loc-${i}" value="${rev.location || ''}" placeholder="Location / City (যেমন: ঢাকা)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+          </div>
+          <textarea id="edit-rev-comment-${i}" rows="2" placeholder="Review Comment" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs">${rev.comment || ''}</textarea>
+        </div>
+      `).join('')}
+      <button type="button" onclick="addReviewItem()" class="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-1.5">
+        <span>➕ Add New Customer Review (নতুন রিভিউ যোগ করুন)</span>
+      </button>
     </div>
-  `).join('');
+  `;
+}
+
+function addReviewItem() {
+  if (!currentEditingPageData) return;
+  if (!currentEditingPageData.reviews) currentEditingPageData.reviews = [];
+  currentEditingPageData.reviews.push({
+    name: "নতুন গ্রাহক",
+    location: "ঢাকা",
+    rating: 5,
+    comment: "প্রোডাক্টটি অত্যন্ত চমৎকার এবং কাজের। ডেলিভারিও পেয়েছি খুব দ্রুত।"
+  });
+  renderReviewsEditor(currentEditingPageData);
+}
+
+function deleteReview(index) {
+  if (!currentEditingPageData || !currentEditingPageData.reviews) return;
+  currentEditingPageData.reviews.splice(index, 1);
+  renderReviewsEditor(currentEditingPageData);
+}
+
+function renderFaqEditor(d) {
+  const faqContainer = document.getElementById('faq-editor-container');
+  if (!faqContainer) return;
+
+  faqContainer.innerHTML = `
+    <div class="space-y-3">
+      ${(d.faq || []).map((f, i) => `
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5 relative">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-slate-800 flex items-center gap-1">❓ FAQ #${i + 1}</span>
+            <button type="button" onclick="deleteFaq(${i})" class="text-rose-600 hover:text-rose-800 text-[11px] font-bold px-2 py-0.5 rounded bg-rose-50 border border-rose-200 transition">✕ Delete</button>
+          </div>
+          <input type="text" id="edit-faq-q-${i}" value="${f.q || ''}" placeholder="Question" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+          <textarea id="edit-faq-a-${i}" rows="2" placeholder="Answer" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs">${f.a || ''}</textarea>
+        </div>
+      `).join('')}
+      <button type="button" onclick="addFaqItem()" class="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-1.5">
+        <span>➕ Add New FAQ Question (নতুন প্রশ্ন ও উত্তর যোগ করুন)</span>
+      </button>
+    </div>
+  `;
+}
+
+function addFaqItem() {
+  if (!currentEditingPageData) return;
+  if (!currentEditingPageData.faq) currentEditingPageData.faq = [];
+  currentEditingPageData.faq.push({
+    q: "আপনার প্রশ্ন এখানে লিখুন?",
+    a: "প্রশ্নের উত্তর এখানে বিস্তারিত লিখুন।"
+  });
+  renderFaqEditor(currentEditingPageData);
+}
+
+function deleteFaq(index) {
+  if (!currentEditingPageData || !currentEditingPageData.faq) return;
+  currentEditingPageData.faq.splice(index, 1);
+  renderFaqEditor(currentEditingPageData);
 }
 
 async function toggleHeroPrimaryShow(isChecked) {
