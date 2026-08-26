@@ -7,6 +7,7 @@ const multer = require('multer');
 const { initDatabase, dbRun, dbGet, dbAll, defaultOrigamiPageData } = require('./database');
 const pathao = require('./pathao');
 const metaCapi = require('./metaCapi');
+const sharp = require('sharp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -320,13 +321,51 @@ app.post('/api/admin/login', async (req, res) => {
   }
 });
 
-// Admin File/Image Upload
-app.post('/api/admin/upload', verifyAdminAuth, upload.single('media'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: 'No file uploaded' });
-  }
-  const fileUrl = `/uploads/${req.file.filename}`;
-  res.json({ success: true, url: fileUrl, filename: req.file.filename });
+// Admin Media Upload Endpoint with automatic WebP conversion and optimization
+app.post('/api/admin/upload', verifyAdminAuth, (req, res) => {
+  upload.single('media')(req, res, async (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(400).json({ success: false, error: `Upload error: ${err.message}` });
+      }
+      return res.status(400).json({ success: false, error: err.message || 'File upload failed' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No media file was uploaded' });
+    }
+
+    let finalFilename = req.file.filename;
+    let finalUrl = `/uploads/${finalFilename}`;
+    const ext = path.extname(req.file.filename).toLowerCase();
+
+    // Automatically optimize raster images to modern WebP
+    if (['.jpg', '.jpeg', '.png', '.webp', '.avif', '.tiff', '.bmp'].includes(ext)) {
+      try {
+        const webpFilename = 'media-' + Date.now() + '-' + Math.round(Math.random() * 1e9) + '.webp';
+        const webpFilePath = path.join(uploadDir, webpFilename);
+        
+        await sharp(req.file.path)
+          .resize({ width: 1200, withoutEnlargement: true })
+          .webp({ quality: 80, effort: 6 })
+          .toFile(webpFilePath);
+
+        // Clean up temporary unoptimized upload
+        try { fs.unlinkSync(req.file.path); } catch (e) {}
+
+        finalFilename = webpFilename;
+        finalUrl = `/uploads/${webpFilename}`;
+      } catch (optErr) {
+        console.error('Image optimization fallback:', optErr.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      url: finalUrl,
+      filename: finalFilename
+    });
+  });
 });
 
 // Admin Product Management
@@ -353,31 +392,6 @@ app.get('/api/admin/products/:id', verifyAdminAuth, async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
-});
-
-// Admin Media Upload Endpoint
-app.post('/api/admin/upload', verifyAdminAuth, (req, res) => {
-  upload.single('media')(req, res, (err) => {
-    if (err) {
-      if (err instanceof multer.MulterError) {
-        return res.status(400).json({ success: false, error: `Upload error: ${err.message}` });
-      }
-      return res.status(400).json({ success: false, error: err.message || 'File upload failed' });
-    }
-
-    if (!req.file) {
-      return res.status(400).json({ success: false, error: 'No media file was uploaded' });
-    }
-
-    // Relative web URL
-    const fileUrl = `/uploads/${req.file.filename}`;
-    res.json({
-      success: true,
-      url: fileUrl,
-      filename: req.file.filename,
-      size: req.file.size
-    });
-  });
 });
 
 app.post('/api/admin/products', verifyAdminAuth, async (req, res) => {

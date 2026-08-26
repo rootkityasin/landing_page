@@ -154,21 +154,21 @@ function renderLandingPage(data) {
         const fallbacks = [
           data.hero?.mediaUrl,
           data.hero?.secondaryMediaUrl,
-          '/images/post1.jpeg',
-          '/images/post2.png'
+          '/images/post1.webp',
+          '/images/post2.webp'
         ].filter(Boolean);
         galleryList = fallbacks;
       }
 
       galleryList = [...new Set(galleryList)];
-      const mainMedia = galleryList[0] || '/images/post1.jpeg';
+      const mainMedia = galleryList[0] || '/images/post1.webp';
       const gridColsClass = galleryList.length <= 3
         ? 'grid-cols-3'
         : (galleryList.length === 4 ? 'grid-cols-4' : 'grid-cols-3 sm:grid-cols-6');
 
       const thumbnailsHtml = galleryList.map((imgSrc, idx) => `
         <button type="button" onclick="switchHeroImg('${imgSrc}', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 ${idx === 0 ? 'border-[#D92143]' : 'border-slate-200'} bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
-          <img src="${imgSrc}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.jpeg';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
+          <img src="${imgSrc}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
         </button>
       `).join('');
 
@@ -279,11 +279,11 @@ function renderLandingPage(data) {
 
   const compImgEl = document.getElementById('comparison-img');
   if (compImgEl) {
-    const compImageSrc = data.comparison?.imageUrl || '/uploads/media-1787690411261-932816281.png';
+    const compImageSrc = data.comparison?.imageUrl || '/uploads/media-1787690411261-932816281.webp';
     compImgEl.src = compImageSrc;
     compImgEl.onerror = function() {
       this.onerror = null;
-      this.src = '/uploads/media-1787690411261-932816281.png';
+      this.src = '/uploads/media-1787690411261-932816281.webp';
     };
     compImgEl.alt = data.comparison?.title || 'Comparison Infographic';
   }

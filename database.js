@@ -74,8 +74,8 @@ const defaultOrigamiPageData = {
     discountBadge: "৪০% ছাড়",
     ctaText: "এখনই অর্ডার করুন",
     mediaType: "image",
-    mediaUrl: "/images/post1.jpeg",
-    secondaryMediaUrl: "/images/post2.png",
+    mediaUrl: "/images/post1.webp",
+    secondaryMediaUrl: "/images/post2.webp",
     mediaPoster: ""
   },
   problemSolution: {
@@ -142,7 +142,7 @@ const defaultOrigamiPageData = {
   comparison: {
     title: "কেন এটি সাধারণ চামচের চেয়ে বহুগুণে সেরা?",
     subtitle: "সাধারণ প্লাস্টিক চামচ ও ডিজিটাল স্কেলের সাথে সরাসরি তুলনা",
-    imageUrl: "/uploads/media-1787690411261-932816281.png"
+    imageUrl: "/uploads/media-1787690411261-932816281.webp"
   },
   bundles: [
     {
