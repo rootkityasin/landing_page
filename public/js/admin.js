@@ -553,10 +553,10 @@ function populateEditorFields(d) {
       title: "আমাদের ১ সেট প্রোডাক্টে কী কী পাচ্ছেন?",
       subtitle: "প্রতি ১ সেটে থাকবে মোট ২টি স্মার্ট ফোল্ডিং চামচ — যা একসাথে রিপ্লেস করবে ৬টি ট্র্যাডিশনাল মেজারিং চামচ",
       largeSpoonTitle: "১. বড় মেজারিং চামচ (Tablespoon)",
-      largeSpoonBadge: "৩টি মাপ (টেবিল চামচ)",
+      largeSpoonBadge: "৩টি মাপ (Tbsp)",
       largeSpoonUsage: "২ Tbsp (৩০ মিলি), ১ Tbsp (১৫ মিলি), ১/২ Tbsp (৭.৫ মিলি) — তেল, ময়দা ও চিনির মাপের জন্য।",
       smallSpoonTitle: "২. ছোট মেজারিং চামচ (Teaspoon)",
-      smallSpoonBadge: "৩টি মাপ (চা চামচ)",
+      smallSpoonBadge: "৩টি মাপ (tsp)",
       smallSpoonUsage: "১ tsp (৫ মিলি), ১/২ tsp (২.৫ মিলি), ১/৪ tsp (১.২৫ মিলি) — মসলা, লবণ ও ওষুধের সঠিক মাপ।",
       bannerTitle: "মোট ৬টি ভিন্ন পরিমাপ মাত্র ২টি ফ্ল্যাট চামচে!",
       bannerDesc: "কোনো বাড়তি বাটি বা ৬টি আলাদা চামচের ঝামেলা ছাড়াই ড্রয়ারে বা ম্যাগনেটিক স্ট্রিপে ফ্ল্যাট রেখে দিন।"
