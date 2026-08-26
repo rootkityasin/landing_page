@@ -168,17 +168,17 @@ function renderLandingPage(data) {
 
       const thumbnailsHtml = galleryList.map((imgSrc, idx) => `
         <button type="button" onclick="switchHeroImg('${imgSrc}', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 ${idx === 0 ? 'border-[#D92143]' : 'border-slate-200'} bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
-          <img src="${imgSrc}" onerror="this.onerror=null; this.src='/images/post1.jpeg';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
+          <img src="${imgSrc}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.jpeg';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
         </button>
       `).join('');
 
       heroMediaEl.innerHTML = `
         <div class="space-y-3">
           <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white">
-            <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
+            <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
             <div class="absolute bottom-3 left-3 bg-[#1C1917]/90 backdrop-blur-md text-white text-xs px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-lg font-latin border border-[#E0C375]/30">
               <span class="w-2 h-2 rounded-full bg-[#F69D39] live-dot"></span>
-              <span>100% Genuine Polygons® Product</span>
+              <span>১০০% Genuine Polygons® Product</span>
             </div>
           </div>
 

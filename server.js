@@ -53,10 +53,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Optimized static assets serving with cache headers
+// Optimized static assets serving with fine-tuned performance cache headers
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: '1d',
-  etag: true
+  maxAge: '7d',
+  etag: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.css') || filePath.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (filePath.match(/\.(jpg|jpeg|png|webp|svg|gif|ico|avif)$/i)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, stale-while-revalidate=86400');
+    } else if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  }
 }));
 
 // Admin Auth Middleware (Basic token / session verification)

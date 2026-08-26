@@ -4,6 +4,7 @@
   "description": "High-converting single product COD landing page & dynamic admin CMS engine",
   "main": "server.js",
   "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/css/styles.min.css --minify",
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
@@ -14,5 +15,8 @@
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.1",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
   }
 }

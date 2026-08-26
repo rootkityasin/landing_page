@@ -7,44 +7,29 @@
   
   <!-- Primary Meta Tags -->
   <meta name="title" content="Polygons® 4-in-1 Folding Measuring Spoon | ফ্ল্যাট ফোল্ডিং মেজারিং চামচ" />
-  <meta name="description" content="রান্না ও বেকিংয়ে ঝামেলামুক্ত নিখুঁত মাপের ৪-ইন-১ ফোল্ডিং মেজারিং চামচ। ড্রয়ারে ০% স্পেস ও 1 সেকেন্ডে ওয়াইপ-ক্লিন।" />
+  <meta name="description" content="রান্না ও বেকিংয়ে ঝামেলামুক্ত নিখুঁত মাপের ৪-ইন-১ ফোল্ডিং মেজারিং চামচ। ড্রয়ারে ০% স্পেস ও ১ সেকেন্ডে ওয়াইপ-ক্লিন।" />
   
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              crimson: '#D92143',
-              crimsonDark: '#BF1A37',
-              orange: '#F69D39',
-              gold: '#E0C375',
-              cream: '#FEF5E4',
-              bgLight: '#FCFAF6',
-              dark: '#0F172A',
-              stone: '#334155'
-            }
-          },
-          boxShadow: {
-            'glow-red': '0 10px 25px -3px rgba(217, 33, 67, 0.4)',
-            'glow-orange': '0 10px 25px -3px rgba(246, 157, 57, 0.35)',
-            'luxury': '0 20px 40px -15px rgba(15, 23, 42, 0.07)'
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Preconnect to Google Fonts for Zero-Latency Handshake -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Non-blocking Google Fonts with font-display: swap -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" />
+  </noscript>
+
+  <!-- Precompiled & Minified Production CSS (Instant 0ms Blocking) -->
+  <link rel="stylesheet" href="/css/styles.min.css?v=4.0" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/polygons_logo.png" />
 
   <!-- Open Graph / Meta Pixel Fallback -->
   <script>
     window.fbq = window.fbq || function(){(window.fbq.q = window.fbq.q || []).push(arguments);};
   </script>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/images/polygons_logo.png" />
-  <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="bg-[#FCFAF6] text-[#0F172A] pb-safe antialiased selection:bg-[#D92143] selection:text-white">
 
@@ -67,7 +52,7 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between">
       <!-- Brand Logo -->
       <a href="/" class="flex items-center">
-        <img src="/images/polygons_logo.png" alt="Polygons" class="h-9 sm:h-11 w-auto object-contain max-w-[180px] sm:max-w-[220px]" />
+        <img src="/images/polygons_logo.png" alt="Polygons" fetchpriority="high" decoding="async" class="h-9 sm:h-11 w-auto object-contain max-w-[180px] sm:max-w-[220px]" />
       </a>
     </div>
   </header>
@@ -343,7 +328,7 @@
 
       <!-- Comparison Showcase Image Container -->
       <div id="comparison-image-container" class="block w-full bg-white rounded-3xl shadow-sm border border-[#E0C375]/40 overflow-hidden p-2 sm:p-4">
-        <img id="comparison-img" src="/uploads/media-1787690411261-932816281.png" alt="Comparison Showcase" class="w-full h-auto object-contain rounded-2xl mx-auto transition duration-300 hover:scale-[1.01]" />
+        <img id="comparison-img" src="/uploads/media-1787690411261-932816281.png" alt="Comparison Showcase" loading="lazy" decoding="async" class="w-full h-auto object-contain rounded-2xl mx-auto transition duration-300 hover:scale-[1.01]" />
       </div>
 
     </section>
@@ -553,7 +538,7 @@
       <div id="trust-badges-container" class="grid grid-cols-1 md:grid-cols-3 gap-3">
         
         <div class="bg-white rounded-2xl p-4 shadow-xs border border-[#E0C375]/30 flex items-center gap-3 hover:border-[#D92143]/40 transition">
-          <img src="/images/trust-cod.svg" alt="ক্যাশ অন ডেলিভারি" class="w-10 h-10 flex-shrink-0" />
+          <img src="/images/trust-cod.svg" alt="ক্যাশ অন ডেলিভারি" loading="lazy" decoding="async" class="w-10 h-10 flex-shrink-0" />
           <div>
             <h5 class="font-bold text-[#0F172A] text-sm">ক্যাশ অন ডেলিভারি</h5>
             <p class="text-xs text-[#334155]">পণ্য হাতে পেয়ে চেক করে সম্পূর্ণ মূল্য পরিশোধ করুন</p>
@@ -561,7 +546,7 @@
         </div>
 
         <div class="bg-white rounded-2xl p-4 shadow-xs border border-[#E0C375]/30 flex items-center gap-3 hover:border-[#D92143]/40 transition">
-          <img src="/images/trust-shipping.svg" alt="সারাদেশে দ্রুত ডেলিভারি" class="w-10 h-10 flex-shrink-0" />
+          <img src="/images/trust-shipping.svg" alt="সারাদেশে দ্রুত ডেলিভারি" loading="lazy" decoding="async" class="w-10 h-10 flex-shrink-0" />
           <div>
             <h5 class="font-bold text-[#0F172A] text-sm">সারাদেশে দ্রুত ডেলিভারি</h5>
             <p class="text-xs text-[#334155]">ঢাকায় ২৪-৪৮ ঘণ্টা ও ঢাকার বাইরে ২-৩ দিনে হোম ডেলিভারি</p>
@@ -569,7 +554,7 @@
         </div>
 
         <div class="bg-white rounded-2xl p-4 shadow-xs border border-[#E0C375]/30 flex items-center gap-3 hover:border-[#D92143]/40 transition">
-          <img src="/images/trust-warranty.svg" alt="৭ দিনের রিপ্লেসমেন্ট গ্যারান্টি" class="w-10 h-10 flex-shrink-0" />
+          <img src="/images/trust-warranty.svg" alt="৭ দিনের রিপ্লেসমেন্ট গ্যারান্টি" loading="lazy" decoding="async" class="w-10 h-10 flex-shrink-0" />
           <div>
             <h5 class="font-bold text-[#0F172A] text-sm">৭ দিনের রিপ্লেসমেন্ট</h5>
             <p class="text-xs text-[#334155]">পণ্য ক্ষতিগ্রস্ত থাকলে ৭ দিনের মধ্যে ১০০% ফ্রি এক্সচেঞ্জ</p>
@@ -639,7 +624,7 @@
       
       <!-- Brand Logo -->
       <div class="flex items-center justify-center">
-        <img src="/images/polygons_logo.png" alt="Polygons" style="height: 32px !important; max-height: 32px !important; width: auto !important; max-width: 180px !important; object-fit: contain !important;" class="brightness-0 invert opacity-95" />
+        <img src="/images/polygons_logo.png" alt="Polygons" loading="lazy" decoding="async" style="height: 32px !important; max-height: 32px !important; width: auto !important; max-width: 180px !important; object-fit: contain !important;" class="brightness-0 invert opacity-95" />
       </div>
 
       <!-- Trust Pillars -->
@@ -654,16 +639,16 @@
       <!-- Payment Badges in Footer -->
       <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
         <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-          <img src="/images/payments/bkash.png" alt="bKash" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:52px !important; object-fit:contain !important; display:block;" />
+          <img src="/images/payments/bkash.png" alt="bKash" loading="lazy" decoding="async" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:52px !important; object-fit:contain !important; display:block;" />
         </div>
         <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-          <img src="/images/payments/nagad.png" alt="Nagad" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:52px !important; object-fit:contain !important; display:block;" />
+          <img src="/images/payments/nagad.png" alt="Nagad" loading="lazy" decoding="async" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:52px !important; object-fit:contain !important; display:block;" />
         </div>
         <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-          <img src="/images/payments/visa.png" alt="Visa" style="height:14px !important; max-height:14px !important; width:auto !important; max-width:44px !important; object-fit:contain !important; display:block;" />
+          <img src="/images/payments/visa.png" alt="Visa" loading="lazy" decoding="async" style="height:14px !important; max-height:14px !important; width:auto !important; max-width:44px !important; object-fit:contain !important; display:block;" />
         </div>
         <div style="background:#FFFFFF; border-radius:8px; padding:4px 10px; height:34px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-          <img src="/images/payments/mastercard.png" alt="Mastercard" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:44px !important; object-fit:contain !important; display:block;" />
+          <img src="/images/payments/mastercard.png" alt="Mastercard" loading="lazy" decoding="async" style="height:18px !important; max-height:18px !important; width:auto !important; max-width:44px !important; object-fit:contain !important; display:block;" />
         </div>
         <div style="background:#1E293B; border:1px solid rgba(224,195,117,0.45); color:#E0C375; font-size:11px; font-weight:800; border-radius:8px; padding:0 10px; height:34px; display:inline-flex; align-items:center; gap:4px;">
           <span>💵 ক্যাশ অন ডেলিভারি</span>
@@ -711,6 +696,6 @@
   </div>
 
   <!-- Main JavaScript File -->
-  <script src="/js/landing.js?v=3.1" defer></script>
+  <script src="/js/landing.js?v=4.0" defer></script>
 </body>
 </html>
