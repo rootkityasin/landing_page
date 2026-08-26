@@ -80,8 +80,8 @@ const defaultOrigamiPageData = {
     mediaPoster: ""
   },
   colors: [
-    { id: "Red", name: "মেরুন রেড", englishName: "Maroon Red", hex: "#D92143" },
-    { id: "Black", name: "ক্লাসিক ব্ল্যাক", englishName: "Classic Black", hex: "#1C1917" }
+    { id: "Red", name: "মেরুন রেড", englishName: "Maroon Red", hex: "#D92143", imageUrl: "/images/variant-red.webp", fullImageUrl: "/images/variant-red-full.webp" },
+    { id: "Black", name: "ক্লাসিক ব্ল্যাক", englishName: "Classic Black", hex: "#1C1917", imageUrl: "/images/variant-black.webp", fullImageUrl: "/images/variant-black-full.webp" }
   ],
   problemSolution: {
     title: "কেন পুরনো মেজারিং চামচগুলো আপনার কিচেনের বিরক্তির কারণ?",

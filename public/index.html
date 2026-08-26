@@ -181,12 +181,18 @@
               </div>
 
               <!-- Thumbnails switcher -->
-              <div class="grid grid-cols-3 gap-2">
-                <button type="button" onclick="switchHeroImg('/uploads/media-1787682523203-498536091.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-[#D92143] bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
-                  <img src="/uploads/media-1787682523203-498536091.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="View 1" />
+              <div class="grid grid-cols-4 gap-2">
+                <button type="button" onclick="switchHeroImg('/images/variant-red-full.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-[#D92143] bg-white shadow-xs p-1 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/variant-red.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-contain rounded-xl" alt="মারুন রেড ভ্যারিয়েন্ট" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/uploads/media-1787682554429-21106470.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
-                  <img src="/uploads/media-1787682554429-21106470.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="View 2" />
+                <button type="button" onclick="switchHeroImg('/images/variant-black-full.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-1 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/variant-black.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-contain rounded-xl" alt="ক্লাসিক ব্ল্যাক ভ্যারিয়েন্ট" />
+                </button>
+                <button type="button" onclick="switchHeroImg('/uploads/media-1787682523203-498536091.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/uploads/media-1787682523203-498536091.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="লাইফস্টাইল ভিউ ১" />
+                </button>
+                <button type="button" onclick="switchHeroImg('/uploads/media-1787682554429-21106470.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/uploads/media-1787682554429-21106470.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="লাইফস্টাইল ভিউ ২" />
                 </button>
               </div>
             </div>
@@ -411,55 +417,66 @@
         <!-- Embedded COD Form -->
         <form id="cod-order-form" class="space-y-4">
 
-          <!-- Color Variant Selection (Red & Black) -->
+          <!-- Color Variant Selection (Red & Black with Image Previews) -->
           <div class="space-y-2">
-            <label class="block font-bold text-[#0F172A] text-sm">
-              পছন্দের কালার বেছে নিন (Select Color) <span class="text-[#D92143]">*</span>
-            </label>
+            <div class="flex items-center justify-between">
+              <label class="block font-bold text-[#0F172A] text-sm">
+                পছন্দের কালার বেছে নিন (Select Color) <span class="text-[#D92143]">*</span>
+              </label>
+              <span class="text-[11px] text-[#475569] font-semibold">আসল ছবির প্রিভিউ</span>
+            </div>
             <div id="color-selector-grid" class="grid grid-cols-2 gap-2.5 sm:gap-3">
               
               <!-- Red Option -->
-              <div onclick="selectColor('Red')" id="color-opt-Red" class="color-card selected border-2 border-[#D92143] bg-[#FEF5E4] rounded-2xl p-3 sm:p-3.5 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143]">
+              <div onclick="selectColor('Red')" id="color-opt-Red" class="color-card selected border-2 border-[#D92143] bg-[#FEF5E4] rounded-2xl p-2.5 sm:p-3 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <span class="w-5 h-5 rounded-full bg-[#D92143] border-2 border-white shadow-xs flex-shrink-0"></span>
+                  <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl p-1 border border-[#E0C375]/60 flex items-center justify-center flex-shrink-0 shadow-2xs overflow-hidden">
+                    <img src="/images/variant-red.webp" alt="মারুন রেড চামচ" width="56" height="56" loading="lazy" decoding="async" class="w-full h-full object-contain" />
+                  </div>
                   <div class="min-w-0">
                     <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মেরুন রেড</span>
-                    <span class="text-[10px] text-[#475569] font-bold block">Maroon Red</span>
+                    <span class="text-[10px] text-[#D92143] font-bold block mt-0.5">Maroon Red</span>
                   </div>
                 </div>
-                <div class="color-radio-dot w-4 h-4 rounded-full border-2 border-[#D92143] bg-[#D92143] flex items-center justify-center flex-shrink-0">
-                  <span class="text-white text-[9px] font-black">✓</span>
+                <div class="color-radio-dot w-5 h-5 rounded-full border-2 border-[#D92143] bg-[#D92143] flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[10px] font-black">✓</span>
                 </div>
               </div>
 
               <!-- Black Option -->
-              <div onclick="selectColor('Black')" id="color-opt-Black" class="color-card border-2 border-[#E0C375]/50 bg-white rounded-2xl p-3 sm:p-3.5 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#0F172A]">
+              <div onclick="selectColor('Black')" id="color-opt-Black" class="color-card border-2 border-[#E0C375]/50 bg-white rounded-2xl p-2.5 sm:p-3 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#0F172A] gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <span class="w-5 h-5 rounded-full bg-[#1C1917] border-2 border-white shadow-xs flex-shrink-0"></span>
+                  <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-50 rounded-xl p-1 border border-slate-200 flex items-center justify-center flex-shrink-0 shadow-2xs overflow-hidden">
+                    <img src="/images/variant-black.webp" alt="ক্লাসিক ব্ল্যাক চামচ" width="56" height="56" loading="lazy" decoding="async" class="w-full h-full object-contain" />
+                  </div>
                   <div class="min-w-0">
                     <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">ক্লাসিক ব্ল্যাক</span>
-                    <span class="text-[10px] text-[#475569] font-bold block">Classic Black</span>
+                    <span class="text-[10px] text-slate-600 font-bold block mt-0.5">Classic Black</span>
                   </div>
                 </div>
-                <div class="color-radio-dot w-4 h-4 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
-                  <span class="text-white text-[9px] font-black hidden">✓</span>
+                <div class="color-radio-dot w-5 h-5 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[10px] font-black hidden">✓</span>
                 </div>
               </div>
 
               <!-- Mixed Combo Option (Active for 2+ sets) -->
-              <div onclick="selectColor('Mixed')" id="color-opt-Mixed" class="color-card col-span-2 hidden border-2 border-[#E0C375]/50 bg-white rounded-2xl p-3 sm:p-3.5 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143]">
+              <div onclick="selectColor('Mixed')" id="color-opt-Mixed" class="color-card col-span-2 hidden border-2 border-[#E0C375]/50 bg-white rounded-2xl p-2.5 sm:p-3 items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <div class="flex -space-x-1.5 flex-shrink-0">
-                    <span class="w-5 h-5 rounded-full bg-[#D92143] border-2 border-white shadow-xs"></span>
-                    <span class="w-5 h-5 rounded-full bg-[#1C1917] border-2 border-white shadow-xs"></span>
+                  <div class="flex -space-x-2 flex-shrink-0">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl p-1 border border-[#E0C375]/60 flex items-center justify-center shadow-2xs overflow-hidden">
+                      <img src="/images/variant-red.webp" alt="Red" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-contain" />
+                    </div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 rounded-xl p-1 border border-slate-200 flex items-center justify-center shadow-2xs overflow-hidden">
+                      <img src="/images/variant-black.webp" alt="Black" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-contain" />
+                    </div>
                   </div>
                   <div class="min-w-0">
                     <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মিক্সড কালার কম্বো</span>
-                    <span class="text-[10px] text-[#475569] font-bold block" id="mixed-color-desc">১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক</span>
+                    <span class="text-[11px] text-[#475569] font-bold block mt-0.5" id="mixed-color-desc">১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক</span>
                   </div>
                 </div>
-                <div class="color-radio-dot w-4 h-4 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
-                  <span class="text-white text-[9px] font-black hidden">✓</span>
+                <div class="color-radio-dot w-5 h-5 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[10px] font-black hidden">✓</span>
                 </div>
               </div>
 
