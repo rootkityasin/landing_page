@@ -254,7 +254,7 @@ function renderLandingPage(data) {
 
         <!-- Step Title & Description Below Image -->
         <div class="p-4 sm:p-5 text-center space-y-1.5">
-          <h4 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-snug">${step.title}</h4>
+          <h3 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-snug">${step.title}</h3>
           <p class="text-[#334155] text-xs sm:text-sm leading-relaxed">${step.desc}</p>
         </div>
       </div>`;
@@ -337,7 +337,7 @@ function renderLandingPage(data) {
                 ${rev.name.substring(0, 1)}
               </div>
               <div>
-                <h5 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-tight">${rev.name}</h5>
+                <h3 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-tight">${rev.name}</h3>
                 <p class="text-xs text-[#475569] font-bold">${rev.location}</p>
               </div>
             </div>
@@ -360,7 +360,7 @@ function renderLandingPage(data) {
       <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#E0C375]/30 flex items-center gap-4 hover:border-[#D92143]/40 transition">
         <img src="${badgeIcons[i] || badgeIcons[0]}" alt="${tb.title}" class="w-12 h-12 flex-shrink-0" />
         <div>
-          <h5 class="font-bold text-[#0F172A] text-sm sm:text-base">${tb.title}</h5>
+          <h3 class="font-bold text-[#0F172A] text-sm sm:text-base">${tb.title}</h3>
           <p class="text-xs sm:text-sm text-[#334155]">${tb.desc}</p>
         </div>
       </div>
@@ -412,7 +412,7 @@ function renderBundles(bundles) {
               <div class="bundle-radio-dot"></div>
             </div>
             <div class="min-w-0">
-              <h4 class="font-extrabold text-[#0F172A] text-[13px] xs:text-[14px] sm:text-base md:text-sm lg:text-base leading-tight whitespace-nowrap">${b.name}</h4>
+              <h3 class="font-extrabold text-[#0F172A] text-[13px] xs:text-[14px] sm:text-base md:text-sm lg:text-base leading-tight whitespace-nowrap">${b.name}</h3>
               <p class="text-xs text-[#334155] mt-0.5">${b.desc}</p>
             </div>
           </div>
