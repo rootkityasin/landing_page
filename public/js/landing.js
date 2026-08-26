@@ -8,7 +8,7 @@ const pageViewEventId = 'view_' + Date.now() + '_' + Math.floor(Math.random() * 
 // Helper: Convert English digits to Bengali digits
 function toBanglaDigits(num) {
   if (num === null || num === undefined) return '';
-  const banglaDigits = ['০', '1', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
   return String(num).replace(/[0-9]/g, d => banglaDigits[d]);
 }
 
@@ -80,10 +80,13 @@ function renderLandingPage(data) {
   
   const heroHeadlineEl = document.getElementById('hero-headline');
   if (heroHeadlineEl) {
-    const rawHeadline = data.hero.headline || 'রান্না ও বেকিংয়ে নিখুঁত মাপের ৪-ইন-1 ফোল্ডিং মেজারিং চামচ';
-    if (rawHeadline.includes('৪-ইন-1')) {
+    const rawHeadline = data.hero.headline || 'রান্না ও বেকিংয়ে নিখুঁত মাপের ৪-ইন-১ ফোল্ডিং মেজারিং চামচ';
+    if (rawHeadline.includes('৪-ইন-১')) {
+      const parts = rawHeadline.split('৪-ইন-১');
+      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black">৪-ইন-১${parts[1]}</span>`;
+    } else if (rawHeadline.includes('৪-ইন-1')) {
       const parts = rawHeadline.split('৪-ইন-1');
-      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black">৪-ইন-1${parts[1]}</span>`;
+      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black">৪-ইন-১${parts[1]}</span>`;
     } else {
       heroHeadlineEl.innerText = rawHeadline;
     }

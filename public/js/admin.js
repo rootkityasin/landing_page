@@ -537,13 +537,13 @@ function populateEditorFields(d) {
     `).join('');
   }
 
-  // 6. What's in 1 Set Box (1 সেটে কী কী পাচ্ছেন)
+  // 6. What's in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
   if (!d.whatsIncluded) {
     d.whatsIncluded = {
       badge: "Complete 1 Set Box",
-      title: "আমাদের 1 সেট প্রোডাক্টে কী কী পাচ্ছেন?",
-      subtitle: "প্রতি 1 সেটে থাকবে মোট ২টি স্মার্ট ফোল্ডিং চামচ — যাতে সহজেই পেয়ে যাবেন মোট ৮টি নিখুঁত পরিমাপ",
-      largeSpoonTitle: "1. বড় মেজারিং চামচ",
+      title: "আমাদের ১ সেট প্রোডাক্টে কী কী পাচ্ছেন?",
+      subtitle: "প্রতি ১ সেটে থাকবে মোট ২টি স্মার্ট ফোল্ডিং চামচ — যাতে সহজেই পেয়ে যাবেন মোট ৮টি নিখুঁত পরিমাপ",
+      largeSpoonTitle: "১. বড় মেজারিং চামচ",
       largeSpoonBadge: "৪টি মাপ (Tablespoon)",
       largeSpoonUsage: "তেল, সস, বেকিং ব্যাটার, ময়দা ও চিনির সঠিক মাপের জন্য।",
       smallSpoonTitle: "২. ছোট মেজারিং চামচ",
@@ -872,7 +872,7 @@ async function saveCurrentPageData() {
     s.image = document.getElementById(`edit-step-img-${i}`)?.value || s.image;
   });
 
-  // 6. What's Included in 1 Set Box (1 সেটে কী কী পাচ্ছেন)
+  // 6. What's Included in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
   if (!d.whatsIncluded) d.whatsIncluded = {};
   if (document.getElementById('edit-included-title')) d.whatsIncluded.title = document.getElementById('edit-included-title').value.trim();
   if (document.getElementById('edit-included-subtitle')) d.whatsIncluded.subtitle = document.getElementById('edit-included-subtitle').value.trim();
