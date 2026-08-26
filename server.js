@@ -357,8 +357,8 @@ app.post('/api/admin/upload', verifyAdminAuth, (req, res) => {
         const webpFilePath = path.join(uploadDir, webpFilename);
         
         await sharp(req.file.path)
-          .resize({ width: 1200, withoutEnlargement: true })
-          .webp({ quality: 80, effort: 6 })
+          .resize({ width: 700, withoutEnlargement: true })
+          .webp({ quality: 75, effort: 6, smartSubsample: true })
           .toFile(webpFilePath);
 
         // Clean up temporary unoptimized upload

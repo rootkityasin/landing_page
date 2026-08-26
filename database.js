@@ -110,19 +110,19 @@ const defaultOrigamiPageData = {
         number: "০১",
         title: "চাপ দিয়ে সাইজ তৈরি করুন (Pinch to Size)",
         desc: "হ্যান্ডেলের দাগ অনুযায়ী দুই পাশে চাপ দিলেই ভাঁজ হয়ে তৈরি হবে ১/৪ চামচ, ১/২ চামচ বা ১ টেবিল চামচ।",
-        image: "/images/step1.svg"
+        image: "/uploads/media-1787681475090-937220178.webp"
       },
       {
         number: "০২",
         title: "মাপ মতো তুলে নিন (Scoop & Level)",
         desc: "গুঁড়া মসলা, লবণ, বেকিং পাউডার কিংবা তরল তেল নিখুঁত মাপে কোনো ছিটে যাওয়া ছাড়াই তুলুন।",
-        image: "/images/step2.svg"
+        image: "/uploads/media-1787681854644-265275869.webp"
       },
       {
         number: "০৩",
         title: "ফ্ল্যাট করে ধুয়ে রাখুন (Flat Clean & Store)",
         desc: "ব্যবহার শেষে ফ্ল্যাট করে ট্যাপের পানিতে ধুয়ে বইয়ের মতো যেকোনো ড্রয়ারে রেখে দিন।",
-        image: "/images/step3.svg"
+        image: "/uploads/media-1787681478748-918889863.webp"
       }
     ]
   },

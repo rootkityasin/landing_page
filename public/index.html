@@ -9,15 +9,13 @@
   <meta name="title" content="Polygons® 4-in-1 Folding Measuring Spoon | ফ্ল্যাট ফোল্ডিং মেজারিং চামচ" />
   <meta name="description" content="রান্না ও বেকিংয়ে ঝামেলামুক্ত নিখুঁত মাপের ৪-ইন-১ ফোল্ডিং মেজারিং চামচ। ড্রয়ারে ০% স্পেস ও ১ সেকেন্ডে ওয়াইপ-ক্লিন।" />
   
-  <!-- Preconnect to Google Fonts for Zero-Latency Handshake -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Preload local primary Bengali WebFont for 0ms font chain delay -->
+  <link rel="preload" href="/fonts/font-1.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/font-4.woff2" as="font" type="font/woff2" crossorigin />
 
-  <!-- Clean, fast Google Fonts with font-display: swap (Zero-CLS) -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" />
-
-  <!-- Precompiled & Minified Production CSS (Instant 0ms Blocking) -->
-  <link rel="stylesheet" href="/css/styles.min.css?v=4.0" />
+  <!-- Precompiled & Minified Production CSS with Self-Hosted Fonts (Zero External Dependencies) -->
+  <link rel="preload" as="style" href="/css/styles.min.css?v=4.1" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=4.1" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/images/polygons_logo.webp" />
@@ -175,7 +173,7 @@
           <div id="hero-media-container" class="relative">
             <div class="space-y-3">
               <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white">
-                <img id="main-hero-display-img" src="/uploads/media-1787682523203-498536091.webp" alt="রান্না ও বেকিংয়ে নিখুঁত মাপের 4-in-1 ফোল্ডিং মেজারিং চামচ" width="1200" height="1200" style="aspect-ratio: 1/1;" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
+                <img id="main-hero-display-img" src="/uploads/media-1787682523203-498536091.webp" alt="রান্না ও বেকিংয়ে নিখুঁত মাপের 4-in-1 ফোল্ডিং মেজারিং চামচ" width="650" height="650" style="aspect-ratio: 1/1;" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
                 <div class="absolute bottom-3 left-3 bg-[#1C1917]/90 backdrop-blur-md text-white text-xs px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-lg font-latin border border-[#E0C375]/30">
                   <span class="w-2 h-2 rounded-full bg-[#F69D39] live-dot"></span>
                   <span>১০০% Genuine Polygons® Product</span>
@@ -222,7 +220,7 @@
           <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-2xl bg-[#FEF5E4] border-2 border-[#D92143]/60 text-[#D92143] font-black text-base flex items-center justify-center shadow-md z-10 group-hover:scale-110 transition">
             ০১
           </div>
-          <img src="/uploads/media-1787681475090-937220178.webp" width="800" height="600" style="aspect-ratio: 4/3;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step1.svg';" alt="চাপ দিয়ে সাইজ তৈরি করুন (Pinch to Size)" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
+          <img src="/uploads/media-1787681475090-937220178.webp" width="600" height="804" style="aspect-ratio: 600/804;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step1.svg';" alt="চাপ দিয়ে সাইজ তৈরি করুন (Pinch to Size)" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
           <div class="p-4 sm:p-5 text-center space-y-1.5">
             <h4 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-snug">চাপ দিয়ে সাইজ তৈরি করুন (Pinch to Size)</h4>
             <p class="text-[#334155] text-xs sm:text-sm leading-relaxed">হ্যান্ডেলের দাগ অনুযায়ী দুই পাশে চাপ দিলেই ভাঁজ হয়ে তৈরি হবে ১/৪ চামচ, ১/২ চামচ বা ১ টেবিল চামচ।</p>
@@ -234,7 +232,7 @@
           <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-2xl bg-[#FFF7ED] border-2 border-[#F69D39]/60 text-[#EA580C] font-black text-base flex items-center justify-center shadow-md z-10 group-hover:scale-110 transition">
             ০২
           </div>
-          <img src="/uploads/media-1787681854644-265275869.webp" width="800" height="600" style="aspect-ratio: 4/3;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step2.svg';" alt="মাপ মতো তুলে নিন (Scoop & Level)" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
+          <img src="/uploads/media-1787681854644-265275869.webp" width="600" height="597" style="aspect-ratio: 600/597;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step2.svg';" alt="মাপ মতো তুলে নিন (Scoop & Level)" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
           <div class="p-4 sm:p-5 text-center space-y-1.5">
             <h4 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-snug">মাপ মতো তুলে নিন (Scoop & Level)</h4>
             <p class="text-[#334155] text-xs sm:text-sm leading-relaxed">গুঁড়া মসলা, লবণ, বেকিং পাউডার কিংবা তরল তেল নিখুঁত মাপে কোনো ছিটে যাওয়া ছাড়াই তুলুন।</p>
@@ -246,7 +244,7 @@
           <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-2xl bg-[#FEF5E4] border-2 border-[#E0C375] text-[#B45309] font-black text-base flex items-center justify-center shadow-md z-10 group-hover:scale-110 transition">
             ০৩
           </div>
-          <img src="/uploads/media-1787681478748-918889863.webp" width="800" height="600" style="aspect-ratio: 4/3;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step3.svg';" alt="ফ্ল্যাট করে ধুয়ে রাখুন (Flat Clean & Store)" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
+          <img src="/uploads/media-1787681478748-918889863.webp" width="600" height="600" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step3.svg';" alt="ফ্ল্যাট করে ধুয়ে রাখুন (Flat Clean & Store)" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
           <div class="p-4 sm:p-5 text-center space-y-1.5">
             <h4 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-snug">ফ্ল্যাট করে ধুয়ে রাখুন (Flat Clean & Store)</h4>
             <p class="text-[#334155] text-xs sm:text-sm leading-relaxed">ব্যবহার শেষে ফ্ল্যাট করে ট্যাপের পানিতে ধুয়ে বইয়ের মতো যেকোনো ড্রয়ারে রেখে দিন।</p>
@@ -376,7 +374,7 @@
 
       <!-- Comparison Showcase Image Container -->
       <div id="comparison-image-container" class="block w-full bg-white rounded-3xl shadow-sm border border-[#E0C375]/40 overflow-hidden p-2 sm:p-4">
-        <img id="comparison-img" src="/uploads/media-1787690411261-932816281.webp" alt="Comparison Showcase" width="948" height="1659" style="aspect-ratio: 948/1659;" loading="lazy" decoding="async" class="w-full h-auto object-contain rounded-2xl mx-auto transition duration-300 hover:scale-[1.01]" />
+        <img id="comparison-img" src="/uploads/media-1787690411261-932816281.webp" alt="Comparison Showcase" width="580" height="1015" style="aspect-ratio: 580/1015;" loading="lazy" decoding="async" class="w-full h-auto object-contain rounded-2xl mx-auto transition duration-300 hover:scale-[1.01]" />
       </div>
 
     </section>
