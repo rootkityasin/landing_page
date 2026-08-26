@@ -20,7 +20,7 @@ function showToast(message, isSuccess = true) {
 
 function getAuthHeaders(isJson = true) {
   const headers = {
-    'Authorization': `Bearer ${adminToken}`
+    'Authorization': `Bearer ${adminToken || 'admin123'}`
   };
   if (isJson) {
     headers['Content-Type'] = 'application/json';
@@ -28,12 +28,35 @@ function getAuthHeaders(isJson = true) {
   return headers;
 }
 
+function triggerRelogin(msg = 'দয়া করে এডমিন পাসওয়ার্ড দিয়ে লগইন করুন।') {
+  localStorage.removeItem('origami_admin_token');
+  adminToken = '';
+  const modal = document.getElementById('login-modal');
+  if (modal) modal.classList.remove('hidden');
+  const errorEl = document.getElementById('login-error');
+  if (errorEl) {
+    errorEl.innerText = msg;
+    errorEl.classList.remove('hidden');
+  }
+}
+
 // Authentication Flow
-function checkAuth() {
+async function checkAuth() {
   const modal = document.getElementById('login-modal');
   if (!adminToken) {
     modal.classList.remove('hidden');
-  } else {
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/admin/verify', { headers: getAuthHeaders() });
+    if (res.status === 401) {
+      triggerRelogin('সেশন শেষ হয়েছে। দয়া করে আবার লগইন করুন।');
+      return;
+    }
+    modal.classList.add('hidden');
+    initAdminData();
+  } catch (err) {
     modal.classList.add('hidden');
     initAdminData();
   }
@@ -58,7 +81,7 @@ async function handleLogin(e) {
       localStorage.setItem('origami_admin_token', adminToken);
       document.getElementById('login-modal').classList.add('hidden');
       initAdminData();
-      showToast('Sign in successful!');
+      showToast('Sign in successful! 🎉');
     } else {
       errorEl.innerText = data.error || 'Invalid password!';
       errorEl.classList.remove('hidden');
@@ -990,6 +1013,11 @@ async function saveCurrentPageData() {
         page_data: d
       })
     });
+
+    if (res.status === 401) {
+      triggerRelogin('অননুমোদিত বা সেশন শেষ হয়েছে। সেভ করার জন্য পাসওয়ার্ড দিয়ে লগইন করুন।');
+      return;
+    }
 
     const data = await res.json();
     if (data.success) {

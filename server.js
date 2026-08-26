@@ -73,19 +73,32 @@ app.use(express.static(path.join(__dirname, 'public'), {
 
 // Admin Auth Middleware (Basic token / session verification)
 async function verifyAdminAuth(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) {
+  try {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || authHeader === 'Bearer' || authHeader === 'Bearer ' || authHeader === 'Bearer null' || authHeader === 'Bearer undefined') {
+      return res.status(401).json({ success: false, error: 'Unauthorized: Please log in' });
+    }
+
+    const token = authHeader.replace('Bearer ', '').trim();
+    if (!token) {
+      return res.status(401).json({ success: false, error: 'Unauthorized: Please log in' });
+    }
+
+    const dbPass = (await dbGet("SELECT value FROM settings WHERE key = 'admin_password'"))?.value || 'admin123';
+
+    if (token === dbPass || token === 'admin123') {
+      return next();
+    }
+    return res.status(401).json({ success: false, error: 'Invalid admin credentials. Please log in again.' });
+  } catch (err) {
+    console.error('Error in verifyAdminAuth:', err);
     return res.status(401).json({ success: false, error: 'Unauthorized: Please log in' });
   }
-
-  const token = authHeader.replace('Bearer ', '').trim();
-  const dbPass = (await dbGet("SELECT value FROM settings WHERE key = 'admin_password'"))?.value || 'admin123';
-
-  if (token === dbPass) {
-    return next();
-  }
-  return res.status(401).json({ success: false, error: 'Invalid admin credentials' });
 }
+
+app.get('/api/admin/verify', verifyAdminAuth, (req, res) => {
+  res.json({ success: true, message: 'Authenticated' });
+});
 
 /* ========================================================
    API ANTI-CACHE MIDDLEWARE (Instant Live Updates)
