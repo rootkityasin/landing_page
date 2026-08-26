@@ -540,17 +540,17 @@ function populateEditorFields(d) {
   // 6. What's in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
   if (!d.whatsIncluded) {
     d.whatsIncluded = {
-      badge: "Complete 1 Set Box",
+      badge: "১ সেটের সম্পূর্ণ বক্স (গিফট প্যাকেজিং)",
       title: "আমাদের ১ সেট প্রোডাক্টে কী কী পাচ্ছেন?",
-      subtitle: "প্রতি ১ সেটে থাকবে মোট ২টি স্মার্ট ফোল্ডিং চামচ — যাতে সহজেই পেয়ে যাবেন মোট ৮টি নিখুঁত পরিমাপ",
-      largeSpoonTitle: "১. বড় মেজারিং চামচ",
-      largeSpoonBadge: "৪টি মাপ (Tablespoon)",
-      largeSpoonUsage: "তেল, সস, বেকিং ব্যাটার, ময়দা ও চিনির সঠিক মাপের জন্য।",
-      smallSpoonTitle: "২. ছোট মেজারিং চামচ",
-      smallSpoonBadge: "৪টি মাপ (Teaspoon)",
-      smallSpoonUsage: "লবণ, গুঁড়া মসলা, বেকিং পাউডার ও শিশুদের ওষুধের সঠিক মাপ।",
-      bannerTitle: "মোট ৮টি ভিন্ন পরিমাপ মাত্র ২টি ফ্ল্যাট চামচে!",
-      bannerDesc: "কোনো বাড়তি বাটি বা ভারী স্কেলের ঝামেলা ছাড়াই রান্নাঘরের যেকোনো ড্রয়ারে ফ্ল্যাট রেখে দিন।"
+      subtitle: "প্রতি ১ সেটে থাকবে মোট ২টি স্মার্ট ফোল্ডিং চামচ — যা একসাথে রিপ্লেস করবে ৬টি ট্র্যাডিশনাল মেজারিং চামচ",
+      largeSpoonTitle: "১. বড় মেজারিং চামচ (Tablespoon)",
+      largeSpoonBadge: "৩টি মাপ (টেবিল চামচ)",
+      largeSpoonUsage: "২ Tbsp (৩০ মিলি), ১ Tbsp (১৫ মিলি), ১/২ Tbsp (৭.৫ মিলি) — তেল, ময়দা ও চিনির মাপের জন্য।",
+      smallSpoonTitle: "২. ছোট মেজারিং চামচ (Teaspoon)",
+      smallSpoonBadge: "৩টি মাপ (চা চামচ)",
+      smallSpoonUsage: "১ tsp (৫ মিলি), ১/২ tsp (২.৫ মিলি), ১/৪ tsp (১.২৫ মিলি) — মসলা, লবণ ও ওষুধের সঠিক মাপ।",
+      bannerTitle: "মোট ৬টি ভিন্ন পরিমাপ মাত্র ২টি ফ্ল্যাট চামচে!",
+      bannerDesc: "কোনো বাড়তি বাটি বা ৬টি আলাদা চামচের ঝামেলা ছাড়াই ড্রয়ারে বা ম্যাগনেটিক স্ট্রিপে ফ্ল্যাট রেখে দিন।"
     };
   }
   if (document.getElementById('edit-included-title')) document.getElementById('edit-included-title').value = d.whatsIncluded.title || '';

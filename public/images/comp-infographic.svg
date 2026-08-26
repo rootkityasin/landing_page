@@ -48,7 +48,7 @@
     <!-- Winner Badge Header -->
     <rect x="0" y="0" width="300" height="48" rx="20" fill="url(#crimson-grad)"/>
     <text x="150" y="30" fill="#FFFFFF" font-family="'Hind Siliguri', sans-serif" font-weight="900" font-size="16" text-anchor="middle">
-      🏆 Polygons® ৪-ইন-১ অরিগামি চামচ
+      🏆 Polygons® ৩-ইন-১ ফোল্ডিং চামচ
     </text>
 
     <!-- Product Illustration Circle -->
@@ -65,7 +65,7 @@
       <g transform="translate(0, 0)">
         <circle cx="12" cy="12" r="12" fill="#D92143"/>
         <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
-        <text x="32" y="16" fill="#0F172A" font-weight="bold">১টি চামচে ৪টি সাইজ (১/৪ tsp - ১ tbsp)</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">২ চামচে ৬টি সাইজ (১/৪ tsp - ২ tbsp)</text>
       </g>
 
       <!-- Feature 2 -->
@@ -79,28 +79,28 @@
       <g transform="translate(0, 100)">
         <circle cx="12" cy="12" r="12" fill="#D92143"/>
         <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
-        <text x="32" y="16" fill="#0F172A" font-weight="bold">ড্রয়ারে শূন্য (০%) জায়গা নষ্ট</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">ম্যাগনেটিক ও ড্রয়ারে ০% জায়গা নষ্ট</text>
       </g>
 
       <!-- Feature 4 -->
       <g transform="translate(0, 150)">
         <circle cx="12" cy="12" r="12" fill="#D92143"/>
         <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
-        <text x="32" y="16" fill="#0F172A" font-weight="bold">তেল, ঘি ও মধুর শূন্য অপচয়</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">১০০% লিক-প্রুফ (তরল ও গুঁড়া)</text>
       </g>
 
       <!-- Feature 5 -->
       <g transform="translate(0, 200)">
         <circle cx="12" cy="12" r="12" fill="#D92143"/>
         <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
-        <text x="32" y="16" fill="#0F172A" font-weight="bold">১০০,০০০+ বার ফোল্ডিং গ্যারান্টি</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">DuraBend™ ১০০,০০০+ ফোল্ড স্থায়িত্ব</text>
       </g>
 
       <!-- Feature 6 -->
       <g transform="translate(0, 245)">
         <circle cx="12" cy="12" r="12" fill="#D92143"/>
         <text x="12" y="16" fill="#FFFFFF" font-weight="bold" font-size="12" text-anchor="middle">✓</text>
-        <text x="32" y="16" fill="#0F172A" font-weight="bold">কোনো ব্যাটারি বা বিদ্যুৎ লাগে না</text>
+        <text x="32" y="16" fill="#0F172A" font-weight="bold">ডিশওয়াশার সেফ ও প্রিমিয়াম গিফট বক্স</text>
       </g>
     </g>
   </g>
@@ -132,7 +132,7 @@
       <g transform="translate(0, 0)">
         <circle cx="12" cy="12" r="12" fill="#E2E8F0"/>
         <text x="12" y="16" fill="#EF4444" font-weight="bold" font-size="12" text-anchor="middle">✕</text>
-        <text x="32" y="16" fill="#475569">৪-৫টি আলাদা চামচ খুঁজতে হয়</text>
+        <text x="32" y="16" fill="#475569">৬টি আলাদা চামচ খোঁজার ঝামেলা</text>
       </g>
 
       <!-- Point 2 -->

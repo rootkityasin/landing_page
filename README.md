@@ -1,4 +1,4 @@
-# Origami 4-in-1 Folding Spoon Landing Page CMS & COD Funnel
+# Polygons 3-in-1 Folding Measuring Spoons (Set of 2 - 6 Sizes) Landing Page CMS & COD Funnel
 
 A high-converting, Direct-to-Consumer (DTC) single product landing page and Cash-on-Delivery (COD) checkout engine for Bangladesh.
 

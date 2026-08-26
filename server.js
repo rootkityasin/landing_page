@@ -259,7 +259,7 @@ app.post('/api/orders', async (req, res) => {
         item_price: itemPrice,
         delivery_charge: deliveryCharge,
         total_amount: totalAmount,
-        product_name: product ? product.title : 'Origami 4-in-1 Spoon',
+        product_name: product ? product.title : 'Polygons 3-in-1 Folding Spoon',
         whatsapp_number: waNumber
       }
     });
