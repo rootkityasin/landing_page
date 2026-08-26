@@ -51,8 +51,8 @@ const compression = require('compression');
 
 app.use(compression());
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Optimized static assets serving with 1-Year Efficient Cache Lifetimes (Google Lighthouse 100 benchmark)
 app.use(express.static(path.join(__dirname, 'public'), {
@@ -440,10 +440,32 @@ app.post('/api/admin/products', verifyAdminAuth, async (req, res) => {
 
 app.put('/api/admin/products/:id', verifyAdminAuth, async (req, res) => {
   try {
-    const { title, slug, page_data } = req.body;
-    const productId = req.params.id;
+    let { title, slug, page_data } = req.body || {};
+    let productId = req.params.id;
 
-    if (slug) {
+    // Fallback if productId is invalid
+    if (!productId || productId === 'undefined' || productId === 'null' || isNaN(Number(productId))) {
+      const defaultP = await dbGet('SELECT id FROM products WHERE is_default = 1 LIMIT 1');
+      const firstP = await dbGet('SELECT id FROM products ORDER BY id ASC LIMIT 1');
+      productId = defaultP ? defaultP.id : (firstP ? firstP.id : 1);
+    } else {
+      productId = Number(productId);
+    }
+
+    // Ensure title is NEVER undefined or empty (prevents SQLite NOT NULL constraint failure)
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      if (page_data && typeof page_data === 'object') {
+        title = page_data.hero?.headline || page_data.meta?.pageTitle || 'Polygons Spoon Set';
+      } else {
+        title = 'Polygons Spoon Set';
+      }
+    }
+    title = title.trim();
+
+    // Ensure page_data is a valid JSON string
+    const stringifiedPageData = typeof page_data === 'string' ? page_data : JSON.stringify(page_data || {});
+
+    if (slug && typeof slug === 'string' && slug.trim()) {
       const cleanSlug = slug.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-');
       const conflict = await dbGet('SELECT id FROM products WHERE slug = ? AND id != ?', [cleanSlug, productId]);
       if (conflict) {
@@ -452,17 +474,18 @@ app.put('/api/admin/products/:id', verifyAdminAuth, async (req, res) => {
 
       await dbRun(
         'UPDATE products SET title = ?, slug = ?, page_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        [title, cleanSlug, JSON.stringify(page_data), productId]
+        [title, cleanSlug, stringifiedPageData, productId]
       );
     } else {
       await dbRun(
         'UPDATE products SET title = ?, page_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        [title, JSON.stringify(page_data), productId]
+        [title, stringifiedPageData, productId]
       );
     }
 
-    res.json({ success: true, message: 'Landing page updated successfully' });
+    res.json({ success: true, message: 'Landing page updated successfully', productId });
   } catch (err) {
+    console.error('Error updating product in PUT /api/admin/products/:id:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });

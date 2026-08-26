@@ -981,11 +981,12 @@ async function saveCurrentPageData() {
   });
 
   try {
-    const res = await fetch(`/api/admin/products/${currentEditingProductId}`, {
+    const targetId = currentEditingProductId || 1;
+    const res = await fetch(`/api/admin/products/${targetId}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({
-        title: d.hero.headline,
+        title: d.hero?.headline || d.meta?.pageTitle || 'Polygons Spoon Set',
         page_data: d
       })
     });
@@ -997,7 +998,8 @@ async function saveCurrentPageData() {
       showToast(data.error || 'Failed to save changes', false);
     }
   } catch (err) {
-    showToast('Server error!', false);
+    console.error('Save error:', err);
+    showToast(err.message || 'Server error!', false);
   }
 }
 

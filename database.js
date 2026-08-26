@@ -11,9 +11,15 @@ const db = new sqlite3.Database(dbPath, (err) => {
 });
 
 // Helper for promise-based queries
+const normalizeParams = (params) => {
+  if (!params) return [];
+  const arr = Array.isArray(params) ? params : [params];
+  return arr.map(p => (p === undefined ? null : p));
+};
+
 const dbRun = (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
+    db.run(sql, normalizeParams(params), function (err) {
       if (err) reject(err);
       else resolve({ lastID: this.lastID, changes: this.changes });
     });
@@ -22,7 +28,7 @@ const dbRun = (sql, params = []) => {
 
 const dbGet = (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
+    db.get(sql, normalizeParams(params), (err, row) => {
       if (err) reject(err);
       else resolve(row);
     });
@@ -31,7 +37,7 @@ const dbGet = (sql, params = []) => {
 
 const dbAll = (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
+    db.all(sql, normalizeParams(params), (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
     });
