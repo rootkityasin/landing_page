@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40">
-  <rect width="120" height="40" rx="8" fill="#141414" />
-  <!-- Intersecting Red & Orange circles -->
-  <g transform="translate(42, 8)">
-    <circle cx="12" cy="12" r="11" fill="#EB001B" />
-    <circle cx="24" cy="12" r="11" fill="#F79E1B" opacity="0.9" />
-    <path d="M 18 3.5 A 11 11 0 0 1 18 20.5 A 11 11 0 0 1 18 3.5 Z" fill="#FF5F00" />
-  </g>
-</svg>
