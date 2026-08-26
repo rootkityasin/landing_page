@@ -435,6 +435,8 @@ function renderBundles(bundles) {
       </div>
     `;
   }).join('');
+
+  selectBundle(popularBundle.id);
 }
 
 // Switch Selected Bundle
@@ -455,29 +457,38 @@ function selectBundle(bundleId) {
     activeCard.classList.add('selected');
   }
 
-  // Update Mixed Combo option visibility based on bundle size
+  // Update Color Labels & Mixed Combo option visibility based on bundle size
+  const redLabelEl = document.getElementById('color-label-red');
+  const blackLabelEl = document.getElementById('color-label-black');
   const mixedOptEl = document.getElementById('color-opt-Mixed');
   const mixedDescEl = document.getElementById('mixed-color-desc');
+
   if (bundleId === 'bundle_2') {
+    if (redLabelEl) redLabelEl.innerText = '২টিই মেরুন রেড';
+    if (blackLabelEl) blackLabelEl.innerText = '২টিই ক্লাসিক ব্ল্যাক';
     if (mixedOptEl) {
       mixedOptEl.classList.remove('hidden');
       mixedOptEl.classList.add('flex');
     }
-    if (mixedDescEl) mixedDescEl.innerText = '১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক (মিক্সড)';
+    if (mixedDescEl) mixedDescEl.innerText = '১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক';
+    selectColor('Mixed');
   } else if (bundleId === 'bundle_3') {
+    if (redLabelEl) redLabelEl.innerText = '৩টিই মেরুন রেড';
+    if (blackLabelEl) blackLabelEl.innerText = '৩টিই ক্লাসিক ব্ল্যাক';
     if (mixedOptEl) {
       mixedOptEl.classList.remove('hidden');
       mixedOptEl.classList.add('flex');
     }
-    if (mixedDescEl) mixedDescEl.innerText = '২টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক (মিক্সড)';
+    if (mixedDescEl) mixedDescEl.innerText = '২টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক';
+    selectColor('Mixed');
   } else {
+    if (redLabelEl) redLabelEl.innerText = 'মেরুন রেড';
+    if (blackLabelEl) blackLabelEl.innerText = 'ক্লাসিক ব্ল্যাক';
     if (mixedOptEl) {
       mixedOptEl.classList.add('hidden');
       mixedOptEl.classList.remove('flex');
     }
-    if (selectedColor === 'Mixed') {
-      selectColor('Red');
-    }
+    selectColor('Red');
   }
 
   updateCheckoutSummary();

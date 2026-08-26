@@ -428,18 +428,18 @@
             <div id="color-selector-grid" class="grid grid-cols-2 gap-2.5 sm:gap-3">
               
               <!-- Red Option -->
-              <div onclick="selectColor('Red')" id="color-opt-Red" class="color-card selected border-2 border-[#D92143] bg-[#FEF5E4] rounded-2xl p-2.5 sm:p-3 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
+              <div onclick="selectColor('Red')" id="color-opt-Red" class="color-card border-2 border-[#E0C375]/50 bg-white rounded-2xl p-2.5 sm:p-3 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                   <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl p-1 border border-[#E0C375]/60 flex items-center justify-center flex-shrink-0 shadow-2xs overflow-hidden">
                     <img src="/images/variant-red.webp" alt="মারুন রেড চামচ" width="56" height="56" loading="lazy" decoding="async" class="w-full h-full object-contain" />
                   </div>
                   <div class="min-w-0">
-                    <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মেরুন রেড</span>
+                    <span id="color-label-red" class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">২টিই মেরুন রেড</span>
                     <span class="text-[10px] text-[#D92143] font-bold block mt-0.5">Maroon Red</span>
                   </div>
                 </div>
-                <div class="color-radio-dot w-5 h-5 rounded-full border-2 border-[#D92143] bg-[#D92143] flex items-center justify-center flex-shrink-0">
-                  <span class="text-white text-[10px] font-black">✓</span>
+                <div class="color-radio-dot w-5 h-5 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[10px] font-black hidden">✓</span>
                 </div>
               </div>
 
@@ -450,7 +450,7 @@
                     <img src="/images/variant-black.webp" alt="ক্লাসিক ব্ল্যাক চামচ" width="56" height="56" loading="lazy" decoding="async" class="w-full h-full object-contain" />
                   </div>
                   <div class="min-w-0">
-                    <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">ক্লাসিক ব্ল্যাক</span>
+                    <span id="color-label-black" class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">২টিই ক্লাসিক ব্ল্যাক</span>
                     <span class="text-[10px] text-slate-600 font-bold block mt-0.5">Classic Black</span>
                   </div>
                 </div>
@@ -459,8 +459,8 @@
                 </div>
               </div>
 
-              <!-- Mixed Combo Option (Active for 2+ sets) -->
-              <div onclick="selectColor('Mixed')" id="color-opt-Mixed" class="color-card col-span-2 hidden border-2 border-[#E0C375]/50 bg-white rounded-2xl p-2.5 sm:p-3 items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
+              <!-- Mixed Combo Option (1 Red + 1 Black - Default for 2 Sets) -->
+              <div onclick="selectColor('Mixed')" id="color-opt-Mixed" class="color-card selected col-span-2 flex border-2 border-[#D92143] bg-[#FEF5E4] rounded-2xl p-2.5 sm:p-3 items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                   <div class="flex -space-x-2 flex-shrink-0">
                     <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl p-1 border border-[#E0C375]/60 flex items-center justify-center shadow-2xs overflow-hidden">
@@ -471,12 +471,15 @@
                     </div>
                   </div>
                   <div class="min-w-0">
-                    <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মিক্সড কালার কম্বো</span>
-                    <span class="text-[11px] text-[#475569] font-bold block mt-0.5" id="mixed-color-desc">১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক</span>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মিক্সড কালার কম্বো</span>
+                      <span class="bg-[#D92143] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">⭐ জনপ্রিয়</span>
+                    </div>
+                    <span class="text-[11px] text-[#B45309] font-bold block mt-0.5" id="mixed-color-desc">১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক</span>
                   </div>
                 </div>
-                <div class="color-radio-dot w-5 h-5 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
-                  <span class="text-white text-[10px] font-black hidden">✓</span>
+                <div class="color-radio-dot w-5 h-5 rounded-full border-2 border-[#D92143] bg-[#D92143] flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[10px] font-black">✓</span>
                 </div>
               </div>
 
