@@ -222,12 +222,12 @@ function renderLandingPage(data) {
         imgBorder: 'border-[#D92143]/20'
       },
       {
-        border: 'border-[#F69D39]/45 hover:border-[#F69D39]',
-        badgeBg: 'bg-[#FFF7ED]',
-        badgeText: 'text-[#EA580C]',
-        badgeBorder: 'border-[#F69D39]/60',
-        imgBg: 'bg-[#FFF7ED]/60',
-        imgBorder: 'border-[#F69D39]/25'
+        border: 'border-[#E0C375] hover:border-[#B45309]',
+        badgeBg: 'bg-[#FEF5E4]',
+        badgeText: 'text-[#9A3412]',
+        badgeBorder: 'border-[#E0C375]',
+        imgBg: 'bg-[#FEF5E4]/60',
+        imgBorder: 'border-[#E0C375]/40'
       },
       {
         border: 'border-[#E0C375]/70 hover:border-[#B45309]',
@@ -250,7 +250,7 @@ function renderLandingPage(data) {
         </div>
         
         <!-- Full-Bleed Photo Directly Following Outer Card -->
-        <img src="${step.image || `/images/step${idx+1}.svg`}" width="800" height="600" style="aspect-ratio: 4/3;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step${idx+1}.svg';" alt="${step.title}" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
+        <img src="${step.image || `/images/step${idx+1}.svg`}" width="600" height="600" style="aspect-ratio: 4/3;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step${idx+1}.svg';" alt="${step.title}" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
 
         <!-- Step Title & Description Below Image -->
         <div class="p-4 sm:p-5 text-center space-y-1.5">
@@ -274,9 +274,8 @@ function renderLandingPage(data) {
   if (compTitleEl) {
     if (data.comparison?.title) {
       compTitleEl.innerText = data.comparison.title;
-      compTitleEl.style.display = 'block';
     } else {
-      compTitleEl.style.display = 'none';
+      compTitleEl.innerText = 'কেন এটি আপনার সাধারণ চামচের চেয়ে বহুগুণে সেরা?';
     }
   }
 
@@ -284,9 +283,8 @@ function renderLandingPage(data) {
   if (compSubEl) {
     if (data.comparison?.subtitle) {
       compSubEl.innerText = data.comparison.subtitle;
-      compSubEl.style.display = 'block';
     } else {
-      compSubEl.style.display = 'none';
+      compSubEl.innerText = 'সাধারণ প্লাস্টিক চামচ ও ডিজিটাল স্কেলের সাথে সরাসরি তুলনা';
     }
   }
 
@@ -340,10 +338,10 @@ function renderLandingPage(data) {
               </div>
               <div>
                 <h5 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-tight">${rev.name}</h5>
-                <p class="text-xs text-[#334155]/70 font-medium">${rev.location}</p>
+                <p class="text-xs text-[#475569] font-bold">${rev.location}</p>
               </div>
             </div>
-            <div class="flex items-center text-[#F69D39] text-base tracking-tight">
+            <div class="flex items-center text-[#B45309] text-base tracking-tight">
               ${'★'.repeat(rev.rating || 5)}
             </div>
           </div>
@@ -420,13 +418,13 @@ function renderBundles(bundles) {
           </div>
           <div class="text-right flex-shrink-0 pl-1">
             <div class="text-xl sm:text-2xl font-extrabold text-[#D92143]">৳${toBanglaDigits(b.price)}</div>
-            ${b.regularPrice ? `<div class="text-xs text-slate-400 line-through">৳${toBanglaDigits(b.regularPrice)}</div>` : ''}
+            ${b.regularPrice ? `<div class="text-xs text-[#475569] font-bold line-through">৳${toBanglaDigits(b.regularPrice)}</div>` : ''}
           </div>
         </div>
 
         <div class="flex items-center justify-between pt-3 border-t border-[#E0C375]/40 mt-2 text-xs">
           <span class="font-bold text-[#D92143]">${b.savings || 'বিশেষ ছাড়'}</span>
-          <span class="font-bold ${b.freeDelivery ? 'text-[#D92143] bg-[#FEF5E4] border border-[#E0C375] px-2.5 py-0.5 rounded-full' : 'text-slate-600'}">
+          <span class="font-bold ${b.freeDelivery ? 'text-[#D92143] bg-[#FEF5E4] border border-[#E0C375] px-2.5 py-0.5 rounded-full' : 'text-[#334155]'}">
             ${b.freeDelivery ? '🚚 ফ্রি ডেলিভারি' : '+ ডেলিভারি চার্জ'}
           </span>
         </div>
