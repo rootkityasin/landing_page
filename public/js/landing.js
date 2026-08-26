@@ -1,6 +1,7 @@
 // Global state
 let currentProduct = null;
 let selectedBundle = null;
+let selectedColor = 'Red';
 let selectedZone = 'dhaka_inside';
 let initiateCheckoutFired = false;
 const pageViewEventId = 'view_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -454,8 +455,64 @@ function selectBundle(bundleId) {
     activeCard.classList.add('selected');
   }
 
+  // Update Mixed Combo option visibility based on bundle size
+  const mixedOptEl = document.getElementById('color-opt-Mixed');
+  const mixedDescEl = document.getElementById('mixed-color-desc');
+  if (bundleId === 'bundle_2') {
+    if (mixedOptEl) {
+      mixedOptEl.classList.remove('hidden');
+      mixedOptEl.classList.add('flex');
+    }
+    if (mixedDescEl) mixedDescEl.innerText = '১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক (মিক্সড)';
+  } else if (bundleId === 'bundle_3') {
+    if (mixedOptEl) {
+      mixedOptEl.classList.remove('hidden');
+      mixedOptEl.classList.add('flex');
+    }
+    if (mixedDescEl) mixedDescEl.innerText = '২টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক (মিক্সড)';
+  } else {
+    if (mixedOptEl) {
+      mixedOptEl.classList.add('hidden');
+      mixedOptEl.classList.remove('flex');
+    }
+    if (selectedColor === 'Mixed') {
+      selectColor('Red');
+    }
+  }
+
   updateCheckoutSummary();
   fireInitiateCheckout();
+}
+
+// Select Color Variant (Red / Black / Mixed)
+function selectColor(color) {
+  selectedColor = color;
+
+  const options = ['Red', 'Black', 'Mixed'];
+  options.forEach(opt => {
+    const el = document.getElementById(`color-opt-${opt}`);
+    if (!el) return;
+    const dot = el.querySelector('.color-radio-dot');
+    const check = dot ? dot.querySelector('span') : null;
+
+    if (opt === color) {
+      el.classList.add('selected', 'border-[#D92143]', 'bg-[#FEF5E4]');
+      el.classList.remove('border-[#E0C375]/50', 'border-[#0F172A]', 'bg-white');
+      if (dot) {
+        dot.className = 'color-radio-dot w-4 h-4 rounded-full border-2 border-[#D92143] bg-[#D92143] flex items-center justify-center flex-shrink-0';
+      }
+      if (check) check.classList.remove('hidden');
+    } else {
+      el.classList.remove('selected', 'border-[#D92143]', 'bg-[#FEF5E4]');
+      el.classList.add('border-[#E0C375]/50', 'bg-white');
+      if (dot) {
+        dot.className = 'color-radio-dot w-4 h-4 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0';
+      }
+      if (check) check.classList.add('hidden');
+    }
+  });
+
+  updateCheckoutSummary();
 }
 
 // Select Delivery Zone (dhaka_inside / dhaka_outside)
@@ -494,6 +551,20 @@ function updateCheckoutSummary() {
 
   const bNameEl = document.getElementById('summary-bundle-name');
   if (bNameEl) bNameEl.innerText = selectedBundle.name;
+
+  const colorNameEl = document.getElementById('summary-color-name');
+  if (colorNameEl) {
+    if (selectedColor === 'Red') {
+      colorNameEl.innerText = 'মেরুন রেড (Maroon Red)';
+      colorNameEl.className = 'font-extrabold text-[#D92143]';
+    } else if (selectedColor === 'Black') {
+      colorNameEl.innerText = 'ক্লাসিক ব্ল্যাক (Classic Black)';
+      colorNameEl.className = 'font-extrabold text-[#0F172A]';
+    } else {
+      colorNameEl.innerText = selectedBundle?.id === 'bundle_3' ? 'মিক্সড (২টি লাল + ১টি কালো)' : 'মিক্সড (১টি লাল + ১টি কালো)';
+      colorNameEl.className = 'font-extrabold text-[#B45309]';
+    }
+  }
 
   const itemPriceEl = document.getElementById('summary-item-price');
   if (itemPriceEl) itemPriceEl.innerText = `৳${toBanglaDigits(itemPrice)}`;
@@ -607,10 +678,10 @@ async function handleOrderSubmit(e) {
   const nameInput = document.getElementById('cust-name');
   const phoneInput = document.getElementById('cust-phone');
   const addressInput = document.getElementById('cust-address');
-  const submitBtn = document.getElementById('checkout-submit-btn');
+  const submitBtn = document.getElementById('checkout-submit-btn') || document.getElementById('submit-order-btn');
   const errorAlert = document.getElementById('order-error-alert');
 
-  errorAlert.classList.add('hidden');
+  if (errorAlert) errorAlert.classList.add('hidden');
 
   const customerName = nameInput.value.trim();
   const phone = phoneInput.value.trim();
@@ -637,13 +708,17 @@ async function handleOrderSubmit(e) {
   }
 
   // Disable button and show loader
-  submitBtn.disabled = true;
-  submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
-  const originalBtnContent = submitBtn.innerHTML;
-  submitBtn.innerHTML = `
-    <span class="inline-block animate-spin mr-2">⏳</span>
-    <span>অর্ডার প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</span>
-  `;
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+  }
+  const originalBtnContent = submitBtn ? submitBtn.innerHTML : '';
+  if (submitBtn) {
+    submitBtn.innerHTML = `
+      <span class="inline-block animate-spin mr-2">⏳</span>
+      <span>অর্ডার প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</span>
+    `;
+  }
 
   const orderEventId = 'order_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
 
@@ -655,6 +730,7 @@ async function handleOrderSubmit(e) {
       address: address,
       delivery_zone: selectedZone,
       bundle_id: selectedBundle?.id || 'bundle_2',
+      color_variant: selectedColor,
       event_id: orderEventId
     };
 

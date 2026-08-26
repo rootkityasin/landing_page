@@ -79,6 +79,10 @@ const defaultOrigamiPageData = {
     secondaryMediaUrl: "/images/post2.webp",
     mediaPoster: ""
   },
+  colors: [
+    { id: "Red", name: "মেরুন রেড", englishName: "Maroon Red", hex: "#D92143" },
+    { id: "Black", name: "ক্লাসিক ব্ল্যাক", englishName: "Classic Black", hex: "#1C1917" }
+  ],
   problemSolution: {
     title: "কেন পুরনো মেজারিং চামচগুলো আপনার কিচেনের বিরক্তির কারণ?",
     subtitle: "সাধারণ চামচের সমস্যা বনাম আমাদের ৩-ইন-১ পলিগনস স্পুনের আধুনিক সমাধান",
@@ -316,6 +320,7 @@ async function initDatabase() {
       delivery_zone TEXT NOT NULL,
       bundle_id TEXT,
       bundle_name TEXT,
+      color_variant TEXT DEFAULT 'Red',
       quantity INTEGER DEFAULT 1,
       item_price REAL NOT NULL,
       delivery_charge REAL NOT NULL,
@@ -328,6 +333,12 @@ async function initDatabase() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  try {
+    await dbRun(`ALTER TABLE orders ADD COLUMN color_variant TEXT DEFAULT 'Red'`);
+  } catch (e) {
+    // Column already exists
+  }
 
   // Create settings table
   await dbRun(`

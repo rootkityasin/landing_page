@@ -154,6 +154,7 @@ app.post('/api/orders', async (req, res) => {
       address,
       delivery_zone,
       bundle_id,
+      color_variant,
       event_id
     } = req.body;
 
@@ -190,6 +191,7 @@ app.post('/api/orders', async (req, res) => {
     const deliveryCharge = selectedBundle.freeDelivery ? 0 : deliveryRate;
     const totalAmount = itemPrice + deliveryCharge;
 
+    const chosenColor = color_variant || 'Red';
     const orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'];
@@ -198,10 +200,10 @@ app.post('/api/orders', async (req, res) => {
       `INSERT INTO orders (
         order_number, product_id, product_slug, product_name,
         customer_name, phone, address, delivery_zone,
-        bundle_id, bundle_name, quantity, item_price,
+        bundle_id, bundle_name, color_variant, quantity, item_price,
         delivery_charge, total_amount, order_status,
         ip_address, user_agent
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
       [
         orderNumber,
         product ? product.id : 1,
@@ -213,6 +215,7 @@ app.post('/api/orders', async (req, res) => {
         delivery_zone,
         selectedBundle.id,
         selectedBundle.name,
+        chosenColor,
         1,
         itemPrice,
         deliveryCharge,
@@ -256,6 +259,7 @@ app.post('/api/orders', async (req, res) => {
         address: address.trim(),
         delivery_zone: delivery_zone,
         bundle_name: selectedBundle.name,
+        color_variant: chosenColor,
         item_price: itemPrice,
         delivery_charge: deliveryCharge,
         total_amount: totalAmount,

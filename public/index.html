@@ -410,6 +410,61 @@
 
         <!-- Embedded COD Form -->
         <form id="cod-order-form" class="space-y-4">
+
+          <!-- Color Variant Selection (Red & Black) -->
+          <div class="space-y-2">
+            <label class="block font-bold text-[#0F172A] text-sm">
+              পছন্দের কালার বেছে নিন (Select Color) <span class="text-[#D92143]">*</span>
+            </label>
+            <div id="color-selector-grid" class="grid grid-cols-2 gap-2.5 sm:gap-3">
+              
+              <!-- Red Option -->
+              <div onclick="selectColor('Red')" id="color-opt-Red" class="color-card selected border-2 border-[#D92143] bg-[#FEF5E4] rounded-2xl p-3 sm:p-3.5 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143]">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-5 h-5 rounded-full bg-[#D92143] border-2 border-white shadow-xs flex-shrink-0"></span>
+                  <div class="min-w-0">
+                    <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মেরুন রেড</span>
+                    <span class="text-[10px] text-[#475569] font-bold block">Maroon Red</span>
+                  </div>
+                </div>
+                <div class="color-radio-dot w-4 h-4 rounded-full border-2 border-[#D92143] bg-[#D92143] flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[9px] font-black">✓</span>
+                </div>
+              </div>
+
+              <!-- Black Option -->
+              <div onclick="selectColor('Black')" id="color-opt-Black" class="color-card border-2 border-[#E0C375]/50 bg-white rounded-2xl p-3 sm:p-3.5 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#0F172A]">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-5 h-5 rounded-full bg-[#1C1917] border-2 border-white shadow-xs flex-shrink-0"></span>
+                  <div class="min-w-0">
+                    <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">ক্লাসিক ব্ল্যাক</span>
+                    <span class="text-[10px] text-[#475569] font-bold block">Classic Black</span>
+                  </div>
+                </div>
+                <div class="color-radio-dot w-4 h-4 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[9px] font-black hidden">✓</span>
+                </div>
+              </div>
+
+              <!-- Mixed Combo Option (Active for 2+ sets) -->
+              <div onclick="selectColor('Mixed')" id="color-opt-Mixed" class="color-card col-span-2 hidden border-2 border-[#E0C375]/50 bg-white rounded-2xl p-3 sm:p-3.5 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143]">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="flex -space-x-1.5 flex-shrink-0">
+                    <span class="w-5 h-5 rounded-full bg-[#D92143] border-2 border-white shadow-xs"></span>
+                    <span class="w-5 h-5 rounded-full bg-[#1C1917] border-2 border-white shadow-xs"></span>
+                  </div>
+                  <div class="min-w-0">
+                    <span class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মিক্সড কালার কম্বো</span>
+                    <span class="text-[10px] text-[#475569] font-bold block" id="mixed-color-desc">১টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক</span>
+                  </div>
+                </div>
+                <div class="color-radio-dot w-4 h-4 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center flex-shrink-0">
+                  <span class="text-white text-[9px] font-black hidden">✓</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
           
           <!-- Full Name -->
           <div>
@@ -476,6 +531,10 @@
             <div class="flex justify-between text-[#334155]">
               <span id="summary-bundle-name">২ সেট (ফ্যামিলি প্যাক)</span>
               <span id="summary-item-price" class="font-black text-[#0F172A]">৳১,১৯৯</span>
+            </div>
+            <div class="flex justify-between text-[#334155]">
+              <span>নির্বাচিত কালার:</span>
+              <span id="summary-color-name" class="font-extrabold text-[#D92143]">মেরুন রেড (Maroon Red)</span>
             </div>
             <div class="flex justify-between text-[#334155]">
               <span>ডেলিভারি চার্জ:</span>

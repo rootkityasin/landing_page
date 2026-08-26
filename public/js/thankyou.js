@@ -27,7 +27,14 @@ async function loadOrderDetails() {
     document.getElementById('inv-cust-name').innerText = order.customer_name;
     document.getElementById('inv-cust-phone').innerText = order.phone;
     document.getElementById('inv-cust-address').innerText = order.address;
-    document.getElementById('inv-bundle-name').innerText = order.bundle_name || 'Origami Spoon Set';
+    document.getElementById('inv-bundle-name').innerText = order.bundle_name || 'Polygons 3-in-1 Spoon Set';
+    
+    const colorText = order.color_variant === 'Black' ? '⚫ ক্লাসিক ব্ল্যাক (Classic Black)' :
+                      order.color_variant === 'Mixed' ? '🎨 মিক্সড কালার কম্বো (Mixed Combo)' :
+                      '🔴 মেরুন রেড (Maroon Red)';
+    const invColorEl = document.getElementById('inv-color-name');
+    if (invColorEl) invColorEl.innerText = colorText;
+
     document.getElementById('inv-item-price').innerText = `৳${toBanglaDigits(order.item_price)}`;
     
     if (order.delivery_charge === 0) {
@@ -47,6 +54,7 @@ async function loadOrderDetails() {
       `📱 ফোন: ${order.phone}\n` +
       `📍 ঠিকানা: ${order.address}\n` +
       `🎁 প্যাকেজ: ${order.bundle_name}\n` +
+      `🎨 কালার: ${colorText}\n` +
       `💰 মোট বিল: ৳${order.total_amount} (ক্যাশ অন ডেলিভারি)\n\n` +
       `দয়া করে আমার অর্ডারটি ফাস্ট ডেলিভারির জন্য কনফার্ম করুন।`
     );

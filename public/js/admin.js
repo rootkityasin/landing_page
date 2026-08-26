@@ -177,8 +177,17 @@ async function fetchOrders() {
           </td>
 
           <td class="p-4 align-top">
-            <div class="font-bold text-slate-800 text-xs sm:text-sm">${o.product_name || 'Origami Spoon Set'}</div>
+            <div class="font-bold text-slate-800 text-xs sm:text-sm">${o.product_name || 'Polygons 3-in-1 Spoon'}</div>
             <div class="text-xs text-emerald-700 font-semibold mt-0.5">${o.bundle_name || 'Standard Package'}</div>
+            <div class="mt-1.5">
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md ${
+                o.color_variant === 'Black' ? 'bg-slate-900 text-white' :
+                o.color_variant === 'Mixed' ? 'bg-amber-100 text-amber-900 border border-amber-300' :
+                'bg-rose-100 text-rose-800 border border-rose-200'
+              }">
+                ${o.color_variant === 'Black' ? '⚫ Black' : o.color_variant === 'Mixed' ? '🎨 Mixed Combo' : '🔴 Maroon Red'}
+              </span>
+            </div>
           </td>
 
           <td class="p-4 align-top">
