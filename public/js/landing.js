@@ -228,11 +228,11 @@ function renderLandingPage(data) {
 
     stepsContainer.innerHTML = data.howItWorks.steps.map((step, idx) => {
       const theme = stepColorThemes[idx % stepColorThemes.length];
-      const stepNumber = String(idx + 1).padStart(2, '0');
+      const stepNumber = toBanglaDigits(String(idx + 1).padStart(2, '0'));
       return `
       <div class="relative bg-white rounded-3xl border-2 ${theme.border} flex flex-col justify-between hover:shadow-lg transition duration-300 group">
         <!-- Numbering Badge Positioned Above Div -->
-        <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-2xl ${theme.badgeBg} border-2 ${theme.badgeBorder} ${theme.badgeText} font-black text-base flex items-center justify-center font-latin shadow-md z-10 group-hover:scale-110 transition">
+        <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-2xl ${theme.badgeBg} border-2 ${theme.badgeBorder} ${theme.badgeText} font-black text-base flex items-center justify-center shadow-md z-10 group-hover:scale-110 transition">
           ${stepNumber}
         </div>
         
@@ -293,7 +293,7 @@ function renderLandingPage(data) {
   if (checkoutTitleEl) checkoutTitleEl.innerText = data.checkout?.title || 'আপনার পছন্দের প্যাকেজটি বেছে নিন';
 
   const checkoutSubEl = document.getElementById('checkout-subtitle');
-  if (checkoutSubEl) checkoutSubEl.innerText = data.checkout?.subtitle || '২ বা ৩ সেটের অর্ডারে থাকছে সারাদেশে 100% ফ্রি হোম ডেলিভারি';
+  if (checkoutSubEl) checkoutSubEl.innerText = data.checkout?.subtitle || '২ বা ৩ সেটের অর্ডারে থাকছে সারাদেশে ১০০% ফ্রি হোম ডেলিভারি';
 
   // Dynamic Delivery Zone Rate Badges
   const insidePriceEl = document.getElementById('zone-inside-price');
@@ -322,7 +322,7 @@ function renderLandingPage(data) {
         <div>
           <div class="flex items-center justify-between mb-3.5">
             <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-full bg-[#FEF5E4] border-2 border-[#E0C375] flex items-center justify-center font-extrabold text-[#D92143] text-base font-latin shadow-xs">
+              <div class="w-11 h-11 rounded-full bg-[#FEF5E4] border-2 border-[#E0C375] flex items-center justify-center font-extrabold text-[#D92143] text-base shadow-xs">
                 ${rev.name.substring(0, 1)}
               </div>
               <div>
@@ -406,8 +406,8 @@ function renderBundles(bundles) {
             </div>
           </div>
           <div class="text-right flex-shrink-0 pl-1">
-            <div class="text-xl sm:text-2xl font-extrabold text-[#D92143] font-latin">৳${toBanglaDigits(b.price)}</div>
-            ${b.regularPrice ? `<div class="text-xs text-slate-400 line-through font-latin">৳${toBanglaDigits(b.regularPrice)}</div>` : ''}
+            <div class="text-xl sm:text-2xl font-extrabold text-[#D92143]">৳${toBanglaDigits(b.price)}</div>
+            ${b.regularPrice ? `<div class="text-xs text-slate-400 line-through">৳${toBanglaDigits(b.regularPrice)}</div>` : ''}
           </div>
         </div>
 
@@ -611,7 +611,7 @@ async function handleOrderSubmit(e) {
   const cleanPhone = phone.replace(/[^0-9]/g, '');
   const bdPhoneRegex = /^01[3-9]\d{8}$/;
   if (!bdPhoneRegex.test(cleanPhone)) {
-    showFormError('সঠিক 11 ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
+    showFormError('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
     phoneInput.focus();
     return;
   }
@@ -726,12 +726,12 @@ function validatePhoneLive(inputEl) {
     inputEl.classList.remove('border-emerald-500', 'bg-emerald-50/30');
     if (val.length > 0 && val.length < 11) {
       if (helperText) {
-        helperText.innerText = `11 ডিজিট প্রয়োজন (বর্তমানে ${toBanglaDigits(val.length)} ডিজিট)`;
+        helperText.innerText = `১১ ডিজিট প্রয়োজন (বর্তমানে ${toBanglaDigits(val.length)} ডিজিট)`;
         helperText.className = 'text-xs text-amber-600 font-semibold mt-1';
       }
     } else if (val.length > 11) {
       if (helperText) {
-        helperText.innerText = 'মোবাইল নম্বর সর্বোচ্চ 11 ডিজিট হতে হবে।';
+        helperText.innerText = 'মোবাইল নম্বর সর্বোচ্চ ১১ ডিজিট হতে হবে।';
         helperText.className = 'text-xs text-rose-500 font-semibold mt-1';
       }
     } else {
@@ -746,11 +746,11 @@ function validatePhoneLive(inputEl) {
 // Live Social Proof Notification Popup (FOMO & Trust Trigger)
 const recentCustomers = [
   { name: 'তানভীর আহমেদ', area: 'উত্তরা, ঢাকা', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '২' },
-  { name: 'মেহজাবিন চৌধুরী', area: 'জিইসি, চট্টগ্রাম', pkg: '1 সেট ট্রায়াল প্যাক', mins: '৪' },
-  { name: 'রোকসানা পারভীন', area: 'মিরপুর 1০, ঢাকা', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '1' },
+  { name: 'মেহজাবিন চৌধুরী', area: 'জিইসি, চট্টগ্রাম', pkg: '১ সেট ট্রায়াল প্যাক', mins: '৪' },
+  { name: 'রোকসানা পারভীন', area: 'মিরপুর ১০, ঢাকা', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '১' },
   { name: 'ফারহানা সুলতানা', area: 'ধানমন্ডি, ঢাকা', pkg: '৩ সেটের সুপার সেভার প্যাক', mins: '৫' },
   { name: 'আরিফুল ইসলাম', area: 'উপশহর, সিলেট', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '৩' },
-  { name: 'নুসরাত জাহান', area: 'খালিশপুর, খুলনা', pkg: '1 সেট ট্রায়াল প্যাক', mins: '৬' },
+  { name: 'নুসরাত জাহান', area: 'খালিশপুর, খুলনা', pkg: '১ সেট ট্রায়াল প্যাক', mins: '৬' },
   { name: 'মাহমুদুল হাসান', area: 'বোয়ালিয়া, রাজশাহী', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '২' }
 ];
 
@@ -823,7 +823,7 @@ function updateSynchronized4HourTimer() {
   // Update Top Bar Urgency Banner
   const urgencyTextEl = document.getElementById('top-urgency-text');
   if (urgencyTextEl) {
-    urgencyTextEl.innerHTML = `Polygons® Official Store • ৪ ঘণ্টার স্পেশাল অফার — শেষ হতে আর মাত্র <span class="text-[#F69D39] font-bold font-latin">${hStr} ঘণ্টা ${mStr} মি: ${sStr} সে:</span> বাকি!`;
+    urgencyTextEl.innerHTML = `Polygons® Official Store • ৪ ঘণ্টার স্পেশাল অফার — শেষ হতে আর মাত্র <span class="text-[#F69D39] font-bold">${hStr} ঘণ্টা ${mStr} মি: ${sStr} সে:</span> বাকি!`;
   }
 }
 
