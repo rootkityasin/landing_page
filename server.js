@@ -634,6 +634,11 @@ app.post('/api/admin/settings', verifyAdminAuth, async (req, res) => {
 /* ========================================================
    FRONTEND ROUTE MAPPINGS
    ======================================================== */
+app.get('/favicon.ico', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
+
 app.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
   res.setHeader('Pragma', 'no-cache');
