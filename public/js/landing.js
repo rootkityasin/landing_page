@@ -395,17 +395,17 @@ function renderBundles(bundles) {
           </div>
         ` : ''}
 
-        <div class="flex items-start justify-between gap-3 mb-3">
-          <div class="flex items-center gap-3">
-            <div class="bundle-radio-circle">
+        <div class="flex items-start justify-between gap-2.5 mb-3">
+          <div class="flex items-center gap-2.5 min-w-0 flex-1">
+            <div class="bundle-radio-circle flex-shrink-0">
               <div class="bundle-radio-dot"></div>
             </div>
-            <div>
-              <h4 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-tight">${b.name}</h4>
+            <div class="min-w-0">
+              <h4 class="font-extrabold text-[#0F172A] text-[13px] xs:text-[14px] sm:text-base md:text-sm lg:text-base leading-tight whitespace-nowrap">${b.name}</h4>
               <p class="text-xs text-[#334155] mt-0.5">${b.desc}</p>
             </div>
           </div>
-          <div class="text-right flex-shrink-0">
+          <div class="text-right flex-shrink-0 pl-1">
             <div class="text-xl sm:text-2xl font-extrabold text-[#D92143] font-latin">৳${toBanglaDigits(b.price)}</div>
             ${b.regularPrice ? `<div class="text-xs text-slate-400 line-through font-latin">৳${toBanglaDigits(b.regularPrice)}</div>` : ''}
           </div>
