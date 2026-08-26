@@ -22,12 +22,18 @@ function getSlugFromUrl() {
   return urlParams.get('product') || null;
 }
 
-// Fetch Product Configuration
+// Fetch Product Configuration (Instant Live Cache Invalidation)
 async function loadProduct() {
   try {
     const slug = getSlugFromUrl();
-    const endpoint = slug ? `/api/products/${slug}` : '/api/products/active';
-    const res = await fetch(endpoint);
+    const endpoint = (slug ? `/api/products/${slug}` : '/api/products/active') + `?_t=${Date.now()}`;
+    const res = await fetch(endpoint, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
     const data = await res.json();
 
     if (!data.success || !data.product) {
@@ -49,6 +55,13 @@ async function loadProduct() {
     console.error('Error loading product:', err);
   }
 }
+
+// Auto re-validate when tab gains visibility (e.g. after updating Admin panel)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    loadProduct();
+  }
+});
 
 // Render dynamic page sections
 function renderLandingPage(data) {
