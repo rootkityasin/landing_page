@@ -271,6 +271,14 @@ function renderLandingPage(data) {
     if (incTitleEl && data.whatsIncluded.title) incTitleEl.innerText = data.whatsIncluded.title;
     const incSubEl = document.getElementById('included-subtitle');
     if (incSubEl && data.whatsIncluded.subtitle) incSubEl.innerText = data.whatsIncluded.subtitle;
+    const incLTitleEl = document.getElementById('included-large-title');
+    if (incLTitleEl && data.whatsIncluded.largeSpoonTitle) incLTitleEl.innerText = data.whatsIncluded.largeSpoonTitle;
+    const incLBadgeEl = document.getElementById('included-large-badge');
+    if (incLBadgeEl && data.whatsIncluded.largeSpoonBadge) incLBadgeEl.innerText = data.whatsIncluded.largeSpoonBadge;
+    const incSTitleEl = document.getElementById('included-small-title');
+    if (incSTitleEl && data.whatsIncluded.smallSpoonTitle) incSTitleEl.innerText = data.whatsIncluded.smallSpoonTitle;
+    const incSBadgeEl = document.getElementById('included-small-badge');
+    if (incSBadgeEl && data.whatsIncluded.smallSpoonBadge) incSBadgeEl.innerText = data.whatsIncluded.smallSpoonBadge;
   }
 
   // 4. Comparison Section (High-Converting Infographic / Image)
