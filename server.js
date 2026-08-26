@@ -163,7 +163,9 @@ app.post('/api/orders', async (req, res) => {
     const selectedBundle = pageData.bundles.find(b => b.id === bundle_id) || pageData.bundles[0];
 
     const itemPrice = Number(selectedBundle.price);
-    const deliveryRate = delivery_zone === 'dhaka_outside' ? Number(pageData.checkout.deliveryOutside || 130) : Number(pageData.checkout.deliveryDhaka || 70);
+    const deliveryDhaka = pageData.checkout && pageData.checkout.deliveryDhaka !== undefined && pageData.checkout.deliveryDhaka !== '' ? Number(pageData.checkout.deliveryDhaka) : 60;
+    const deliveryOutside = pageData.checkout && pageData.checkout.deliveryOutside !== undefined && pageData.checkout.deliveryOutside !== '' ? Number(pageData.checkout.deliveryOutside) : 130;
+    const deliveryRate = delivery_zone === 'dhaka_outside' ? deliveryOutside : deliveryDhaka;
     const deliveryCharge = selectedBundle.freeDelivery ? 0 : deliveryRate;
     const totalAmount = itemPrice + deliveryCharge;
 

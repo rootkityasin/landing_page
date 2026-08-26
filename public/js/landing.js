@@ -297,6 +297,23 @@ function renderLandingPage(data) {
   const checkoutSubEl = document.getElementById('checkout-subtitle');
   if (checkoutSubEl) checkoutSubEl.innerText = data.checkout?.subtitle || '২ বা ৩ সেটের অর্ডারে থাকছে সারাদেশে 100% ফ্রি হোম ডেলিভারি';
 
+  // Dynamic Delivery Zone Rate Badges
+  const insidePriceEl = document.getElementById('zone-inside-price');
+  if (insidePriceEl && data.checkout) {
+    const rateDhaka = data.checkout.deliveryDhaka !== undefined && data.checkout.deliveryDhaka !== ''
+      ? Number(data.checkout.deliveryDhaka)
+      : 60;
+    insidePriceEl.innerText = rateDhaka === 0 ? 'ফ্রি (৳০)' : `৳${toBanglaDigits(rateDhaka)}`;
+  }
+
+  const outsidePriceEl = document.getElementById('zone-outside-price');
+  if (outsidePriceEl && data.checkout) {
+    const rateOutside = data.checkout.deliveryOutside !== undefined && data.checkout.deliveryOutside !== ''
+      ? Number(data.checkout.deliveryOutside)
+      : 130;
+    outsidePriceEl.innerText = rateOutside === 0 ? 'ফ্রি (৳০)' : `৳${toBanglaDigits(rateOutside)}`;
+  }
+
   renderBundles(data.bundles);
 
   // 6. Social Proof & Reviews
@@ -451,9 +468,14 @@ function updateCheckoutSummary() {
   const pageData = currentProduct.pageData;
 
   const itemPrice = Number(selectedBundle.price);
-  const deliveryRate = selectedZone === 'dhaka_outside' 
-    ? Number(pageData.checkout.deliveryOutside || 130) 
-    : Number(pageData.checkout.deliveryDhaka || 70);
+  const deliveryDhaka = pageData.checkout && pageData.checkout.deliveryDhaka !== undefined && pageData.checkout.deliveryDhaka !== ''
+    ? Number(pageData.checkout.deliveryDhaka)
+    : 60;
+  const deliveryOutside = pageData.checkout && pageData.checkout.deliveryOutside !== undefined && pageData.checkout.deliveryOutside !== ''
+    ? Number(pageData.checkout.deliveryOutside)
+    : 130;
+
+  const deliveryRate = selectedZone === 'dhaka_outside' ? deliveryOutside : deliveryDhaka;
 
   const deliveryCharge = selectedBundle.freeDelivery ? 0 : deliveryRate;
   const grandTotal = itemPrice + deliveryCharge;
