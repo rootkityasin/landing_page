@@ -249,66 +249,60 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
         
         <!-- Card 1: Large Spoon (বড় চামচ) -->
-        <div class="bg-gradient-to-b from-[#FEF5E4]/50 to-white rounded-3xl p-5 sm:p-6 border-2 border-[#D92143]/30 hover:border-[#D92143] transition duration-300 shadow-xs flex flex-col justify-between space-y-4">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="bg-[#D92143] text-white text-xs font-black px-3 py-1 rounded-xl shadow-xs">১. বড় মেজারিং চামচ</span>
-              <span class="text-xs font-bold text-[#D92143] bg-[#FEF5E4] px-2.5 py-1 rounded-lg border border-[#E0C375]">৪টি মাপ (Tablespoon)</span>
-            </div>
-            <h3 class="text-base sm:text-lg font-extrabold text-[#0F172A]">১টি বড় চামচেই রয়েছে ৪টি মাপ:</h3>
-            <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">১ টেবিল চামচ (15ml)</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">১/২ টেবিল চামচ (7.5ml)</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">২ চা চামচ (10ml)</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">১ চা চামচ (5ml)</span>
-              </div>
-            </div>
+        <div class="bg-gradient-to-b from-[#FEF5E4]/50 to-white rounded-3xl p-5 sm:p-6 border-2 border-[#D92143]/30 hover:border-[#D92143] transition duration-300 shadow-xs space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#D92143] text-white text-xs font-black px-3 py-1 rounded-xl shadow-xs">১. বড় মেজারিং চামচ</span>
+            <span class="text-xs font-bold text-[#D92143] bg-[#FEF5E4] px-2.5 py-1 rounded-lg border border-[#E0C375]">৪টি মাপ (Tablespoon)</span>
           </div>
-          <div class="bg-white/80 p-3 rounded-2xl border border-[#E0C375]/40 text-xs text-[#334155]">
-            <strong class="text-[#D92143]">উপযোগী:</strong> তেল, সস, বেকিং ব্যাটার, ময়দা ও চিনির সঠিক মাপের জন্য।
+          <h3 class="text-base sm:text-lg font-extrabold text-[#0F172A]">১টি বড় চামচেই রয়েছে ৪টি মাপ:</h3>
+          
+          <!-- Only 4 Variants in Single Clean Div -->
+          <div class="bg-white rounded-2xl p-4 border border-[#E0C375]/60 shadow-2xs grid grid-cols-2 gap-3 text-xs sm:text-sm">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">১ টেবিল চামচ (15ml)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">১/২ টেবিল চামচ (7.5ml)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">২ চা চামচ (10ml)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">১ চা চামচ (5ml)</span>
+            </div>
           </div>
         </div>
 
         <!-- Card 2: Small Spoon (ছোট চামচ) -->
-        <div class="bg-gradient-to-b from-[#FEF5E4]/50 to-white rounded-3xl p-5 sm:p-6 border-2 border-[#F69D39]/40 hover:border-[#F69D39] transition duration-300 shadow-xs flex flex-col justify-between space-y-4">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="bg-[#EA580C] text-white text-xs font-black px-3 py-1 rounded-xl shadow-xs">২. ছোট মেজারিং চামচ</span>
-              <span class="text-xs font-bold text-[#EA580C] bg-[#FFF7ED] px-2.5 py-1 rounded-lg border border-[#F69D39]/50">৪টি মাপ (Teaspoon)</span>
-            </div>
-            <h3 class="text-base sm:text-lg font-extrabold text-[#0F172A]">১টি ছোট চামচেই রয়েছে ৪টি মাপ:</h3>
-            <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">১ চা চামচ (5ml)</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">১/২ চা চামচ (2.5ml)</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">১/৪ চা চামচ (1.25ml)</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
-                <span class="font-bold text-[#0F172A]">১/৮ চা চামচ (0.6ml)</span>
-              </div>
-            </div>
+        <div class="bg-gradient-to-b from-[#FEF5E4]/50 to-white rounded-3xl p-5 sm:p-6 border-2 border-[#F69D39]/40 hover:border-[#F69D39] transition duration-300 shadow-xs space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#EA580C] text-white text-xs font-black px-3 py-1 rounded-xl shadow-xs">২. ছোট মেজারিং চামচ</span>
+            <span class="text-xs font-bold text-[#EA580C] bg-[#FFF7ED] px-2.5 py-1 rounded-lg border border-[#F69D39]/50">৪টি মাপ (Teaspoon)</span>
           </div>
-          <div class="bg-white/80 p-3 rounded-2xl border border-[#F69D39]/40 text-xs text-[#334155]">
-            <strong class="text-[#EA580C]">উপযোগী:</strong> লবণ, গুঁড়া মসলা, বেকিং পাউডার ও শিশুদের ওষুধের সঠিক মাপ।
+          <h3 class="text-base sm:text-lg font-extrabold text-[#0F172A]">১টি ছোট চামচেই রয়েছে ৪টি মাপ:</h3>
+          
+          <!-- Only 4 Variants in Single Clean Div -->
+          <div class="bg-white rounded-2xl p-4 border border-[#F69D39]/50 shadow-2xs grid grid-cols-2 gap-3 text-xs sm:text-sm">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">১ চা চামচ (5ml)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">১/২ চা চামচ (2.5ml)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">১/৪ চা চামচ (1.25ml)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center font-bold text-xs flex-shrink-0">✓</span>
+              <span class="font-bold text-[#0F172A]">১/৮ চা চামচ (0.6ml)</span>
+            </div>
           </div>
         </div>
 
