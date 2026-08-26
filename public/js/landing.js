@@ -168,14 +168,14 @@ function renderLandingPage(data) {
 
       const thumbnailsHtml = galleryList.map((imgSrc, idx) => `
         <button type="button" onclick="switchHeroImg('${imgSrc}', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 ${idx === 0 ? 'border-[#D92143]' : 'border-slate-200'} bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
-          <img src="${imgSrc}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
+          <img src="${imgSrc}" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
         </button>
       `).join('');
 
       heroMediaEl.innerHTML = `
         <div class="space-y-3">
           <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white">
-            <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
+            <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" width="1200" height="1200" style="aspect-ratio: 1/1;" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
             <div class="absolute bottom-3 left-3 bg-[#1C1917]/90 backdrop-blur-md text-white text-xs px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-lg font-latin border border-[#E0C375]/30">
               <span class="w-2 h-2 rounded-full bg-[#F69D39] live-dot"></span>
               <span>১০০% Genuine Polygons® Product</span>
@@ -237,7 +237,7 @@ function renderLandingPage(data) {
         </div>
         
         <!-- Full-Bleed Photo Directly Following Outer Card -->
-        <img src="${step.image || `/images/step${idx+1}.svg`}" onerror="this.onerror=null; this.src='/images/step${idx+1}.svg';" alt="${step.title}" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
+        <img src="${step.image || `/images/step${idx+1}.svg`}" width="800" height="600" style="aspect-ratio: 4/3;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step${idx+1}.svg';" alt="${step.title}" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
 
         <!-- Step Title & Description Below Image -->
         <div class="p-4 sm:p-5 text-center space-y-1.5">
