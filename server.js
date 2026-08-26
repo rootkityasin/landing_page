@@ -12,10 +12,17 @@ const sharp = require('sharp');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Ensure upload directory exists
-const uploadDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Detect Vercel / Serverless
+const isVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
+
+// Ensure upload directory exists (fallback to /tmp/uploads on Vercel read-only filesystem)
+const uploadDir = isVercel ? path.join(require('os').tmpdir(), 'uploads') : path.join(__dirname, 'public', 'uploads');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (e) {
+  console.warn('Upload directory creation notice:', e.message);
 }
 
 // Multer storage setup for image/media uploads
@@ -55,6 +62,9 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Optimized static assets serving with 1-Year Efficient Cache Lifetimes (Google Lighthouse 100 benchmark)
+if (isVercel) {
+  app.use('/uploads', express.static(path.join(require('os').tmpdir(), 'uploads')));
+}
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: '1y',
   etag: true,
@@ -697,20 +707,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
-async function start() {
-  try {
-    await initDatabase();
-    app.listen(PORT, () => {
-      console.log(`=======================================================`);
-      console.log(`🚀 Origami COD Landing Page Server running on http://localhost:${PORT}`);
-      console.log(`📦 Admin Dashboard: http://localhost:${PORT}/admin (Pass: admin123)`);
-      console.log(`🎯 Product Landing Page: http://localhost:${PORT}/p/origami-spoon`);
-      console.log(`=======================================================`);
-    });
-  } catch (err) {
-    console.error('Failed to start server:', err);
-  }
+// Initialize Database on startup
+initDatabase().catch(err => console.error('Database initialization notice:', err.message));
+
+// Start standalone server when not in Vercel serverless
+if (!isVercel) {
+  const server = app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`🚀 Origami COD Landing Page Server running on http://localhost:${PORT}`);
+    console.log(`📦 Admin Dashboard: http://localhost:${PORT}/admin (Pass: admin123)`);
+    console.log(`🎯 Product Landing Page: http://localhost:${PORT}/p/origami-spoon`);
+    console.log(`=======================================================`);
+  });
 }
 
-start();
+// Export for Vercel Serverless
+module.exports = app;

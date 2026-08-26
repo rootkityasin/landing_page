@@ -1,10 +1,33 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
-const dbPath = path.join(__dirname, 'database.sqlite');
+// Detect Vercel / AWS Lambda Serverless Environment
+const isVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
+
+let dbPath = path.join(__dirname, 'database.sqlite');
+
+if (isVercel) {
+  const tmpDbPath = path.join(os.tmpdir(), 'database.sqlite');
+  const bundledDbPath = path.join(__dirname, 'database.sqlite');
+  try {
+    if (!fs.existsSync(tmpDbPath)) {
+      if (fs.existsSync(bundledDbPath)) {
+        fs.copyFileSync(bundledDbPath, tmpDbPath);
+        console.log('Copied bundled database.sqlite to /tmp/database.sqlite for full write access on Vercel');
+      }
+    }
+    dbPath = tmpDbPath;
+  } catch (err) {
+    console.warn('Vercel tmpdb copy notice:', err.message);
+    dbPath = tmpDbPath;
+  }
+}
+
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error('Failed to connect to SQLite database:', err.message);
+    console.error('Failed to connect to SQLite database at', dbPath, err.message);
   } else {
     console.log('Connected to SQLite database at', dbPath);
   }
