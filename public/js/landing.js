@@ -80,13 +80,16 @@ function renderLandingPage(data) {
   
   const heroHeadlineEl = document.getElementById('hero-headline');
   if (heroHeadlineEl) {
-    const rawHeadline = data.hero.headline || 'রান্না ও বেকিংয়ে নিখুঁত মাপের ৪-ইন-১ ফোল্ডিং মেজারিং চামচ';
-    if (rawHeadline.includes('৪-ইন-১')) {
+    const rawHeadline = data.hero.headline || 'রান্না ও বেকিংয়ে নিখুঁত মাপের 4-in-1 ফোল্ডিং মেজারিং চামচ';
+    if (rawHeadline.includes('4-in-1')) {
+      const parts = rawHeadline.split('4-in-1');
+      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black"><span class="font-latin">4-in-1</span>${parts[1]}</span>`;
+    } else if (rawHeadline.includes('৪-ইন-১')) {
       const parts = rawHeadline.split('৪-ইন-১');
-      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black">৪-ইন-১${parts[1]}</span>`;
+      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black"><span class="font-latin">4-in-1</span>${parts[1]}</span>`;
     } else if (rawHeadline.includes('৪-ইন-1')) {
       const parts = rawHeadline.split('৪-ইন-1');
-      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black">৪-ইন-১${parts[1]}</span>`;
+      heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black"><span class="font-latin">4-in-1</span>${parts[1]}</span>`;
     } else {
       heroHeadlineEl.innerText = rawHeadline;
     }
