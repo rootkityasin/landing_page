@@ -455,7 +455,6 @@ function populateEditorFields(d) {
   if (!d.hero) d.hero = {};
   if (!d.problemSolution) d.problemSolution = { cards: [] };
   if (!d.howItWorks) d.howItWorks = { steps: [] };
-  if (!d.comparison) d.comparison = {};
   if (!d.checkout) d.checkout = {};
   if (!d.bundles) d.bundles = [];
   if (!d.reviews) d.reviews = [];
@@ -573,31 +572,13 @@ function populateEditorFields(d) {
   if (document.getElementById('edit-included-banner-title')) document.getElementById('edit-included-banner-title').value = d.whatsIncluded.bannerTitle || '';
   if (document.getElementById('edit-included-banner-desc')) document.getElementById('edit-included-banner-desc').value = d.whatsIncluded.bannerDesc || '';
 
-  // 7. Comparison Section (Infographic Image)
-  if (!d.comparison) {
-    d.comparison = {
-      title: "কেন এটি সাধারণ চামচের চেয়ে বহুগুণে সেরা?",
-      subtitle: "সাধারণ প্লাস্টিক চামচ ও ডিজিটাল স্কেলের সাথে সরাসরি তুলনা",
-      imageUrl: "/images/comp-infographic.svg"
-    };
-  }
-  document.getElementById('edit-comp-title').value = d.comparison.title || '';
-  document.getElementById('edit-comp-subtitle').value = d.comparison.subtitle || '';
-  const compImg = d.comparison.imageUrl || '/images/comp-infographic.svg';
-  if (document.getElementById('edit-comp-image-url')) {
-    document.getElementById('edit-comp-image-url').value = compImg;
-  }
-  if (document.getElementById('comp-preview-img')) {
-    document.getElementById('comp-preview-img').src = compImg;
-  }
-
   // 7. Unified Package Offers & Checkout Section
   if (!d.checkout) d.checkout = {};
   if (document.getElementById('edit-checkout-title')) {
     document.getElementById('edit-checkout-title').value = d.checkout.title || 'আপনার পছন্দের প্যাকেজটি বেছে নিন';
   }
   if (document.getElementById('edit-checkout-subtitle')) {
-    document.getElementById('edit-checkout-subtitle').value = d.checkout.subtitle || '২ বা ৩ সেটের অর্ডারে থাকছে সারাদেশে 1০০% ফ্রি হোম ডেলিভারি';
+    document.getElementById('edit-checkout-subtitle').value = d.checkout.subtitle || '২ বা ৩ সেটের অর্ডারে থাকছে সারাদেশে ১০০% ফ্রি হোম ডেলিভারি';
   }
 
   const bundlesContainer = document.getElementById('bundles-editor-container');
@@ -876,7 +857,6 @@ async function saveCurrentPageData() {
   if (!d.hero) d.hero = {};
   if (!d.problemSolution) d.problemSolution = { cards: [] };
   if (!d.howItWorks) d.howItWorks = { steps: [] };
-  if (!d.comparison) d.comparison = {};
   if (!d.checkout) d.checkout = {};
   if (!d.bundles) d.bundles = [];
   if (!d.reviews) d.reviews = [];
@@ -961,18 +941,6 @@ async function saveCurrentPageData() {
   if (document.getElementById('edit-included-small-usage')) d.whatsIncluded.smallSpoonUsage = document.getElementById('edit-included-small-usage').value.trim();
   if (document.getElementById('edit-included-banner-title')) d.whatsIncluded.bannerTitle = document.getElementById('edit-included-banner-title').value.trim();
   if (document.getElementById('edit-included-banner-desc')) d.whatsIncluded.bannerDesc = document.getElementById('edit-included-banner-desc').value.trim();
-
-  // 7. Comparison Section (Image Showcase)
-  if (!d.comparison) d.comparison = {};
-  if (document.getElementById('edit-comp-title')) {
-    d.comparison.title = document.getElementById('edit-comp-title').value.trim();
-  }
-  if (document.getElementById('edit-comp-subtitle')) {
-    d.comparison.subtitle = document.getElementById('edit-comp-subtitle').value.trim();
-  }
-  if (document.getElementById('edit-comp-image-url')) {
-    d.comparison.imageUrl = document.getElementById('edit-comp-image-url').value.trim();
-  }
 
   // 7. Unified Package Offers & Checkout Section
   if (!d.checkout) d.checkout = {};

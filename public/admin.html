@@ -245,7 +245,7 @@
           <span class="text-2xl">✏️</span>
           <div>
             <h2 class="text-xl font-extrabold text-slate-900">Landing Page Visual Editor</h2>
-            <p class="text-xs text-slate-500">Edit copy, images, pricing, comparison table, and offer bundles</p>
+            <p class="text-xs text-slate-500">Edit copy, images, pricing, and offer bundles</p>
           </div>
         </div>
 
@@ -492,47 +492,10 @@
           </div>
         </div>
 
-        <!-- 7. Comparison Section (Infographic Image Showcase) -->
+        <!-- 7. Offer Bundles & Package Pricing -->
         <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>📊 7. Comparison Section (Showcase Image)</span>
-          </h3>
-          <div class="space-y-4 text-sm">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block font-bold text-slate-700 text-xs mb-1">Section Title</label>
-                <input type="text" id="edit-comp-title" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 text-xs mb-1">Section Subtitle</label>
-                <input type="text" id="edit-comp-subtitle" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none" />
-              </div>
-            </div>
-
-            <!-- Comparison Image Uploader -->
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="block font-bold text-slate-800 text-xs">Comparison Showcase / Comparison Infographic Image</label>
-                <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
-                  <span>Quick Default:</span>
-                  <button type="button" onclick="setQuickImage('edit-comp-image-url', 'comp-preview-img', '/images/comp-infographic.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">comp-infographic.svg</button>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <input type="file" id="comp-image-file-input" accept="image/*" onchange="uploadMediaFile(this, 'edit-comp-image-url', 'comp-preview-img')" class="text-xs text-slate-500" />
-                <input type="text" id="edit-comp-image-url" placeholder="/images/comp-infographic.svg" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-latin" />
-              </div>
-              <div class="pt-2">
-                <img id="comp-preview-img" src="/images/comp-infographic.svg" alt="Comparison Preview" class="max-h-48 w-auto rounded-xl border border-slate-200 object-contain bg-white shadow-xs" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 8. Offer Bundles & Package Pricing -->
-        <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>🎁 8. Unified Package Offers & Checkout Section</span>
+            <span>🎁 7. Unified Package Offers & Checkout Section</span>
           </h3>
           <div class="space-y-4 text-sm">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -552,10 +515,10 @@
           </div>
         </div>
 
-        <!-- 9. Delivery Charges -->
+        <!-- 8. Delivery Charges -->
         <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>🚚 9. Delivery Charge Rates</span>
+            <span>🚚 8. Delivery Charge Rates</span>
           </h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div>
@@ -569,20 +532,20 @@
           </div>
         </div>
 
-        <!-- 10. Customer Reviews -->
+        <!-- 9. Customer Reviews -->
         <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>⭐ 10. Customer Reviews (UGC Social Proof)</span>
+            <span>⭐ 9. Customer Reviews (UGC Social Proof)</span>
           </h3>
           <div id="reviews-editor-container" class="space-y-4">
             <!-- Dynamic Reviews -->
           </div>
         </div>
 
-        <!-- 11. FAQs -->
+        <!-- 10. FAQs -->
         <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>❓ 11. Frequently Asked Questions (FAQs)</span>
+            <span>❓ 10. Frequently Asked Questions (FAQs)</span>
           </h3>
           <div id="faq-editor-container" class="space-y-3">
             <!-- Dynamic FAQs -->

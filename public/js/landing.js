@@ -281,37 +281,7 @@ function renderLandingPage(data) {
     if (incSBadgeEl && data.whatsIncluded.smallSpoonBadge) incSBadgeEl.innerText = data.whatsIncluded.smallSpoonBadge;
   }
 
-  // 4. Comparison Section (High-Converting Infographic / Image)
-  const compTitleEl = document.getElementById('comparison-title');
-  if (compTitleEl) {
-    if (data.comparison?.title) {
-      compTitleEl.innerText = data.comparison.title;
-    } else {
-      compTitleEl.innerText = 'কেন এটি আপনার সাধারণ চামচের চেয়ে বহুগুণে সেরা?';
-    }
-  }
-
-  const compSubEl = document.getElementById('comparison-subtitle');
-  if (compSubEl) {
-    if (data.comparison?.subtitle) {
-      compSubEl.innerText = data.comparison.subtitle;
-    } else {
-      compSubEl.innerText = 'সাধারণ প্লাস্টিক চামচ ও ডিজিটাল স্কেলের সাথে সরাসরি তুলনা';
-    }
-  }
-
-  const compImgEl = document.getElementById('comparison-img');
-  if (compImgEl) {
-    const compImageSrc = data.comparison?.imageUrl || '/uploads/media-1787690411261-932816281.webp';
-    compImgEl.src = compImageSrc;
-    compImgEl.onerror = function() {
-      this.onerror = null;
-      this.src = '/uploads/media-1787690411261-932816281.webp';
-    };
-    compImgEl.alt = data.comparison?.title || 'Comparison Infographic';
-  }
-
-  // 5. Unified Package Offers & Checkout Section
+  // 4. Unified Package Offers & Checkout Section
   const checkoutTitleEl = document.getElementById('checkout-title');
   if (checkoutTitleEl) checkoutTitleEl.innerText = data.checkout?.title || 'আপনার পছন্দের প্যাকেজটি বেছে নিন';
 
