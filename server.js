@@ -85,17 +85,17 @@ if (isVercel) {
   app.use('/uploads', express.static(path.join(require('os').tmpdir(), 'uploads')));
 }
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: '1y',
   etag: true,
   lastModified: true,
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
+    if (filePath.endsWith('.html') || filePath.endsWith('.js') || filePath.endsWith('.css')) {
+      // No caching for HTML/JS/CSS to ensure instant updates on all mobile & desktop devices
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
     } else {
-      // 1 Year TTL (31,536,000 seconds) with immutable flag for all static assets (CSS, JS, Images, SVGs, Fonts)
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      // Static media / fonts (images, icons, webp, woff2)
+      res.setHeader('Cache-Control', 'public, max-age=86400');
     }
   }
 }));
