@@ -272,7 +272,7 @@ app.post('/api/orders', async (req, res) => {
 
     // Get WhatsApp number from settings
     const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
-    const waNumber = waSetting ? waSetting.value : '8801700000000';
+    const waNumber = waSetting ? waSetting.value : '8801353892282';
 
     res.json({
       success: true,
@@ -300,12 +300,14 @@ app.post('/api/orders', async (req, res) => {
 // Single Order Lookup for Thank You Page
 app.get('/api/orders/:id', async (req, res) => {
   try {
-    const isNumber = /^\d+$/.test(req.params.id);
-    let order;
-    if (isNumber) {
-      order = await dbGet('SELECT * FROM orders WHERE id = ?', [req.params.id]);
-    } else {
-      order = await dbGet('SELECT * FROM orders WHERE order_number = ?', [req.params.id]);
+    const rawId = decodeURIComponent(req.params.id || '').trim();
+    if (!rawId) {
+      return res.status(400).json({ success: false, error: 'Order ID is required' });
+    }
+
+    let order = await dbGet('SELECT * FROM orders WHERE LOWER(order_number) = LOWER(?)', [rawId]);
+    if (!order && /^\d+$/.test(rawId)) {
+      order = await dbGet('SELECT * FROM orders WHERE id = ?', [Number(rawId)]);
     }
 
     if (!order) {
@@ -313,7 +315,7 @@ app.get('/api/orders/:id', async (req, res) => {
     }
 
     const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
-    order.whatsapp_number = waSetting ? waSetting.value : '8801700000000';
+    order.whatsapp_number = waSetting ? waSetting.value : '8801353892282';
 
     res.json({ success: true, order });
   } catch (err) {

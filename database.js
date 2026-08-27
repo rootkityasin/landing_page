@@ -99,9 +99,9 @@ const defaultOrigamiPageData = {
       "🛡️ DuraBend™ টেকনোলজি (১০০,০০০+ ফোল্ড): ফুড-সেফ পলিমার যা কখনো ভাঙবে না বা বাঁকা হবে না।"
     ],
     ratingText: "৪.৯/৫ রেটিং (৩৫০+ ভেরিফাইড রিভিউ)",
-    regularPrice: 1100,
+    regularPrice: 1200,
     discountedPrice: 666,
-    discountBadge: "৪০% ছাড়",
+    discountBadge: "৪৫% ছাড়",
     ctaText: "এখনই অর্ডার করুন",
     mediaType: "image",
     mediaUrl: "/images/post1.webp",
@@ -176,39 +176,41 @@ const defaultOrigamiPageData = {
   bundles: [
     {
       id: "bundle_1",
-      name: "১ সেট (ট্রায়াল প্যাক)",
-      badge: "ট্রায়াল প্যাক",
+      name: "১ সেট — ৳৬৬৬",
+      badge: "১ সেট (বিজ্ঞাপনের অফার)",
       desc: "১টি বড় চামচ + ১টি ছোট চামচ (মোট ৬টি মাপ)",
       price: 666,
-      regularPrice: 1100,
-      savings: "৪৩৪ টাকা ছাড়",
+      regularPrice: 1200,
+      savings: "৫৩৪ টাকা ছাড় (৪৫% ছাড়)",
       freeDelivery: false,
       isPopular: false
     },
     {
       id: "bundle_2",
-      name: "২ সেট (ফ্যামিলি প্যাক)",
-      badge: "⭐ সর্বাধিক জনপ্রিয়",
+      name: "২ সেট — ৳১,১৯৯",
+      badge: "⭐ সেরা অফার + ফ্রি ডেলিভারি",
       desc: "২টি বড় চামচ + ২টি ছোট চামচ (ফ্যামিলি ও গিফট প্যাক)",
       price: 1199,
-      regularPrice: 2200,
-      savings: "১০০১ টাকা ছাড় + ফ্রি ডেলিভারি",
+      regularPrice: 2400,
+      savings: "১২০১ টাকা ছাড় + ফ্রি ডেলিভারি",
       freeDelivery: true,
       isPopular: true
     },
     {
       id: "bundle_3",
-      name: "৩ সেট (সুপার সেভার)",
-      badge: "🔥 বেস্ট ভ্যালু",
+      name: "৩ সেট — ৳১,৬৯৯",
+      badge: "🔥 মেগা সেভার + ফ্রি ডেলিভারি",
       desc: "৩টি বড় চামচ + ৩টি ছোট চামচ (নিজের ও আত্মীয়দের জন্য)",
       price: 1699,
-      regularPrice: 3300,
-      savings: "১৬০১ টাকা ছাড় + ফ্রি ডেলিভারি",
+      regularPrice: 3600,
+      savings: "১৯০১ টাকা ছাড় + ফ্রি ডেলিভারি",
       freeDelivery: true,
       isPopular: false
     }
   ],
   checkout: {
+    title: "প্যাকেজ অফার বেছে নিয়ে অর্ডার কনফার্ম করুন",
+    subtitle: "১ সেটে বিজ্ঞাপনের অফার ৳৬৬৬ • ২ বা ৩ সেটে পাচ্ছেন ১০০% ফ্রি হোম ডেলিভারি",
     formTitle: "অর্ডার কনফার্ম করতে নিচের তথ্যগুলো পূরণ করুন",
     formSubtitle: "🔒 ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে চেক করে টাকা পরিশোধ করবেন",
     deliveryDhaka: 60,
@@ -262,7 +264,7 @@ const defaultOrigamiPageData = {
     }
   ],
   whatsapp: {
-    phoneNumber: "8801700000000",
+    phoneNumber: "8801353892282",
     messagePrefix: "হ্যালো, আমি ওয়েবসাইট থেকে অর্ডার কনফার্ম করতে চাই। অর্ডার নম্বর: "
   }
 };
@@ -351,7 +353,7 @@ async function initDatabase() {
     { key: 'pathao_username', value: '' },
     { key: 'pathao_password', value: '' },
     { key: 'pathao_store_id', value: '' },
-    { key: 'whatsapp_number', value: '8801700000000' }
+    { key: 'whatsapp_number', value: '8801353892282' }
   ];
 
   for (const s of defaultSettings) {

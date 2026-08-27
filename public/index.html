@@ -102,8 +102,8 @@
               </div>
               <div class="flex items-baseline gap-2.5">
                 <span id="hero-discounted-price" class="text-2xl sm:text-3xl font-black text-[#D92143]">৳৬৬৬</span>
-                <span id="hero-regular-price" class="text-base text-[#475569] font-bold line-through">৳১,১০০</span>
-                <span id="hero-discount-badge" class="bg-[#D92143] text-white text-xs font-extrabold px-2.5 py-0.5 rounded-full shadow-xs">৪০% ছাড়</span>
+                <span id="hero-regular-price" class="text-base text-[#475569] font-bold line-through">৳১,২০০</span>
+                <span id="hero-discount-badge" class="bg-[#D92143] text-white text-xs font-extrabold px-2.5 py-0.5 rounded-full shadow-xs">৪৫% ছাড়</span>
               </div>
             </div>
 
@@ -412,13 +412,13 @@
             <div id="color-selector-grid" class="grid grid-cols-2 gap-2.5 sm:gap-3">
               
               <!-- Red Option -->
-              <div onclick="selectColor('Red')" id="color-opt-Red" class="color-card border-2 border-[#E0C375]/50 bg-white rounded-2xl p-2.5 sm:p-3 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
+              <div onclick="selectColor('Red')" id="color-opt-Red" class="color-card selected border-2 border-[#D92143] bg-[#FEF5E4] rounded-2xl p-2.5 sm:p-3 flex items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                   <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl p-1 border border-[#E0C375]/60 flex items-center justify-center flex-shrink-0 shadow-2xs overflow-hidden">
                     <img src="/images/variant-red.webp" alt="মারুন রেড চামচ" width="56" height="56" loading="lazy" decoding="async" class="w-full h-full object-contain" />
                   </div>
                   <div class="min-w-0">
-                    <span id="color-label-red" class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">২টিই মেরুন রেড</span>
+                    <span id="color-label-red" class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">মেরুন রেড (১ সেট)</span>
                     <span class="text-[10px] text-[#D92143] font-bold block mt-0.5">Maroon Red</span>
                   </div>
                 </div>
@@ -434,7 +434,7 @@
                     <img src="/images/variant-black.webp" alt="ক্লাসিক ব্ল্যাক চামচ" width="56" height="56" loading="lazy" decoding="async" class="w-full h-full object-contain" />
                   </div>
                   <div class="min-w-0">
-                    <span id="color-label-black" class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">২টিই ক্লাসিক ব্ল্যাক</span>
+                    <span id="color-label-black" class="font-extrabold text-xs sm:text-sm text-[#0F172A] block leading-tight">ক্লাসিক ব্ল্যাক (১ সেট)</span>
                     <span class="text-[10px] text-slate-600 font-bold block mt-0.5">Classic Black</span>
                   </div>
                 </div>
@@ -444,7 +444,7 @@
               </div>
 
               <!-- Mixed Combo Option (1 Red + 1 Black - Default for 2 Sets) -->
-              <div onclick="selectColor('Mixed')" id="color-opt-Mixed" class="color-card selected col-span-2 flex border-2 border-[#D92143] bg-[#FEF5E4] rounded-2xl p-2.5 sm:p-3 items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
+              <div onclick="selectColor('Mixed')" id="color-opt-Mixed" class="color-card col-span-2 hidden border-2 border-[#E0C375]/50 bg-white rounded-2xl p-2.5 sm:p-3 items-center justify-between cursor-pointer transition shadow-2xs hover:border-[#D92143] gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                   <div class="flex -space-x-2 flex-shrink-0">
                     <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl p-1 border border-[#E0C375]/60 flex items-center justify-center shadow-2xs overflow-hidden">
@@ -542,7 +542,7 @@
             </div>
             <div class="flex justify-between text-[#334155]">
               <span>ডেলিভারি চার্জ:</span>
-              <span id="summary-delivery-charge" class="font-bold text-emerald-700">ফ্রি (৳০)</span>
+              <span id="summary-delivery-charge" class="font-bold text-[#334155]">৳৬০</span>
             </div>
             <div class="border-t border-[#E0C375]/40 pt-2 flex justify-between items-baseline text-base font-extrabold text-[#0F172A]">
               <span>Total:</span>
@@ -552,7 +552,7 @@
 
           <!-- Submit Order Button -->
           <button type="submit" id="submit-order-btn" style="background-color: #D92143 !important; color: #FFFFFF !important;" class="w-full bg-[#D92143] hover:bg-[#BF1A37] text-white font-black text-base sm:text-lg py-3.5 sm:py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center transition active:scale-98">
-            <span id="submit-btn-text">ক্যাশ অন ডেলিভারি (৳১,১৯৯)</span>
+            <span id="submit-btn-text">ক্যাশ অন ডেলিভারি (৳৭২৬)</span>
           </button>
 
           <!-- Risk-Free COD Assurance -->
@@ -691,6 +691,22 @@
       <div class="pt-2 text-slate-300 text-xs sm:text-[13px] space-y-1">
         <p class="font-latin font-semibold text-slate-200">© 2026 Polygons LLC. All Rights Reserved.</p>
         <p class="text-slate-300 text-[11px] sm:text-xs">Distributed across Bangladesh with verified Cash-on-Delivery service.</p>
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs pt-1.5">
+          <a href="tel:01353892282" class="inline-flex items-center gap-1.5 text-[#E0C375] hover:text-white transition">
+            <svg class="w-3.5 h-3.5 text-[#E0C375] fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></svg>
+            <span class="font-latin font-bold text-[#E0C375]">01353-892282</span>
+          </a>
+          <span class="text-slate-600 hidden sm:inline">•</span>
+          <a href="https://wa.me/8801353892282" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-[#25D366] hover:text-[#1EBE5D] transition">
+            <svg class="w-4 h-4 text-[#25D366] fill-[#25D366] flex-shrink-0" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            <span class="font-latin font-bold text-[#25D366]">01353-892282</span>
+          </a>
+          <span class="text-slate-600 hidden sm:inline">•</span>
+          <a href="mailto:info.polygonsbd@gmail.com" class="inline-flex items-center gap-1.5 text-slate-300 hover:text-white transition">
+            <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span class="font-latin text-slate-300">info.polygonsbd@gmail.com</span>
+          </a>
+        </div>
       </div>
 
     </div>
@@ -702,7 +718,7 @@
   <div id="sticky-mobile-bar" class="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[#E0C375]/40 px-4 py-2.5 z-40 shadow-2xl flex items-center justify-between gap-3">
     <div class="leading-tight pl-1">
       <div class="text-[11px] text-[#64748B] font-bold">Total:</div>
-      <div id="mobile-bar-price" class="text-xl font-black text-[#D92143] leading-none pt-0.5">৳১,১৯৯</div>
+      <div id="mobile-bar-price" class="text-xl font-black text-[#D92143] leading-none pt-0.5">৳৭২৬</div>
     </div>
     <button onclick="scrollToCheckout()" style="background-color: #D92143 !important; color: #FFFFFF !important;" class="w-auto bg-[#D92143] hover:bg-[#BF1A37] text-white font-black py-2.5 px-5 rounded-2xl shadow-lg flex items-center justify-center gap-2 transition active:scale-95 flex-shrink-0">
       <svg class="w-5 h-5 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

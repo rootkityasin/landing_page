@@ -138,7 +138,7 @@ function renderLandingPage(data) {
   if (heroDiscPriceEl) heroDiscPriceEl.innerText = `৳${toBanglaDigits(data.hero.discountedPrice)}`;
 
   const heroDiscBadgeEl = document.getElementById('hero-discount-badge');
-  if (heroDiscBadgeEl) heroDiscBadgeEl.innerText = data.hero.discountBadge || '৪০% ছাড়';
+  if (heroDiscBadgeEl) heroDiscBadgeEl.innerText = data.hero.discountBadge || '৪৫% ছাড়';
 
   const heroCtaEl = document.getElementById('hero-cta-btn');
   if (heroCtaEl) {
@@ -432,47 +432,60 @@ function renderBundles(bundles) {
   const bundlesContainer = document.getElementById('bundles-container');
   if (!bundles || bundles.length === 0 || !bundlesContainer) return;
 
-  // Set default selected bundle (prefer isPopular or index 1)
-  const popularBundle = bundles.find(b => b.isPopular) || bundles[1] || bundles[0];
-  selectedBundle = popularBundle;
+  // Default to 1st bundle (1 Set — ৳666) so Facebook ad visitors seeing ৳666 immediately get 1 Set
+  const defaultBundle = bundles[0];
+  selectedBundle = defaultBundle;
 
-  bundlesContainer.innerHTML = bundles.map(b => {
+  bundlesContainer.innerHTML = bundles.map((b, i) => {
     const isSelected = b.id === selectedBundle.id;
+    
+    // Delivery status badge for cards
+    let deliveryBadge = '';
+    if (b.freeDelivery) {
+      deliveryBadge = '<span class="font-extrabold text-[#D92143] bg-[#FEF5E4] border border-[#E0C375] px-2.5 py-0.5 rounded-full shadow-2xs">🚚 ফ্রি ডেলিভারি</span>';
+    } else {
+      deliveryBadge = '<span class="font-bold text-[#475569] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md text-[11px]">+ ডেলিভারি চার্জ (ঢাকা ৬০ / বাইরে ১৩০)</span>';
+    }
+
+    const badgeClasses = b.isPopular 
+      ? 'bg-[#D92143] text-white border-2 border-[#FEF5E4] shadow-xs animate-pulse'
+      : (i === 0 
+          ? 'bg-emerald-700 text-white border border-emerald-600 shadow-2xs' 
+          : 'bg-[#0F172A] text-[#E0C375] border border-[#E0C375]/40 shadow-2xs');
+
     return `
-      <div onclick="selectBundle('${b.id}')" id="bundle-card-${b.id}" class="bundle-card ${isSelected ? 'selected' : ''} relative rounded-3xl p-5 sm:p-6 flex flex-col justify-between">
+      <div onclick="selectBundle('${b.id}')" id="bundle-card-${b.id}" class="bundle-card ${isSelected ? 'selected' : ''} relative rounded-3xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-200 hover:shadow-md cursor-pointer">
         ${b.badge ? `
-          <div class="absolute -top-3.5 right-5 ${b.isPopular ? 'bg-[#D92143] text-white' : 'bg-[#0F172A] text-[#E0C375] border border-[#E0C375]/30'} text-[11px] font-extrabold px-3.5 py-1 rounded-full shadow-sm font-latin tracking-wide">
+          <div class="absolute -top-3.5 right-4 sm:right-5 ${badgeClasses} text-[11px] font-black px-3.5 py-1 rounded-full font-latin tracking-wide">
             ${b.badge}
           </div>
         ` : ''}
 
-        <div class="flex items-start justify-between gap-2.5 mb-3">
+        <div class="flex items-start justify-between gap-2 mb-3">
           <div class="flex items-center gap-2.5 min-w-0 flex-1">
             <div class="bundle-radio-circle flex-shrink-0">
               <div class="bundle-radio-dot"></div>
             </div>
             <div class="min-w-0">
-              <h3 class="font-extrabold text-[#0F172A] text-[13px] xs:text-[14px] sm:text-base md:text-sm lg:text-base leading-tight whitespace-nowrap">${b.name}</h3>
-              <p class="text-xs text-[#334155] mt-0.5">${b.desc}</p>
+              <h3 class="font-black text-[#0F172A] text-[15px] sm:text-base md:text-sm lg:text-base leading-tight">${b.name}</h3>
+              <p class="text-xs text-[#334155] mt-1 leading-snug">${b.desc}</p>
             </div>
           </div>
           <div class="text-right flex-shrink-0 pl-1">
-            <div class="text-xl sm:text-2xl font-extrabold text-[#D92143]">৳${toBanglaDigits(b.price)}</div>
-            ${b.regularPrice ? `<div class="text-xs text-[#475569] font-bold line-through">৳${toBanglaDigits(b.regularPrice)}</div>` : ''}
+            <div class="text-xl sm:text-2xl font-black text-[#D92143] leading-none">৳${toBanglaDigits(b.price)}</div>
+            ${b.regularPrice ? `<div class="text-xs text-[#475569] font-bold line-through pt-1">৳${toBanglaDigits(b.regularPrice)}</div>` : ''}
           </div>
         </div>
 
-        <div class="flex items-center justify-between pt-3 border-t border-[#E0C375]/40 mt-2 text-xs">
-          <span class="font-bold text-[#D92143]">${b.savings || 'বিশেষ ছাড়'}</span>
-          <span class="font-bold ${b.freeDelivery ? 'text-[#D92143] bg-[#FEF5E4] border border-[#E0C375] px-2.5 py-0.5 rounded-full' : 'text-[#334155]'}">
-            ${b.freeDelivery ? '🚚 ফ্রি ডেলিভারি' : '+ ডেলিভারি চার্জ'}
-          </span>
+        <div class="flex items-center justify-between pt-3 border-t border-[#E0C375]/40 mt-2 text-xs flex-wrap gap-1.5">
+          <span class="font-extrabold text-[#D92143]">${b.savings || 'বিশেষ অফার'}</span>
+          ${deliveryBadge}
         </div>
       </div>
     `;
   }).join('');
 
-  selectBundle(popularBundle.id);
+  selectBundle(defaultBundle.id);
 }
 
 // Switch Selected Bundle
@@ -518,13 +531,17 @@ function selectBundle(bundleId) {
     if (mixedDescEl) mixedDescEl.innerText = '২টি মেরুন রেড + ১টি ক্লাসিক ব্ল্যাক';
     selectColor('Mixed');
   } else {
-    if (redLabelEl) redLabelEl.innerText = 'মেরুন রেড';
-    if (blackLabelEl) blackLabelEl.innerText = 'ক্লাসিক ব্ল্যাক';
+    if (redLabelEl) redLabelEl.innerText = 'মেরুন রেড (১ সেট)';
+    if (blackLabelEl) blackLabelEl.innerText = 'ক্লাসিক ব্ল্যাক (১ সেট)';
     if (mixedOptEl) {
       mixedOptEl.classList.add('hidden');
       mixedOptEl.classList.remove('flex');
     }
-    selectColor('Red');
+    if (selectedColor === 'Mixed') {
+      selectColor('Red');
+    } else {
+      selectColor(selectedColor || 'Red');
+    }
   }
 
   updateCheckoutSummary();
@@ -790,7 +807,34 @@ async function handleOrderSubmit(e) {
     const data = await res.json();
 
     if (data.success && data.order) {
-      // Fire client-side purchase pixel
+      // 1. Store order details in sessionStorage and localStorage for instant offline/serverless resilience
+      try {
+        sessionStorage.setItem('polygons_last_order', JSON.stringify(data.order));
+        localStorage.setItem(`polygons_order_${data.order.order_number}`, JSON.stringify(data.order));
+      } catch (e) {
+        console.warn('Storage save notice:', e);
+      }
+
+      // 2. Prepare URL query with compact payload as fallback
+      let targetUrl = `/thankyou?orderId=${encodeURIComponent(data.order.order_number)}`;
+      try {
+        const compactObj = {
+          id: data.order.order_number,
+          n: data.order.customer_name,
+          p: data.order.phone,
+          a: data.order.address,
+          b: data.order.bundle_name,
+          c: data.order.color_variant,
+          pr: data.order.item_price,
+          dc: data.order.delivery_charge,
+          t: data.order.total_amount,
+          w: data.order.whatsapp_number
+        };
+        const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(compactObj)))));
+        targetUrl += `&d=${encoded}`;
+      } catch (e) {}
+
+      // 3. Fire client-side purchase pixel
       if (window.fbq) {
         fbq('track', 'Purchase', {
           content_name: data.order.product_name,
@@ -800,8 +844,8 @@ async function handleOrderSubmit(e) {
         }, { eventID: orderEventId });
       }
 
-      // Redirect to Thank You page
-      window.location.href = `/thankyou?orderId=${data.order.order_number}`;
+      // 4. Redirect to Thank You page
+      window.location.href = targetUrl;
     } else {
       showFormError(data.error || 'অর্ডার সম্পন্ন হতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
       submitBtn.disabled = false;

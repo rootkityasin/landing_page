@@ -606,20 +606,42 @@ function populateEditorFields(d) {
 
   const bundlesContainer = document.getElementById('bundles-editor-container');
   bundlesContainer.innerHTML = (d.bundles || []).map((b, i) => `
-    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-slate-800 text-xs">Bundle Package #${i + 1} (${b.id})</span>
-        <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-          <input type="checkbox" id="edit-bundle-free-${i}" ${b.freeDelivery ? 'checked' : ''} />
-          <span>🚚 Free Delivery</span>
-        </label>
+    <div class="bundle-editor-item bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <span class="font-black text-slate-800 text-xs">📦 Package #${i + 1} (${b.id})</span>
+        <div class="flex items-center gap-3">
+          <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-pointer">
+            <input type="checkbox" id="edit-bundle-popular-${i}" ${b.isPopular ? 'checked' : ''} class="rounded text-[#D92143]" />
+            <span>⭐ Highlight Best Value</span>
+          </label>
+          <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-pointer">
+            <input type="checkbox" id="edit-bundle-free-${i}" ${b.freeDelivery ? 'checked' : ''} class="rounded text-emerald-600" />
+            <span>🚚 Free Delivery</span>
+          </label>
+        </div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <input type="text" id="edit-bundle-name-${i}" value="${b.name}" placeholder="Package Name" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold" />
-        <input type="number" id="edit-bundle-price-${i}" value="${b.price}" placeholder="Price (৳)" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-latin" />
-        <input type="text" id="edit-bundle-savings-${i}" value="${b.savings || ''}" placeholder="Savings Badge" class="px-3 py-2 rounded-xl border border-slate-200 text-xs" />
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 mb-1">Package Name</label>
+          <input type="text" id="edit-bundle-name-${i}" value="${(b.name || '').replace(/"/g, '&quot;')}" placeholder="e.g. ১ সেট — ৳৬৬৬" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold bg-white" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 mb-1">Top Badge Tag</label>
+          <input type="text" id="edit-bundle-badge-${i}" value="${(b.badge || '').replace(/"/g, '&quot;')}" placeholder="e.g. ⭐ সেরা অফার + ফ্রি ডেলিভারি" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-[#D92143] bg-white" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 mb-1">Price (৳)</label>
+          <input type="number" id="edit-bundle-price-${i}" value="${b.price || 0}" placeholder="Price (৳)" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-latin font-bold bg-white" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 mb-1">Savings Text</label>
+          <input type="text" id="edit-bundle-savings-${i}" value="${(b.savings || '').replace(/"/g, '&quot;')}" placeholder="e.g. ৫৩৪ টাকা ছাড়" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white" />
+        </div>
       </div>
-      <input type="text" id="edit-bundle-desc-${i}" value="${b.desc}" placeholder="Package Description" class="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs" />
+      <div>
+        <label class="block text-[11px] font-bold text-slate-600 mb-1">Description / Items Included</label>
+        <input type="text" id="edit-bundle-desc-${i}" value="${(b.desc || '').replace(/"/g, '&quot;')}" placeholder="Package Description" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white" />
+      </div>
     </div>
   `).join('');
 
@@ -1102,15 +1124,19 @@ async function saveCurrentPageData() {
 
   (d.bundles || []).forEach((b, i) => {
     const bn = document.getElementById(`edit-bundle-name-${i}`);
+    const bb = document.getElementById(`edit-bundle-badge-${i}`);
     const bp = document.getElementById(`edit-bundle-price-${i}`);
     const bs = document.getElementById(`edit-bundle-savings-${i}`);
     const bd = document.getElementById(`edit-bundle-desc-${i}`);
     const bf = document.getElementById(`edit-bundle-free-${i}`);
+    const bpop = document.getElementById(`edit-bundle-popular-${i}`);
     if (bn) b.name = bn.value.trim();
+    if (bb) b.badge = bb.value.trim();
     if (bp) b.price = Number(bp.value) || 0;
     if (bs) b.savings = bs.value.trim();
     if (bd) b.desc = bd.value.trim();
     if (bf) b.freeDelivery = bf.checked;
+    if (bpop) b.isPopular = bpop.checked;
   });
 
   // 8. Delivery
@@ -1253,7 +1279,7 @@ async function loadSettings() {
     document.getElementById('set-meta-pixel-id').value = s.meta_pixel_id || '';
     document.getElementById('set-meta-test-code').value = s.meta_test_event_code || '';
     document.getElementById('set-meta-capi-token').value = s.meta_capi_token || '';
-    document.getElementById('set-whatsapp-number').value = s.whatsapp_number || '8801700000000';
+    document.getElementById('set-whatsapp-number').value = s.whatsapp_number || '8801353892282';
   } catch (err) {
     console.error('Error loading settings:', err);
   }

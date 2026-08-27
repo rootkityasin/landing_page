@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>অর্ডার সফল হয়েছে! | Polygons® Store</title>
+  <title>অর্ডার সম্পন্ন হয়েছে! | Polygons® Store</title>
   
   <!-- Preload local primary Bengali WebFont -->
   <link rel="preload" href="/fonts/font-1.woff2" as="font" type="font/woff2" crossorigin />
@@ -17,6 +17,39 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+  <style>
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      header, footer, #whatsapp-vip-box, .no-print, nav, a[href="/"] {
+        display: none !important;
+      }
+      main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+      #thankyou-card {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        padding: 20px !important;
+        border-radius: 8px !important;
+        background: #ffffff !important;
+      }
+      .print-header {
+        display: block !important;
+      }
+      .print-footer {
+        display: block !important;
+      }
+    }
+  </style>
 </head>
 <body class="bg-[#FFFDF9] text-[#1C1917] min-h-screen flex flex-col justify-between antialiased selection:bg-[#D92143] selection:text-white">
 
@@ -30,14 +63,37 @@
   <main class="max-w-2xl mx-auto px-4 py-8 sm:py-12 w-full">
     
     <!-- Success Card -->
-    <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-lg border border-[#E0C375]/40 text-center space-y-6">
+    <div id="thankyou-card" class="bg-white rounded-3xl p-6 sm:p-10 shadow-lg border border-[#E0C375]/40 text-center space-y-6">
       
+      <!-- Printable Only Official Daraz-Style Header -->
+      <div class="hidden print-header border-b border-slate-200 pb-4 mb-4 text-left">
+        <div class="flex justify-between items-start">
+          <div class="space-y-1">
+            <img src="/images/polygons_logo.png" alt="Polygons" style="height: 36px; width: auto;" />
+            <div class="text-xs text-slate-500 font-bold">Polygons Bangladesh</div>
+            <div class="flex items-center gap-2 text-[11px] text-slate-600 font-latin font-bold pt-0.5">
+              <span class="inline-flex items-center gap-1"><svg class="w-3 h-3 text-slate-700" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></svg> 01353-892282</span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1 text-[#25D366]"><svg class="w-3 h-3 fill-[#25D366]" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg> 01353-892282</span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1"><svg class="w-3 h-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> info.polygonsbd@gmail.com</span>
+            </div>
+          </div>
+          <div class="text-right space-y-0.5">
+            <h2 class="text-xl font-black text-slate-900 tracking-tight">INVOICE</h2>
+            <div class="text-xs font-black text-[#D92143]" id="print-order-num"></div>
+            <div class="text-[11px] text-slate-500 font-latin" id="print-order-date"></div>
+            <div class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded inline-block">CASH ON DELIVERY</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Checkmark Icon -->
-      <div class="w-16 h-16 bg-[#FEF5E4] text-[#D92143] border border-[#E0C375] rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-inner">
+      <div class="w-16 h-16 bg-[#FEF5E4] text-[#D92143] border border-[#E0C375] rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-inner no-print">
         ✓
       </div>
 
-      <div class="space-y-2">
+      <div class="space-y-2 no-print">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-[#1C1917]">
           ধন্যবাদ! আপনার অর্ডারটি গ্রহণ করা হয়েছে
         </h1>
@@ -49,16 +105,16 @@
       <!-- Order ID & Status Badge -->
       <div class="bg-[#FEF5E4]/60 rounded-2xl p-4 border border-[#E0C375]/50 flex flex-wrap items-center justify-between gap-3 text-sm">
         <div>
-          <span class="text-[#44403C] font-medium">অর্ডার নম্বর:</span>
+          <span class="text-[#44403C] font-bold">অর্ডার নম্বর:</span>
           <span id="order-number-display" class="font-extrabold text-[#D92143] text-base font-latin ml-1">লোড হচ্ছে...</span>
         </div>
-        <span class="bg-[#1C1917] text-[#E0C375] text-xs font-bold px-3 py-1 rounded-full font-latin border border-[#E0C375]/30">
+        <span class="bg-[#1C1917] text-[#E0C375] text-xs font-black px-3 py-1 rounded-full font-latin border border-[#E0C375]/30">
           PROCESSING (COD)
         </span>
       </div>
 
       <!-- WhatsApp VIP Priority Confirmation CTA -->
-      <div class="bg-[#1C1917] text-white rounded-2xl p-5 text-left space-y-3 border border-[#E0C375]/40 shadow-md">
+      <div id="whatsapp-vip-box" class="bg-[#1C1917] text-white rounded-2xl p-5 text-left space-y-3 border border-[#E0C375]/40 shadow-md no-print">
         <div class="flex items-start gap-3">
           <span class="text-2xl">📲</span>
           <div>
@@ -74,56 +130,82 @@
         </a>
       </div>
 
-      <!-- Invoice Details Table -->
+      <!-- Clean Professional Daraz-Style Invoice Table -->
       <div class="text-left space-y-3 pt-2">
-        <h3 class="font-extrabold text-[#1C1917] text-base border-b border-[#E0C375]/40 pb-2">
-          অর্ডার ইনভয়েস ও ডেলিভারি বিবরণ
-        </h3>
+        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+          <h3 class="font-black text-[#1C1917] text-base">
+            অর্ডার ইনভয়েস (Invoice)
+          </h3>
+          <span id="inv-date-time" class="text-xs text-[#64748B] font-bold font-latin"></span>
+        </div>
         
-        <div class="space-y-2 text-sm text-[#44403C]">
-          <div class="flex justify-between">
-            <span class="text-[#44403C]/70">গ্রাহকের নাম:</span>
-            <span id="inv-cust-name" class="font-bold text-[#1C1917]">-</span>
+        <div class="space-y-2.5 text-sm text-[#44403C]">
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500 font-medium">গ্রাহকের নাম:</span>
+            <span id="inv-cust-name" class="font-bold text-slate-900">-</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-[#44403C]/70">মোবাইল নম্বর:</span>
-            <span id="inv-cust-phone" class="font-bold text-[#1C1917]">-</span>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500 font-medium">মোবাইল নম্বর:</span>
+            <span id="inv-cust-phone" class="font-bold text-slate-900 font-latin">-</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-[#44403C]/70">ডেলিভারি ঠিকানা:</span>
-            <span id="inv-cust-address" class="font-medium text-[#1C1917] text-right max-w-xs">-</span>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500 font-medium">ডেলিভারি ঠিকানা:</span>
+            <span id="inv-cust-address" class="font-medium text-slate-900 text-right max-w-xs">-</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-[#44403C]/70">প্যাকেজ:</span>
-            <span id="inv-bundle-name" class="font-bold text-[#1C1917]">-</span>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500 font-medium">প্যাকেজ:</span>
+            <span id="inv-bundle-name" class="font-bold text-slate-900">-</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-[#44403C]/70">কালার ভ্যারিয়েন্ট:</span>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500 font-medium">কালার:</span>
             <span id="inv-color-name" class="font-extrabold text-[#D92143]">-</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-[#44403C]/70">প্রোডাক্ট মূল্য:</span>
-            <span id="inv-item-price" class="font-bold text-[#1C1917]">-</span>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500 font-medium">প্রোডাক্ট মূল্য:</span>
+            <span id="inv-item-price" class="font-bold text-slate-900">-</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-[#44403C]/70">ডেলিভারি চার্জ:</span>
-            <span id="inv-delivery-charge" class="font-bold text-[#1C1917]">-</span>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500 font-medium">ডেলিভারি চার্জ:</span>
+            <span id="inv-delivery-charge" class="font-bold text-slate-900">-</span>
           </div>
-          <div class="flex justify-between text-base font-extrabold text-[#1C1917] border-t border-[#E0C375]/30 pt-2">
-            <span>Total:</span>
-            <span id="inv-total-amount" class="text-[#D92143] text-lg font-black">-</span>
+          <div class="flex justify-between text-base font-black text-slate-900 border-t-2 border-slate-800 pt-2.5">
+            <span>সর্বমোট (Total):</span>
+            <span id="inv-total-amount" class="text-[#D92143] text-xl font-black">-</span>
           </div>
         </div>
       </div>
 
+      <!-- Action Buttons: Download Invoice & Print -->
+      <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 no-print">
+        <button type="button" onclick="printInvoice()" style="background-color: #0F172A !important; color: #FFFFFF !important;" class="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white font-extrabold text-sm py-3.5 px-4 rounded-2xl border border-slate-800 shadow-md flex items-center justify-center gap-2 transition active:scale-98 cursor-pointer">
+          <svg class="w-5 h-5 text-[#E0C375] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span class="text-white">ইনভয়েস ডাউনলোড (PDF)</span>
+        </button>
+
+        <button type="button" onclick="downloadInvoiceFile()" class="w-full bg-[#FEF5E4] hover:bg-[#FDECCE] text-[#D92143] font-extrabold text-sm py-3.5 px-4 rounded-2xl border border-[#E0C375] shadow-xs flex items-center justify-center gap-2 transition active:scale-98 cursor-pointer">
+          <svg class="w-5 h-5 text-[#D92143] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          <span>রিসিট ফাইল সেভ করুন</span>
+        </button>
+      </div>
+
+      <!-- Printable Only Clean Footer -->
+      <div class="hidden print-footer text-center border-t border-slate-200 pt-3 text-[11px] text-slate-500 space-y-0.5">
+        <p class="font-bold text-slate-700 flex items-center justify-center gap-3"><span>Polygons Store</span><span>•</span><span>📞 01353-892282</span><span>•</span><span>💬 01353-892282</span><span>•</span><span>✉️ info.polygonsbd@gmail.com</span></p>
+        <p>© 2026 Polygons LLC. All Rights Reserved.</p>
+      </div>
+
       <!-- Delivery Timeline Notice -->
-      <div class="bg-[#FEF5E4]/50 rounded-2xl p-4 text-xs text-[#44403C] text-left space-y-1 border border-[#E0C375]/40">
+      <div class="bg-[#FEF5E4]/50 rounded-2xl p-4 text-xs text-[#44403C] text-left space-y-1 border border-[#E0C375]/40 no-print">
         <p class="font-bold text-[#1C1917]">🚚 ডেলিভারি সময়সীমা:</p>
         <p>• ঢাকা সিটি: ২৪ থেকে ৪৮ ঘণ্টার মধ্যে হোম ডেলিভারি।</p>
         <p>• ঢাকার বাইরে: ২ থেকে ৩ কার্যদিবসের মধ্যে ডেলিভারি।</p>
       </div>
 
-      <div class="pt-2">
+      <div class="pt-2 no-print">
         <a href="/" class="inline-block text-[#D92143] hover:underline font-bold text-sm">
           ← হোমপেজে ফিরে যান
         </a>
@@ -135,7 +217,6 @@
 
   <!-- Footer with Payment Trust Logos -->
   <footer class="bg-[#1C1917] text-slate-300 py-10 text-center text-xs space-y-4 border-t border-[#E0C375]/30">
-    <!-- Footer Logo -->
     <div class="flex items-center justify-center">
       <img src="/images/logo-white.webp" alt="Polygons" loading="lazy" decoding="async" style="height: 34px !important; max-height: 34px !important; width: auto !important; max-width: 180px !important; object-fit: contain !important;" />
     </div>
@@ -156,10 +237,25 @@
         <span>💵 ক্যাশ অন ডেলিভারি</span>
       </div>
     </div>
-    <p class="text-slate-300 pt-1 text-xs">কাস্টমার সাপোর্ট: <a href="mailto:info.polygonsbd@gmail.com" class="text-[#F69D39] hover:underline font-latin">info.polygonsbd@gmail.com</a></p>
+    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs pt-1.5">
+          <a href="tel:01353892282" class="inline-flex items-center gap-1.5 text-[#E0C375] hover:text-white transition">
+            <svg class="w-3.5 h-3.5 text-[#E0C375] fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></svg>
+            <span class="font-latin font-bold text-[#E0C375]">01353-892282</span>
+          </a>
+          <span class="text-slate-600 hidden sm:inline">•</span>
+          <a href="https://wa.me/8801353892282" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-[#25D366] hover:text-[#1EBE5D] transition">
+            <svg class="w-4 h-4 text-[#25D366] fill-[#25D366] flex-shrink-0" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            <span class="font-latin font-bold text-[#25D366]">01353-892282</span>
+          </a>
+          <span class="text-slate-600 hidden sm:inline">•</span>
+          <a href="mailto:info.polygonsbd@gmail.com" class="inline-flex items-center gap-1.5 text-slate-300 hover:text-white transition">
+            <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span class="font-latin text-slate-300">info.polygonsbd@gmail.com</span>
+          </a>
+        </div>
     <p class="text-slate-400 font-latin text-xs">© 2026 Polygons LLC. All Rights Reserved.</p>
   </footer>
 
-  <script src="/js/thankyou.js"></script>
+  <script src="/js/thankyou.js?v=5.3"></script>
 </body>
 </html>
