@@ -28,7 +28,7 @@ function getAuthHeaders(isJson = true) {
   return headers;
 }
 
-function triggerRelogin(msg = 'দয়া করে এডমিন পাসওয়ার্ড দিয়ে লগইন করুন।') {
+function triggerRelogin(msg = 'Please sign in with your admin password.') {
   localStorage.removeItem('origami_admin_token');
   adminToken = '';
   const modal = document.getElementById('login-modal');
@@ -51,7 +51,7 @@ async function checkAuth() {
   try {
     const res = await fetch('/api/admin/verify', { headers: getAuthHeaders() });
     if (res.status === 401) {
-      triggerRelogin('সেশন শেষ হয়েছে। দয়া করে আবার লগইন করুন।');
+      triggerRelogin('Session expired. Please sign in again.');
       return;
     }
     modal.classList.add('hidden');
@@ -618,11 +618,11 @@ function populateEditorFields(d) {
       <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
         <div>
           <label class="block text-[11px] font-bold text-slate-600 mb-1">Package Name</label>
-          <input type="text" id="edit-bundle-name-${i}" value="${(b.name || '').replace(/"/g, '&quot;')}" placeholder="e.g. ১ সেট — ৳৬৬৬" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold bg-white" />
+          <input type="text" id="edit-bundle-name-${i}" value="${(b.name || '').replace(/"/g, '&quot;')}" placeholder="e.g. 1 Set — ৳666" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold bg-white" />
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-600 mb-1">Top Badge Tag</label>
-          <input type="text" id="edit-bundle-badge-${i}" value="${(b.badge || '').replace(/"/g, '&quot;')}" placeholder="e.g. ⭐ সেরা অফার + ফ্রি ডেলিভারি" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-[#D92143] bg-white" />
+          <input type="text" id="edit-bundle-badge-${i}" value="${(b.badge || '').replace(/"/g, '&quot;')}" placeholder="e.g. ⭐ Best Offer + Free Delivery" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-[#D92143] bg-white" />
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-600 mb-1">Price (৳)</label>
@@ -630,7 +630,7 @@ function populateEditorFields(d) {
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-600 mb-1">Savings Text</label>
-          <input type="text" id="edit-bundle-savings-${i}" value="${(b.savings || '').replace(/"/g, '&quot;')}" placeholder="e.g. ৫৩৪ টাকা ছাড়" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white" />
+          <input type="text" id="edit-bundle-savings-${i}" value="${(b.savings || '').replace(/"/g, '&quot;')}" placeholder="e.g. ৳534 Discount (45% OFF)" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white" />
         </div>
       </div>
       <div>
@@ -727,12 +727,12 @@ function renderReviewsEditor(d) {
           <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
             <div class="sm:col-span-4">
               <label class="block text-[11px] font-bold text-slate-600 mb-1">Customer Name</label>
-              <input type="text" id="edit-rev-name-${i}" value="${(rev.name || '').replace(/"/g, '&quot;')}" placeholder="যেমন: তানভীর আহমেদ" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold bg-white" />
+              <input type="text" id="edit-rev-name-${i}" value="${(rev.name || '').replace(/"/g, '&quot;')}" placeholder="e.g. Tanvir Ahmed" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold bg-white" />
             </div>
 
             <div class="sm:col-span-3">
               <label class="block text-[11px] font-bold text-slate-600 mb-1">Location / City</label>
-              <input type="text" id="edit-rev-loc-${i}" value="${(rev.location || '').replace(/"/g, '&quot;')}" placeholder="যেমন: ধানমন্ডি, ঢাকা" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white" />
+              <input type="text" id="edit-rev-loc-${i}" value="${(rev.location || '').replace(/"/g, '&quot;')}" placeholder="e.g. Dhanmondi, Dhaka" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white" />
             </div>
 
             <div class="sm:col-span-2">
@@ -748,19 +748,19 @@ function renderReviewsEditor(d) {
 
             <div class="sm:col-span-3">
               <label class="block text-[11px] font-bold text-slate-600 mb-1">Date</label>
-              <input type="text" id="edit-rev-date-${i}" value="${(rev.date || '').replace(/"/g, '&quot;')}" placeholder="যেমন: ৩ দিন আগে" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white" />
+              <input type="text" id="edit-rev-date-${i}" value="${(rev.date || '').replace(/"/g, '&quot;')}" placeholder="e.g. 3 days ago" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white" />
             </div>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-slate-600 mb-1">Review Comment</label>
-            <textarea id="edit-rev-comment-${i}" rows="2" placeholder="গ্রাহকের বিস্তারিত রিভিউ লিখুন..." class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white">${rev.comment || ''}</textarea>
+            <textarea id="edit-rev-comment-${i}" rows="2" placeholder="Write detailed customer review feedback here..." class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white">${rev.comment || ''}</textarea>
           </div>
 
           <div class="flex items-center gap-2 pt-0.5">
             <input type="checkbox" id="edit-rev-verified-${i}" ${rev.verified !== false ? 'checked' : ''} class="rounded text-emerald-600 w-3.5 h-3.5" />
             <label for="edit-rev-verified-${i}" class="text-[11px] font-bold text-slate-600 cursor-pointer">
-              ✓ Verified Customer Badge (ভেরিফাইড ক্রেতা ব্যাজ দেখান)
+              ✓ Show Verified Customer Badge
             </label>
           </div>
         </div>
@@ -768,7 +768,7 @@ function renderReviewsEditor(d) {
 
       <button type="button" onclick="addReviewItem()" class="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-2 hover:border-slate-400 shadow-2xs">
         <span class="text-emerald-600 font-black text-sm">➕</span>
-        <span>Add New Customer Review (নতুন রিভিউ যোগ করুন)</span>
+        <span>+ Add New Customer Review</span>
       </button>
     </div>
   `;
@@ -779,12 +779,12 @@ function addReviewItem() {
   syncReviewsFromDOM();
   if (!currentEditingPageData.reviews) currentEditingPageData.reviews = [];
   currentEditingPageData.reviews.push({
-    name: "নতুন গ্রাহক",
-    location: "ঢাকা",
+    name: "Verified Customer",
+    location: "Dhaka",
     rating: 5,
     verified: true,
-    date: "সম্প্রতি",
-    comment: "প্রোডাক্টটি অত্যন্ত চমৎকার এবং কাজের। ডেলিভারিও পেয়েছি খুব দ্রুত।"
+    date: "Just now",
+    comment: "The folding measuring spoon is very handy, sturdy, and easy to clean. Highly recommended!"
   });
   renderReviewsEditor(currentEditingPageData);
 }
@@ -816,11 +816,11 @@ function renderFaqEditor(d) {
             </button>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Question (প্রশ্ন)</label>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Question</label>
             <input type="text" id="edit-faq-q-${i}" value="${(f.q || '').replace(/"/g, '&quot;')}" placeholder="Question" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold bg-white" />
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Answer (উত্তর)</label>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Answer</label>
             <textarea id="edit-faq-a-${i}" rows="2" placeholder="Answer" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white">${f.a || ''}</textarea>
           </div>
         </div>
@@ -828,7 +828,7 @@ function renderFaqEditor(d) {
 
       <button type="button" onclick="addFaqItem()" class="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-2 hover:border-slate-400 shadow-2xs">
         <span class="text-emerald-600 font-black text-sm">➕</span>
-        <span>Add New FAQ Question (নতুন প্রশ্ন ও উত্তর যোগ করুন)</span>
+        <span>+ Add New FAQ Item</span>
       </button>
     </div>
   `;
@@ -839,8 +839,8 @@ function addFaqItem() {
   syncFaqsFromDOM();
   if (!currentEditingPageData.faq) currentEditingPageData.faq = [];
   currentEditingPageData.faq.push({
-    q: "আপনার প্রশ্ন এখানে লিখুন?",
-    a: "প্রশ্নের উত্তর এখানে বিস্তারিত লিখুন।"
+    q: "How do I fold and use the spoon?",
+    a: "Simply pinch along the engraved measurement lines to fold into the required spoon volume."
   });
   renderFaqEditor(currentEditingPageData);
 }
@@ -978,7 +978,7 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
   formData.append('media', file);
 
   try {
-    showAdminToast('ছবি আপলোড হচ্ছে...');
+    showAdminToast('Uploading media...');
     const res = await fetch('/api/admin/upload', {
       method: 'POST',
       headers: {
@@ -993,10 +993,10 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
       data = JSON.parse(text);
     } catch (e) {
       if (res.status === 413 || text.includes('Request Entity Too Large') || text.includes('413')) {
-        alert('⚠️ ফাইলের সাইজ হোস্টিং লিমিটের চেয়ে বড় (Request Entity Too Large)। অনুগ্রহ করে ছোট সাইজের ছবি ব্যবহার করুন।');
+        alert('⚠️ File size exceeds server limit (Request Entity Too Large). Please choose a smaller image.');
         return;
       }
-      alert('সার্ভার এরর (' + res.status + '): ' + text.substring(0, 120));
+      alert('Server Error (' + res.status + '): ' + text.substring(0, 120));
       return;
     }
 
@@ -1009,12 +1009,12 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
       }
       // Auto-save immediately to database
       await saveCurrentPageData();
-      showAdminToast('✅ ছবি সফলভাবে আপলোড ও সেভ হয়েছে!');
+      showAdminToast('✅ Media uploaded and saved successfully!');
     } else {
-      alert('আপলোড ব্যর্থ: ' + (data.error || 'Unknown error'));
+      alert('Upload failed: ' + (data.error || 'Unknown error'));
     }
   } catch (err) {
-    alert('আপলোড এরর: ' + (err.message || 'Network error'));
+    alert('Upload error: ' + (err.message || 'Network error'));
   }
 }
 
@@ -1168,7 +1168,7 @@ async function saveCurrentPageData() {
     });
 
     if (res.status === 401) {
-      triggerRelogin('অননুমোদিত বা সেশন শেষ হয়েছে। সেভ করার জন্য পাসওয়ার্ড দিয়ে লগইন করুন।');
+      triggerRelogin('Unauthorized or session expired. Please sign in to save changes.');
       return;
     }
 
@@ -1374,7 +1374,7 @@ function previewAdminVideo() {
   const posterUrl = posterInput ? posterInput.value.trim() : '';
 
   if (!videoUrl) {
-    previewBox.innerHTML = '<p class="text-xs text-slate-400">কোনো ভিডিও নেই</p>';
+    previewBox.innerHTML = '<p class="text-xs text-slate-400">No video selected</p>';
     return;
   }
 
@@ -1397,9 +1397,9 @@ function uploadVideoFile(inputEl, targetInputId) {
 
   if (uploadBtnLabel) {
     uploadBtnLabel.classList.add('opacity-75', 'pointer-events-none');
-    uploadBtnLabel.innerHTML = `<span>⏳ ০% (${fileSizeMB}MB)</span>`;
+    uploadBtnLabel.innerHTML = `<span>⏳ 0% (${fileSizeMB}MB)</span>`;
   }
-  if (targetInput) targetInput.placeholder = `ভিডিও আপলোড হচ্ছে... (${fileSizeMB}MB)`;
+  if (targetInput) targetInput.placeholder = `Uploading video... (${fileSizeMB}MB)`;
 
   const formData = new FormData();
   formData.append('media', file);
@@ -1415,7 +1415,7 @@ function uploadVideoFile(inputEl, targetInputId) {
         uploadBtnLabel.innerHTML = `<span>⏳ ${percent}% (${fileSizeMB}MB)</span>`;
       }
       if (targetInput) {
-        targetInput.placeholder = `ভিডিও আপলোড হচ্ছে... ${percent}%`;
+        targetInput.placeholder = `Uploading video... ${percent}%`;
       }
     }
   };
@@ -1433,10 +1433,10 @@ function uploadVideoFile(inputEl, targetInputId) {
       data = JSON.parse(text);
     } catch (e) {
       if (xhr.status === 413 || text.includes('Request Entity Too Large') || text.includes('413')) {
-        alert(`⚠️ ফাইল সাইজ (${fileSizeMB}MB) সার্ভারের লিমিটের চেয়ে বড় (413 Request Entity Too Large)।\n\n💡 সহজ সমাধান:\n১. ভিডিওটি কোনো ভিডিও কম্প্রেসার (যেমন: FreeConvert, VideoCompressor) দিয়ে সাইজ কমিয়ে (< ২৫MB) আপলোড করুন।\nঅথবা\n২. ভিডিওটি YouTube-এ আপলোড করে সেই YouTube লিংকটি ইনপুট বক্সে পেস্ট করুন (YouTube লিংক দিলে সাইট অনেক দ্রুত লোড হয় এবং কোয়ালিটি HD থাকে!)।`);
+        alert(`⚠️ File size (${fileSizeMB}MB) exceeds server limit (413 Request Entity Too Large).\n\n💡 Easy Solutions:\n1. Paste a YouTube or Shorts link into the Video Source box (fastest & no storage limit).\n2. Or compress the video file to under 25MB before uploading.`);
         return;
       }
-      alert(`সার্ভার এরর (${xhr.status}): ${text.substring(0, 150)}`);
+      alert(`Server Error (${xhr.status}): ${text.substring(0, 150)}`);
       return;
     }
 
@@ -1445,10 +1445,10 @@ function uploadVideoFile(inputEl, targetInputId) {
         targetInput.value = data.url;
       }
       previewAdminVideo();
-      showAdminToast('✅ ভিডিও সফলভাবে আপলোড হয়েছে!');
+      showAdminToast('✅ Video uploaded successfully!');
       saveCurrentPageData();
     } else {
-      alert('ভিডিও আপলোড ব্যর্থ হয়েছে: ' + (data.error || 'Unknown error'));
+      alert('Video upload failed: ' + (data.error || 'Unknown error'));
     }
   };
 
@@ -1458,7 +1458,7 @@ function uploadVideoFile(inputEl, targetInputId) {
       uploadBtnLabel.classList.remove('opacity-75', 'pointer-events-none');
     }
     inputEl.value = '';
-    alert('নেটওয়ার্ক সংযোগ বিঘ্নিত হওয়ার কারণে ভিডিও আপলোড সম্পন্ন হয়নি।');
+    alert('Network connection interrupted. Video upload could not be completed.');
   };
 
   xhr.send(formData);

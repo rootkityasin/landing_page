@@ -439,50 +439,50 @@
           </div>
         </div>
 
-        <!-- 5. Video Demo Section (ব্যবহারের ভিডিও) -->
+        <!-- 5. Video Demo Section -->
         <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>🎥 5. Video Demo (ব্যবহারের ভিডিও ডেমোস্ট্রেশন)</span>
+            <span>🎥 5. Video Demo (Product Demonstration Video)</span>
           </h3>
           <div class="space-y-4 text-sm">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="block font-bold text-slate-700 text-xs mb-1">Badge Text</label>
-                <input type="text" id="edit-video-badge" placeholder="🎥 ভিডিও ডেমোস্ট্রেশন" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none text-xs font-bold" />
+                <input type="text" id="edit-video-badge" placeholder="e.g. 🎥 Product Video Demo" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none text-xs font-bold" />
               </div>
               <div class="sm:col-span-2">
                 <label class="block font-bold text-slate-700 text-xs mb-1">Section Title</label>
-                <input type="text" id="edit-video-title" placeholder="ভিডিওতে দেখুন এটি কীভাবে কাজ করে ও সহজে ব্যবহার করবেন" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none text-xs font-bold" />
+                <input type="text" id="edit-video-title" placeholder="e.g. Watch how it works and how easy it is to use" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none text-xs font-bold" />
               </div>
             </div>
 
             <div>
               <label class="block font-bold text-slate-700 text-xs mb-1">Section Subtitle</label>
-              <input type="text" id="edit-video-subtitle" placeholder="মাত্র কয়েক সেকেন্ডে নিখুঁত পরিমাপ ও ব্যবহারের সহজ পদ্ধতি সরাসরি ভিডিওতে দেখে নিন" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none text-xs" />
+              <input type="text" id="edit-video-subtitle" placeholder="e.g. Accurate measurements in seconds with effortless folding and cleaning" class="w-full px-3 py-2 rounded-xl border border-slate-200 outline-none text-xs" />
             </div>
 
             <!-- Video File / URL Uploader -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
               <div class="flex items-center justify-between flex-wrap gap-1">
                 <label class="block font-bold text-slate-800 text-xs">Video Source (YouTube Link or MP4 File)</label>
-                <span class="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-bold">✨ YouTube / Shorts লিংক সরাসরি কাজ করবে</span>
+                <span class="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-bold">✨ YouTube / Shorts links supported</span>
               </div>
               
               <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <input type="text" id="edit-video-url" oninput="previewAdminVideo()" placeholder="উদা: https://www.youtube.com/watch?v=dQw4w9WgXcQ অথবা /uploads/video.mp4" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs font-latin outline-none bg-white" />
+                <input type="text" id="edit-video-url" oninput="previewAdminVideo()" placeholder="e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ or /uploads/video.mp4" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs font-latin outline-none bg-white" />
                 <label class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer inline-flex items-center justify-center gap-1.5 transition flex-shrink-0">
-                  <span>📤 ভিডিও আপলোড</span>
+                  <span>📤 Upload Video</span>
                   <input type="file" accept="video/*" onchange="uploadVideoFile(this, 'edit-video-url')" class="hidden" />
                 </label>
               </div>
 
               <!-- Video Poster / Thumbnail -->
               <div>
-                <label class="block font-bold text-slate-700 text-xs mb-1">Poster / Thumbnail Image (ঐচ্ছিক)</label>
+                <label class="block font-bold text-slate-700 text-xs mb-1">Poster / Thumbnail Image (Optional)</label>
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <input type="text" id="edit-video-poster" oninput="previewAdminVideo()" placeholder="/uploads/poster.webp" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs font-latin outline-none bg-white" />
                   <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl cursor-pointer inline-flex items-center justify-center gap-1.5 transition flex-shrink-0 border border-slate-300">
-                    <span>🖼️ ছবি আপলোড</span>
+                    <span>🖼️ Upload Image</span>
                     <input type="file" accept="image/*" onchange="uploadMediaFile(this, 'edit-video-poster')" class="hidden" />
                   </label>
                 </div>
@@ -492,17 +492,17 @@
               <div class="pt-2">
                 <label class="block font-bold text-slate-700 text-xs mb-1.5">Live Preview</label>
                 <div id="admin-video-preview-box" class="w-full max-w-md mx-auto aspect-video rounded-2xl bg-black overflow-hidden flex items-center justify-center border border-slate-300 shadow-inner">
-                  <p class="text-xs text-slate-400">ভিডিও প্রিভিউ</p>
+                  <p class="text-xs text-slate-400">Video Preview</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 6. What's Included in 1 Set (১ সেটে কী কী পাচ্ছেন) -->
+        <!-- 6. What's Included in 1 Set -->
         <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>📦 6. What's in 1 Set (১ সেটে কী কী পাচ্ছেন)</span>
+            <span>📦 6. What's Included in 1 Set</span>
           </h3>
           <div class="space-y-4 text-sm">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -519,26 +519,26 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <!-- Large Spoon Controls -->
               <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
-                <span class="font-bold text-xs text-[#D92143]">🥄 Large Spoon (বড় চামচ)</span>
-                <input type="text" id="edit-included-large-title" placeholder="১. বড় মেজারিং চামচ (Tablespoon)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
-                <input type="text" id="edit-included-large-badge" placeholder="৩টি মাপ (Tbsp)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
-                <input type="text" id="edit-included-large-usage" placeholder="২ Tbsp (৩০ মিলি), ১ Tbsp (১৫ মিলি), ১/২ Tbsp (৭.৫ মিলি)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+                <span class="font-bold text-xs text-[#D92143]">🥄 Large Spoon (Tablespoon)</span>
+                <input type="text" id="edit-included-large-title" placeholder="e.g. 1. Large Measuring Spoon (Tablespoon)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+                <input type="text" id="edit-included-large-badge" placeholder="e.g. 3 Size Adjustments (Tbsp)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+                <input type="text" id="edit-included-large-usage" placeholder="e.g. 2 Tbsp (30ml), 1 Tbsp (15ml), 1/2 Tbsp (7.5ml)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
               </div>
 
               <!-- Small Spoon Controls -->
               <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
-                <span class="font-bold text-xs text-[#EA580C]">🥄 Small Spoon (ছোট চামচ)</span>
-                <input type="text" id="edit-included-small-title" placeholder="২. ছোট মেজারিং চামচ (Teaspoon)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
-                <input type="text" id="edit-included-small-badge" placeholder="৩টি মাপ (tsp)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
-                <input type="text" id="edit-included-small-usage" placeholder="১ tsp (৫ মিলি), ১/২ tsp (২.৫ মিলি), ১/৪ tsp (১.২৫ মিলি)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+                <span class="font-bold text-xs text-[#EA580C]">🥄 Small Spoon (Teaspoon)</span>
+                <input type="text" id="edit-included-small-title" placeholder="e.g. 2. Small Measuring Spoon (Teaspoon)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+                <input type="text" id="edit-included-small-badge" placeholder="e.g. 3 Size Adjustments (tsp)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+                <input type="text" id="edit-included-small-usage" placeholder="e.g. 1 tsp (5ml), 1/2 tsp (2.5ml), 1/4 tsp (1.25ml)" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
               </div>
             </div>
 
             <!-- Bottom Value Banner -->
             <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
               <label class="block font-bold text-slate-700 text-xs">Bottom Value Banner Copy</label>
-              <input type="text" id="edit-included-banner-title" placeholder="মোট ৬টি ভিন্ন পরিমাপ মাত্র ২টি ফ্ল্যাট চামচে!" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
-              <input type="text" id="edit-included-banner-desc" placeholder="কোনো বাড়তি বাটি বা ৬টি আলাদা চামচের ঝামেলা ছাড়াই রান্নাঘরের ড্রয়ারে বা ম্যাগনেটিক স্ট্রিপে ফ্ল্যাট রেখে দিন।" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+              <input type="text" id="edit-included-banner-title" placeholder="e.g. 6 Different Measurements in Just 2 Flat Spoons!" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
+              <input type="text" id="edit-included-banner-desc" placeholder="e.g. Store completely flat in any drawer or magnetic strip without bulky measuring cups." class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
             </div>
           </div>
         </div>
