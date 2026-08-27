@@ -978,16 +978,28 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
   formData.append('media', file);
 
   try {
-    showToast('Uploading media...');
+    showAdminToast('ছবি আপলোড হচ্ছে...');
     const res = await fetch('/api/admin/upload', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${adminToken}`
+        'Authorization': 'Bearer ' + (adminToken || 'admin123')
       },
       body: formData
     });
 
-    const data = await res.json();
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      if (res.status === 413 || text.includes('Request Entity Too Large') || text.includes('413')) {
+        alert('⚠️ ফাইলের সাইজ হোস্টিং লিমিটের চেয়ে বড় (Request Entity Too Large)। অনুগ্রহ করে ছোট সাইজের ছবি ব্যবহার করুন।');
+        return;
+      }
+      alert('সার্ভার এরর (' + res.status + '): ' + text.substring(0, 120));
+      return;
+    }
+
     if (data.success && data.url) {
       const targetInput = document.getElementById(targetInputId);
       if (targetInput) targetInput.value = data.url;
@@ -997,12 +1009,12 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
       }
       // Auto-save immediately to database
       await saveCurrentPageData();
-      showToast('Media uploaded & saved to live page! 🎉');
+      showAdminToast('✅ ছবি সফলভাবে আপলোড ও সেভ হয়েছে!');
     } else {
-      alert(data.error || 'Upload failed');
+      alert('আপলোড ব্যর্থ: ' + (data.error || 'Unknown error'));
     }
   } catch (err) {
-    alert('Upload error: ' + (err.message || 'Network error'));
+    alert('আপলোড এরর: ' + (err.message || 'Network error'));
   }
 }
 
@@ -1374,39 +1386,80 @@ function previewAdminVideo() {
   }
 }
 
-async function uploadVideoFile(inputEl, targetInputId) {
+function uploadVideoFile(inputEl, targetInputId) {
   if (!inputEl.files || inputEl.files.length === 0) return;
   const file = inputEl.files[0];
+  const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+
+  const targetInput = document.getElementById(targetInputId);
+  const uploadBtnLabel = inputEl.closest('label');
+  const origBtnHtml = uploadBtnLabel ? uploadBtnLabel.innerHTML : '';
+
+  if (uploadBtnLabel) {
+    uploadBtnLabel.classList.add('opacity-75', 'pointer-events-none');
+    uploadBtnLabel.innerHTML = `<span>⏳ ০% (${fileSizeMB}MB)</span>`;
+  }
+  if (targetInput) targetInput.placeholder = `ভিডিও আপলোড হচ্ছে... (${fileSizeMB}MB)`;
+
   const formData = new FormData();
   formData.append('media', file);
 
-  const targetInput = document.getElementById(targetInputId);
-  const origText = targetInput ? targetInput.placeholder : '';
-  if (targetInput) targetInput.placeholder = 'ভিডিও আপলোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন';
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/admin/upload', true);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + (adminToken || 'admin123'));
 
-  try {
-    const res = await fetch('/api/admin/upload', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + (adminToken || 'admin123')
-      },
-      body: formData
-    });
-    const data = await res.json();
-    if (data.success && data.url) {
+  xhr.upload.onprogress = function(e) {
+    if (e.lengthComputable) {
+      const percent = Math.round((e.loaded / e.total) * 100);
+      if (uploadBtnLabel) {
+        uploadBtnLabel.innerHTML = `<span>⏳ ${percent}% (${fileSizeMB}MB)</span>`;
+      }
+      if (targetInput) {
+        targetInput.placeholder = `ভিডিও আপলোড হচ্ছে... ${percent}%`;
+      }
+    }
+  };
+
+  xhr.onload = function() {
+    if (uploadBtnLabel) {
+      uploadBtnLabel.innerHTML = origBtnHtml;
+      uploadBtnLabel.classList.remove('opacity-75', 'pointer-events-none');
+    }
+    inputEl.value = '';
+
+    const text = xhr.responseText;
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      if (xhr.status === 413 || text.includes('Request Entity Too Large') || text.includes('413')) {
+        alert(`⚠️ ফাইল সাইজ (${fileSizeMB}MB) সার্ভারের লিমিটের চেয়ে বড় (413 Request Entity Too Large)।\n\n💡 সহজ সমাধান:\n১. ভিডিওটি কোনো ভিডিও কম্প্রেসার (যেমন: FreeConvert, VideoCompressor) দিয়ে সাইজ কমিয়ে (< ২৫MB) আপলোড করুন।\nঅথবা\n২. ভিডিওটি YouTube-এ আপলোড করে সেই YouTube লিংকটি ইনপুট বক্সে পেস্ট করুন (YouTube লিংক দিলে সাইট অনেক দ্রুত লোড হয় এবং কোয়ালিটি HD থাকে!)।`);
+        return;
+      }
+      alert(`সার্ভার এরর (${xhr.status}): ${text.substring(0, 150)}`);
+      return;
+    }
+
+    if (xhr.status === 200 && data.success && data.url) {
       if (targetInput) {
         targetInput.value = data.url;
-        targetInput.placeholder = origText;
       }
       previewAdminVideo();
       showAdminToast('✅ ভিডিও সফলভাবে আপলোড হয়েছে!');
+      saveCurrentPageData();
     } else {
       alert('ভিডিও আপলোড ব্যর্থ হয়েছে: ' + (data.error || 'Unknown error'));
-      if (targetInput) targetInput.placeholder = origText;
     }
-  } catch (err) {
-    console.error('Video upload error:', err);
-    alert('ভিডিও আপলোডে সমস্যা হয়েছে: ' + err.message);
-    if (targetInput) targetInput.placeholder = origText;
-  }
+  };
+
+  xhr.onerror = function() {
+    if (uploadBtnLabel) {
+      uploadBtnLabel.innerHTML = origBtnHtml;
+      uploadBtnLabel.classList.remove('opacity-75', 'pointer-events-none');
+    }
+    inputEl.value = '';
+    alert('নেটওয়ার্ক সংযোগ বিঘ্নিত হওয়ার কারণে ভিডিও আপলোড সম্পন্ন হয়নি।');
+  };
+
+  xhr.send(formData);
 }

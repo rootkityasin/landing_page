@@ -58,7 +58,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max
+  limits: { fileSize: 300 * 1024 * 1024 }, // 50MB max
   fileFilter: (req, file, cb) => {
     // Accept all images and video files
     if (file.mimetype && (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/'))) {
@@ -77,8 +77,8 @@ const compression = require('compression');
 
 app.use(compression());
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '300mb' }));
+app.use(express.urlencoded({ extended: true, limit: '300mb' }));
 
 // Optimized static assets serving with 1-Year Efficient Cache Lifetimes (Google Lighthouse 100 benchmark)
 if (isVercel) {
@@ -834,7 +834,28 @@ initDatabase().catch(err => console.error('Database initialization notice:', err
 
 // Start standalone server when not in Vercel serverless
 if (!isVercel) {
-  const server = app.listen(PORT, () => {
+  const server = 
+// Global Upload / Request Entity Error Handler
+app.use((err, req, res, next) => {
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({
+      success: false,
+      error: 'ফাইলের সাইজ অনেক বড় (সর্বোচ্চ ৩০০MB অনুমোদিত)।'
+    });
+  }
+  if (err.type === 'entity.too.large' || err.status === 413) {
+    return res.status(413).json({
+      success: false,
+      error: 'রিকোয়েস্ট ডাটা সাইজ অনেক বড় (Request Entity Too Large)।'
+    });
+  }
+  if (err.message && err.message.includes('Unsupported file type')) {
+    return res.status(400).json({ success: false, error: err.message });
+  }
+  res.status(500).json({ success: false, error: err.message || 'Server error' });
+});
+
+app.listen(PORT, () => {
     console.log(`=======================================================`);
     console.log(`🚀 Origami COD Landing Page Server running on http://localhost:${PORT}`);
     console.log(`📦 Admin Dashboard: http://localhost:${PORT}/admin (Pass: admin123)`);
