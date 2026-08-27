@@ -634,27 +634,124 @@ function populateEditorFields(d) {
   renderFaqEditor(d);
 }
 
+function syncReviewsFromDOM() {
+  const container = document.getElementById('reviews-editor-container');
+  if (!container) return currentEditingPageData?.reviews || [];
+  
+  const items = container.querySelectorAll('.review-editor-item');
+  const reviews = [];
+  items.forEach((item, i) => {
+    const nameEl = document.getElementById(`edit-rev-name-${i}`);
+    const locEl = document.getElementById(`edit-rev-loc-${i}`);
+    const ratingEl = document.getElementById(`edit-rev-rating-${i}`);
+    const verifiedEl = document.getElementById(`edit-rev-verified-${i}`);
+    const dateEl = document.getElementById(`edit-rev-date-${i}`);
+    const commentEl = document.getElementById(`edit-rev-comment-${i}`);
+
+    const name = nameEl ? nameEl.value.trim() : '';
+    const location = locEl ? locEl.value.trim() : '';
+    const rating = ratingEl ? (Number(ratingEl.value) || 5) : 5;
+    const verified = verifiedEl ? verifiedEl.checked : true;
+    const date = dateEl ? dateEl.value.trim() : '';
+    const comment = commentEl ? commentEl.value.trim() : '';
+
+    if (name || comment) {
+      reviews.push({ name, location, rating, verified, date, comment });
+    }
+  });
+
+  if (currentEditingPageData) {
+    currentEditingPageData.reviews = reviews;
+  }
+  return reviews;
+}
+
+function syncFaqsFromDOM() {
+  const container = document.getElementById('faq-editor-container');
+  if (!container) return currentEditingPageData?.faq || [];
+  
+  const items = container.querySelectorAll('.faq-editor-item');
+  const faqs = [];
+  items.forEach((item, i) => {
+    const qEl = document.getElementById(`edit-faq-q-${i}`);
+    const aEl = document.getElementById(`edit-faq-a-${i}`);
+    const q = qEl ? qEl.value.trim() : '';
+    const a = aEl ? aEl.value.trim() : '';
+    if (q || a) {
+      faqs.push({ q, a });
+    }
+  });
+
+  if (currentEditingPageData) {
+    currentEditingPageData.faq = faqs;
+  }
+  return faqs;
+}
+
 function renderReviewsEditor(d) {
   const reviewsContainer = document.getElementById('reviews-editor-container');
   if (!reviewsContainer) return;
   
+  const revList = Array.isArray(d.reviews) ? d.reviews : [];
+
   reviewsContainer.innerHTML = `
     <div class="space-y-3">
-      ${(d.reviews || []).map((rev, i) => `
-        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5 relative">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-extrabold text-slate-800 flex items-center gap-1">⭐ Review #${i + 1}</span>
-            <button type="button" onclick="deleteReview(${i})" class="text-rose-600 hover:text-rose-800 text-[11px] font-bold px-2 py-0.5 rounded bg-rose-50 border border-rose-200 transition">✕ Delete</button>
+      ${revList.map((rev, i) => `
+        <div class="review-editor-item bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 relative shadow-2xs">
+          <div class="flex items-center justify-between pb-1 border-b border-slate-200">
+            <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+              <span>⭐ Review #${i + 1}</span>
+            </span>
+            <button type="button" onclick="deleteReview(${i})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 transition hover:bg-rose-100">
+              ✕ Delete
+            </button>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" id="edit-rev-name-${i}" value="${rev.name || ''}" placeholder="Customer Name" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
-            <input type="text" id="edit-rev-loc-${i}" value="${rev.location || ''}" placeholder="Location / City (যেমন: ঢাকা)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+            <div class="sm:col-span-4">
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Customer Name</label>
+              <input type="text" id="edit-rev-name-${i}" value="${(rev.name || '').replace(/"/g, '&quot;')}" placeholder="যেমন: তানভীর আহমেদ" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold bg-white" />
+            </div>
+
+            <div class="sm:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Location / City</label>
+              <input type="text" id="edit-rev-loc-${i}" value="${(rev.location || '').replace(/"/g, '&quot;')}" placeholder="যেমন: ধানমন্ডি, ঢাকা" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white" />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Rating</label>
+              <select id="edit-rev-rating-${i}" class="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs bg-white font-bold">
+                <option value="5" ${(rev.rating === 5 || !rev.rating) ? 'selected' : ''}>★★★★★ (5)</option>
+                <option value="4" ${rev.rating === 4 ? 'selected' : ''}>★★★★☆ (4)</option>
+                <option value="3" ${rev.rating === 3 ? 'selected' : ''}>★★★☆☆ (3)</option>
+                <option value="2" ${rev.rating === 2 ? 'selected' : ''}>★★☆☆☆ (2)</option>
+                <option value="1" ${rev.rating === 1 ? 'selected' : ''}>★☆☆☆☆ (1)</option>
+              </select>
+            </div>
+
+            <div class="sm:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Date</label>
+              <input type="text" id="edit-rev-date-${i}" value="${(rev.date || '').replace(/"/g, '&quot;')}" placeholder="যেমন: ৩ দিন আগে" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white" />
+            </div>
           </div>
-          <textarea id="edit-rev-comment-${i}" rows="2" placeholder="Review Comment" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs">${rev.comment || ''}</textarea>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Review Comment</label>
+            <textarea id="edit-rev-comment-${i}" rows="2" placeholder="গ্রাহকের বিস্তারিত রিভিউ লিখুন..." class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white">${rev.comment || ''}</textarea>
+          </div>
+
+          <div class="flex items-center gap-2 pt-0.5">
+            <input type="checkbox" id="edit-rev-verified-${i}" ${rev.verified !== false ? 'checked' : ''} class="rounded text-emerald-600 w-3.5 h-3.5" />
+            <label for="edit-rev-verified-${i}" class="text-[11px] font-bold text-slate-600 cursor-pointer">
+              ✓ Verified Customer Badge (ভেরিফাইড ক্রেতা ব্যাজ দেখান)
+            </label>
+          </div>
         </div>
       `).join('')}
-      <button type="button" onclick="addReviewItem()" class="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-1.5">
-        <span>➕ Add New Customer Review (নতুন রিভিউ যোগ করুন)</span>
+
+      <button type="button" onclick="addReviewItem()" class="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-2 hover:border-slate-400 shadow-2xs">
+        <span class="text-emerald-600 font-black text-sm">➕</span>
+        <span>Add New Customer Review (নতুন রিভিউ যোগ করুন)</span>
       </button>
     </div>
   `;
@@ -662,18 +759,23 @@ function renderReviewsEditor(d) {
 
 function addReviewItem() {
   if (!currentEditingPageData) return;
+  syncReviewsFromDOM();
   if (!currentEditingPageData.reviews) currentEditingPageData.reviews = [];
   currentEditingPageData.reviews.push({
     name: "নতুন গ্রাহক",
     location: "ঢাকা",
     rating: 5,
+    verified: true,
+    date: "সম্প্রতি",
     comment: "প্রোডাক্টটি অত্যন্ত চমৎকার এবং কাজের। ডেলিভারিও পেয়েছি খুব দ্রুত।"
   });
   renderReviewsEditor(currentEditingPageData);
 }
 
 function deleteReview(index) {
-  if (!currentEditingPageData || !currentEditingPageData.reviews) return;
+  if (!currentEditingPageData) return;
+  syncReviewsFromDOM();
+  if (!currentEditingPageData.reviews) return;
   currentEditingPageData.reviews.splice(index, 1);
   renderReviewsEditor(currentEditingPageData);
 }
@@ -682,20 +784,34 @@ function renderFaqEditor(d) {
   const faqContainer = document.getElementById('faq-editor-container');
   if (!faqContainer) return;
 
+  const faqList = Array.isArray(d.faq) ? d.faq : [];
+
   faqContainer.innerHTML = `
     <div class="space-y-3">
-      ${(d.faq || []).map((f, i) => `
-        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5 relative">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-extrabold text-slate-800 flex items-center gap-1">❓ FAQ #${i + 1}</span>
-            <button type="button" onclick="deleteFaq(${i})" class="text-rose-600 hover:text-rose-800 text-[11px] font-bold px-2 py-0.5 rounded bg-rose-50 border border-rose-200 transition">✕ Delete</button>
+      ${faqList.map((f, i) => `
+        <div class="faq-editor-item bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5 relative shadow-2xs">
+          <div class="flex items-center justify-between pb-1 border-b border-slate-200">
+            <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+              <span>❓ FAQ #${i + 1}</span>
+            </span>
+            <button type="button" onclick="deleteFaq(${i})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 transition hover:bg-rose-100">
+              ✕ Delete
+            </button>
           </div>
-          <input type="text" id="edit-faq-q-${i}" value="${f.q || ''}" placeholder="Question" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold" />
-          <textarea id="edit-faq-a-${i}" rows="2" placeholder="Answer" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs">${f.a || ''}</textarea>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Question (প্রশ্ন)</label>
+            <input type="text" id="edit-faq-q-${i}" value="${(f.q || '').replace(/"/g, '&quot;')}" placeholder="Question" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Answer (উত্তর)</label>
+            <textarea id="edit-faq-a-${i}" rows="2" placeholder="Answer" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white">${f.a || ''}</textarea>
+          </div>
         </div>
       `).join('')}
-      <button type="button" onclick="addFaqItem()" class="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-1.5">
-        <span>➕ Add New FAQ Question (নতুন প্রশ্ন ও উত্তর যোগ করুন)</span>
+
+      <button type="button" onclick="addFaqItem()" class="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-2 hover:border-slate-400 shadow-2xs">
+        <span class="text-emerald-600 font-black text-sm">➕</span>
+        <span>Add New FAQ Question (নতুন প্রশ্ন ও উত্তর যোগ করুন)</span>
       </button>
     </div>
   `;
@@ -703,6 +819,7 @@ function renderFaqEditor(d) {
 
 function addFaqItem() {
   if (!currentEditingPageData) return;
+  syncFaqsFromDOM();
   if (!currentEditingPageData.faq) currentEditingPageData.faq = [];
   currentEditingPageData.faq.push({
     q: "আপনার প্রশ্ন এখানে লিখুন?",
@@ -712,7 +829,9 @@ function addFaqItem() {
 }
 
 function deleteFaq(index) {
-  if (!currentEditingPageData || !currentEditingPageData.faq) return;
+  if (!currentEditingPageData) return;
+  syncFaqsFromDOM();
+  if (!currentEditingPageData.faq) return;
   currentEditingPageData.faq.splice(index, 1);
   renderFaqEditor(currentEditingPageData);
 }
@@ -936,10 +1055,14 @@ async function saveCurrentPageData() {
     d.problemSolution.title = document.getElementById('edit-probsol-title').value.trim();
   }
   (d.problemSolution.cards || []).forEach((c, i) => {
-    c.problemTitle = document.getElementById(`edit-prob-title-${i}`)?.value || c.problemTitle;
-    c.solutionTitle = document.getElementById(`edit-sol-title-${i}`)?.value || c.solutionTitle;
-    c.problemDesc = document.getElementById(`edit-prob-desc-${i}`)?.value || c.problemDesc;
-    c.solutionDesc = document.getElementById(`edit-sol-desc-${i}`)?.value || c.solutionDesc;
+    const pt = document.getElementById(`edit-prob-title-${i}`);
+    const st = document.getElementById(`edit-sol-title-${i}`);
+    const pd = document.getElementById(`edit-prob-desc-${i}`);
+    const sd = document.getElementById(`edit-sol-desc-${i}`);
+    if (pt) c.problemTitle = pt.value.trim();
+    if (st) c.solutionTitle = st.value.trim();
+    if (pd) c.problemDesc = pd.value.trim();
+    if (sd) c.solutionDesc = sd.value.trim();
   });
 
   // 5. How It Works
@@ -947,9 +1070,12 @@ async function saveCurrentPageData() {
     d.howItWorks.title = document.getElementById('edit-howitworks-title').value.trim();
   }
   (d.howItWorks.steps || []).forEach((s, i) => {
-    s.title = document.getElementById(`edit-step-title-${i}`)?.value || s.title;
-    s.desc = document.getElementById(`edit-step-desc-${i}`)?.value || s.desc;
-    s.image = document.getElementById(`edit-step-img-${i}`)?.value || s.image;
+    const st = document.getElementById(`edit-step-title-${i}`);
+    const sd = document.getElementById(`edit-step-desc-${i}`);
+    const si = document.getElementById(`edit-step-img-${i}`);
+    if (st) s.title = st.value.trim();
+    if (sd) s.desc = sd.value.trim();
+    if (si) s.image = si.value.trim();
   });
 
   // 6. What's Included in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
@@ -975,11 +1101,16 @@ async function saveCurrentPageData() {
   }
 
   (d.bundles || []).forEach((b, i) => {
-    b.name = document.getElementById(`edit-bundle-name-${i}`)?.value || b.name;
-    b.price = Number(document.getElementById(`edit-bundle-price-${i}`)?.value || b.price);
-    b.savings = document.getElementById(`edit-bundle-savings-${i}`)?.value || b.savings;
-    b.desc = document.getElementById(`edit-bundle-desc-${i}`)?.value || b.desc;
-    b.freeDelivery = document.getElementById(`edit-bundle-free-${i}`)?.checked || false;
+    const bn = document.getElementById(`edit-bundle-name-${i}`);
+    const bp = document.getElementById(`edit-bundle-price-${i}`);
+    const bs = document.getElementById(`edit-bundle-savings-${i}`);
+    const bd = document.getElementById(`edit-bundle-desc-${i}`);
+    const bf = document.getElementById(`edit-bundle-free-${i}`);
+    if (bn) b.name = bn.value.trim();
+    if (bp) b.price = Number(bp.value) || 0;
+    if (bs) b.savings = bs.value.trim();
+    if (bd) b.desc = bd.value.trim();
+    if (bf) b.freeDelivery = bf.checked;
   });
 
   // 8. Delivery
@@ -990,18 +1121,11 @@ async function saveCurrentPageData() {
     d.checkout.deliveryOutside = Number(document.getElementById('edit-delivery-outside').value);
   }
 
-  // 9. Reviews
-  (d.reviews || []).forEach((r, i) => {
-    r.name = document.getElementById(`edit-rev-name-${i}`)?.value || r.name;
-    r.location = document.getElementById(`edit-rev-loc-${i}`)?.value || r.location;
-    r.comment = document.getElementById(`edit-rev-comment-${i}`)?.value || r.comment;
-  });
+  // 9. Reviews (Directly synced from DOM inputs - completely replaces previous data)
+  d.reviews = syncReviewsFromDOM();
 
-  // 10. FAQ
-  (d.faq || []).forEach((f, i) => {
-    f.q = document.getElementById(`edit-faq-q-${i}`)?.value || f.q;
-    f.a = document.getElementById(`edit-faq-a-${i}`)?.value || f.a;
-  });
+  // 10. FAQs (Directly synced from DOM inputs - completely replaces previous data)
+  d.faq = syncFaqsFromDOM();
 
   try {
     const targetId = currentEditingProductId || 1;
@@ -1022,12 +1146,91 @@ async function saveCurrentPageData() {
     const data = await res.json();
     if (data.success) {
       showToast('All section changes saved successfully! 🎉');
+      try {
+        const prodSlug = currentEditingPageData?.slug || 'origami-spoon';
+        localStorage.setItem(`polygons_prod_${prodSlug}`, JSON.stringify({
+          id: targetId,
+          slug: prodSlug,
+          title: d.hero?.headline || 'Polygons Spoon Set',
+          pageData: d
+        }));
+        localStorage.setItem(`polygons_prod_default`, JSON.stringify({
+          id: targetId,
+          slug: prodSlug,
+          title: d.hero?.headline || 'Polygons Spoon Set',
+          pageData: d
+        }));
+      } catch (e) {}
     } else {
       showToast(data.error || 'Failed to save changes', false);
     }
   } catch (err) {
     console.error('Save error:', err);
     showToast(err.message || 'Server error!', false);
+  }
+}
+
+/* ==========================================
+   DATABASE BACKUP / RESTORE HELPERS
+   ========================================== */
+async function exportDatabase() {
+  try {
+    const token = getAdminToken();
+    const res = await fetch('/api/admin/database/export', {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) {
+      throw new Error('Failed to download database backup');
+    }
+    const blob = await res.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = `database-backup-${Date.now()}.sqlite`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+    showToast('Database snapshot downloaded successfully! 💾');
+  } catch (err) {
+    alert('Export error: ' + err.message);
+  }
+}
+
+async function importDatabase(inputEl) {
+  if (!inputEl || !inputEl.files || !inputEl.files[0]) return;
+  const file = inputEl.files[0];
+  if (!confirm(`Are you sure you want to restore "${file.name}"? This will replace the current database with the uploaded backup.`)) {
+    inputEl.value = '';
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('database', file);
+
+  try {
+    const token = getAdminToken();
+    const res = await fetch('/api/admin/database/import', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showToast('Database imported & restored successfully! 🚀');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
+    } else {
+      alert(data.error || 'Failed to restore database');
+    }
+  } catch (err) {
+    alert('Import error: ' + err.message);
+  } finally {
+    inputEl.value = '';
   }
 }
 

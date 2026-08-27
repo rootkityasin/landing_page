@@ -23,10 +23,24 @@ function getSlugFromUrl() {
   return urlParams.get('product') || null;
 }
 
-// Fetch Product Configuration (Instant Live Cache Invalidation)
+// Fetch Product Configuration (Instant Live Cache Invalidation + Local Cache Fallback)
 async function loadProduct() {
+  const slug = getSlugFromUrl();
+  const cacheKey = `polygons_prod_${slug || 'default'}`;
+
+  // Instant 0ms render from client cache if available
   try {
-    const slug = getSlugFromUrl();
+    const cachedStr = localStorage.getItem(cacheKey);
+    if (cachedStr) {
+      const cached = JSON.parse(cachedStr);
+      if (cached && cached.pageData && !currentProduct) {
+        currentProduct = cached;
+        renderLandingPage(currentProduct.pageData);
+      }
+    }
+  } catch (e) {}
+
+  try {
     const endpoint = (slug ? `/api/products/${slug}` : '/api/products/active') + `?_t=${Date.now()}`;
     const res = await fetch(endpoint, {
       cache: 'no-store',
@@ -51,6 +65,10 @@ async function loadProduct() {
     }
 
     currentProduct = data.product;
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(currentProduct));
+    } catch (e) {}
+
     renderLandingPage(currentProduct.pageData);
   } catch (err) {
     console.error('Error loading product:', err);
@@ -308,61 +326,101 @@ function renderLandingPage(data) {
   renderBundles(data.bundles);
 
   // 6. Social Proof & Reviews
+  const reviewsSection = document.getElementById('reviews-section');
   const reviewsContainer = document.getElementById('reviews-container');
-  if (reviewsContainer && data.reviews) {
-    reviewsContainer.innerHTML = data.reviews.map((rev, i) => `
-      <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-[#E0C375]/35 flex flex-col justify-between hover:border-[#D92143]/50 hover:shadow-md transition space-y-4">
-        <div>
-          <div class="flex items-center justify-between mb-3.5">
-            <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-full bg-[#FEF5E4] border-2 border-[#E0C375] flex items-center justify-center font-extrabold text-[#D92143] text-base shadow-xs">
-                ${rev.name.substring(0, 1)}
+  const reviewsList = Array.isArray(data.reviews) ? data.reviews.filter(r => r && (r.name || r.comment)) : [];
+
+  if (reviewsSection && reviewsContainer) {
+    if (reviewsList.length === 0) {
+      reviewsSection.classList.add('hidden');
+      reviewsContainer.innerHTML = '';
+    } else {
+      reviewsSection.classList.remove('hidden');
+      reviewsContainer.innerHTML = reviewsList.map((rev, i) => {
+        const initial = (rev.name || 'ক').trim().substring(0, 1) || 'ক';
+        const ratingCount = Math.max(1, Math.min(5, Number(rev.rating) || 5));
+        const stars = '★'.repeat(ratingCount);
+        const locationText = rev.location ? `<p class="text-xs text-[#475569] font-bold">${rev.location}</p>` : '';
+        const verifiedBadge = rev.verified !== false ? `<span class="inline-flex items-center text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded ml-1.5 shadow-2xs">✓ ভেরিফাইড ক্রেতা</span>` : '';
+        const dateText = rev.date ? `<span class="text-[11px] text-slate-400 font-medium">${rev.date}</span>` : '';
+
+        return `
+          <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-[#E0C375]/35 flex flex-col justify-between hover:border-[#D92143]/50 hover:shadow-md transition space-y-4">
+            <div>
+              <div class="flex items-center justify-between mb-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="w-11 h-11 rounded-full bg-[#FEF5E4] border-2 border-[#E0C375] flex items-center justify-center font-extrabold text-[#D92143] text-base shadow-xs">
+                    ${initial}
+                  </div>
+                  <div>
+                    <div class="flex items-center flex-wrap gap-1">
+                      <h3 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-tight">${rev.name || 'সম্মানিত গ্রাহক'}</h3>
+                      ${verifiedBadge}
+                    </div>
+                    ${locationText}
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="flex items-center text-[#B45309] text-base tracking-tight">
+                    ${stars}
+                  </div>
+                  ${dateText}
+                </div>
               </div>
-              <div>
-                <h3 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-tight">${rev.name}</h3>
-                <p class="text-xs text-[#475569] font-bold">${rev.location}</p>
-              </div>
-            </div>
-            <div class="flex items-center text-[#B45309] text-base tracking-tight">
-              ${'★'.repeat(rev.rating || 5)}
+
+              <p class="text-[#334155] text-sm sm:text-base leading-relaxed italic">"${rev.comment || ''}"</p>
             </div>
           </div>
-
-          <p class="text-[#334155] text-sm sm:text-base leading-relaxed italic">"${rev.comment}"</p>
-        </div>
-      </div>
-    `).join('');
+        `;
+      }).join('');
+    }
   }
 
   // 7. Trust Badges
   const trustBadgesContainer = document.getElementById('trust-badges-container');
-  if (trustBadgesContainer && data.trustBadges) {
-    const badgeIcons = ['/images/trust-cod.svg', '/images/trust-shipping.svg', '/images/trust-warranty.svg'];
-    trustBadgesContainer.innerHTML = data.trustBadges.map((tb, i) => `
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#E0C375]/30 flex items-center gap-4 hover:border-[#D92143]/40 transition">
-        <img src="${badgeIcons[i] || badgeIcons[0]}" alt="${tb.title}" class="w-12 h-12 flex-shrink-0" />
-        <div>
-          <h3 class="font-bold text-[#0F172A] text-sm sm:text-base">${tb.title}</h3>
-          <p class="text-xs sm:text-sm text-[#334155]">${tb.desc}</p>
+  const trustBadgesList = Array.isArray(data.trustBadges) ? data.trustBadges.filter(tb => tb && tb.title) : [];
+  if (trustBadgesContainer) {
+    if (trustBadgesList.length === 0) {
+      trustBadgesContainer.innerHTML = '';
+      trustBadgesContainer.classList.add('hidden');
+    } else {
+      trustBadgesContainer.classList.remove('hidden');
+      const badgeIcons = ['/images/trust-cod.svg', '/images/trust-shipping.svg', '/images/trust-warranty.svg'];
+      trustBadgesContainer.innerHTML = trustBadgesList.map((tb, i) => `
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#E0C375]/30 flex items-center gap-4 hover:border-[#D92143]/40 transition">
+          <img src="${badgeIcons[i] || badgeIcons[0]}" alt="${tb.title}" class="w-12 h-12 flex-shrink-0" />
+          <div>
+            <h3 class="font-bold text-[#0F172A] text-sm sm:text-base">${tb.title}</h3>
+            <p class="text-xs sm:text-sm text-[#334155]">${tb.desc || ''}</p>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
   }
 
   // 8. FAQs
+  const faqSection = document.getElementById('faq-section');
   const faqContainer = document.getElementById('faq-container');
-  if (faqContainer && data.faq) {
-    faqContainer.innerHTML = data.faq.map((item, idx) => `
-      <div class="faq-item bg-white rounded-2xl border border-[#E0C375]/40 overflow-hidden transition">
-        <button onclick="toggleFaq(this)" class="w-full text-left p-4 sm:p-5 font-bold text-[#0F172A] text-sm sm:text-base flex items-center justify-between gap-4 hover:bg-[#FEF5E4]/40 transition">
-          <span>${item.q}</span>
-          <span class="faq-icon text-[#F69D39] transition-transform duration-300 font-extrabold text-sm">▼</span>
-        </button>
-        <div class="faq-answer px-4 sm:px-5 text-[#334155] text-sm leading-relaxed border-t border-[#E0C375]/20 bg-[#FEF5E4]/20">
-          ${item.a}
+  const faqList = Array.isArray(data.faq) ? data.faq.filter(item => item && item.q) : [];
+  if (faqSection && faqContainer) {
+    const faqWrapperCard = faqContainer.closest('.bg-white');
+    if (faqList.length === 0) {
+      if (faqWrapperCard) faqWrapperCard.classList.add('hidden');
+      faqContainer.innerHTML = '';
+    } else {
+      if (faqWrapperCard) faqWrapperCard.classList.remove('hidden');
+      faqContainer.innerHTML = faqList.map((item, idx) => `
+        <div class="faq-item bg-white rounded-2xl border border-[#E0C375]/40 overflow-hidden transition">
+          <button onclick="toggleFaq(this)" class="w-full text-left p-4 sm:p-5 font-bold text-[#0F172A] text-sm sm:text-base flex items-center justify-between gap-4 hover:bg-[#FEF5E4]/40 transition">
+            <span>${item.q}</span>
+            <span class="faq-icon text-[#F69D39] transition-transform duration-300 font-extrabold text-sm">▼</span>
+          </button>
+          <div class="faq-answer px-4 sm:px-5 text-[#334155] text-sm leading-relaxed border-t border-[#E0C375]/20 bg-[#FEF5E4]/20">
+            ${item.a || ''}
+          </div>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
   }
 
   // Update sticky mobile bar price
@@ -876,11 +934,11 @@ function startSocialProofLoop() {
   }, 4000);
 }
 
-// Synchronized 4-Hour Countdown Timer
-function updateSynchronized4HourTimer() {
-  const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+// Synchronized 8-Hour Countdown Timer (Seamlessly restarts for another 8 hours upon finish)
+function updateSynchronized8HourTimer() {
+  const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
   const now = Date.now();
-  const remainingMs = FOUR_HOURS_MS - (now % FOUR_HOURS_MS);
+  const remainingMs = EIGHT_HOURS_MS - (now % EIGHT_HOURS_MS);
 
   const totalSecs = Math.floor(remainingMs / 1000);
   const hours = Math.floor(totalSecs / 3600);
@@ -902,13 +960,13 @@ function updateSynchronized4HourTimer() {
   // Update Top Bar Urgency Banner
   const urgencyTextEl = document.getElementById('top-urgency-text');
   if (urgencyTextEl) {
-    urgencyTextEl.innerHTML = `Polygons® Official Store • ৪ ঘণ্টার স্পেশাল অফার — শেষ হতে আর মাত্র <span class="text-[#F69D39] font-bold">${hStr} ঘণ্টা ${mStr} মি: ${sStr} সে:</span> বাকি!`;
+    urgencyTextEl.innerHTML = `Polygons® Official Store • ৮ ঘণ্টার স্পেশাল অফার — শেষ হতে আর মাত্র <span class="text-[#F69D39] font-bold">${hStr} ঘণ্টা ${mStr} মি: ${sStr} সে:</span> বাকি!`;
   }
 }
 
 function startFlashCountdown() {
-  updateSynchronized4HourTimer();
-  setInterval(updateSynchronized4HourTimer, 1000);
+  updateSynchronized8HourTimer();
+  setInterval(updateSynchronized8HourTimer, 1000);
 }
 
 // Initial Boot

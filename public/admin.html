@@ -658,6 +658,27 @@
             </div>
           </div>
 
+          <!-- Database Backup & Persistence Management -->
+          <div class="border-t border-slate-200 pt-5 space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+              <span>💾</span> <span>Database Backup, Restore & Persistence</span>
+            </h3>
+            <p class="text-xs text-slate-500">
+              Download a live backup of your SQLite database (`database.sqlite`) containing all updated products, settings, reviews, and orders, or upload a backup file to restore instantly.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-3 pt-1">
+              <button type="button" onclick="exportDatabase()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2">
+                <span>⬇️ Download database.sqlite</span>
+              </button>
+
+              <label class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition cursor-pointer flex items-center gap-2">
+                <span>⬆️ Restore database.sqlite</span>
+                <input type="file" accept=".sqlite,.db" onchange="importDatabase(this)" class="hidden" />
+              </label>
+            </div>
+          </div>
+
           <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-8 py-3 rounded-xl shadow-sm transition">
             💾 Save Settings
           </button>

@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const { initDatabase, dbRun, dbGet, dbAll, defaultOrigamiPageData } = require('./database');
+const { initDatabase, dbPath, dbRun, dbGet, dbAll, defaultOrigamiPageData } = require('./database');
 const pathao = require('./pathao');
 const metaCapi = require('./metaCapi');
 const sharp = require('sharp');
@@ -627,6 +627,54 @@ app.get('/api/admin/export-csv', verifyAdminAuth, async (req, res) => {
     res.send(csv);
   } catch (err) {
     res.status(500).send('Error generating CSV');
+  }
+});
+
+// Database Backup Export (Download .sqlite)
+app.get('/api/admin/database/export', verifyAdminAuth, (req, res) => {
+  try {
+    if (!fs.existsSync(dbPath)) {
+      return res.status(404).json({ success: false, error: 'Database file not found' });
+    }
+    res.setHeader('Content-Type', 'application/vnd.sqlite3');
+    res.setHeader('Content-Disposition', `attachment; filename=database-${Date.now()}.sqlite`);
+    res.sendFile(dbPath);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Database Restore Import (Upload .sqlite)
+const dbImportDir = path.join(require('os').tmpdir(), 'db_imports');
+try {
+  if (!fs.existsSync(dbImportDir)) fs.mkdirSync(dbImportDir, { recursive: true });
+} catch (e) {}
+
+const dbUpload = multer({
+  dest: dbImportDir,
+  limits: { fileSize: 50 * 1024 * 1024 }
+});
+
+app.post('/api/admin/database/import', verifyAdminAuth, dbUpload.single('database'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No SQLite file was uploaded' });
+    }
+
+    const uploadedFilePath = req.file.path;
+    fs.copyFileSync(uploadedFilePath, dbPath);
+    try { fs.unlinkSync(uploadedFilePath); } catch (e) {}
+
+    const bundledDbPath = path.join(__dirname, 'database.sqlite');
+    if (dbPath !== bundledDbPath && fs.existsSync(bundledDbPath)) {
+      try {
+        fs.copyFileSync(dbPath, bundledDbPath);
+      } catch (e) {}
+    }
+
+    res.json({ success: true, message: 'Database restored successfully!' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
