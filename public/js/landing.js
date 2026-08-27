@@ -87,7 +87,7 @@ function renderLandingPage(data) {
   document.title = data.meta.pageTitle || data.hero.headline;
 
   // Setup Meta Pixel if present
-  if (data.meta.pixelId && !window.fbq) {
+  if (data.meta.pixelId && (!window.fbq || !window.fbq.loaded)) {
     initMetaPixel(data.meta.pixelId);
   }
 
@@ -685,7 +685,7 @@ function toggleFaq(buttonEl) {
 
 // Meta Pixel tracking helper
 function initMetaPixel(pixelId) {
-  if (window.fbq) return;
+  if (window.fbq && window.fbq.loaded) return;
   /* eslint-disable */
   !function(f,b,e,v,n,t,s)
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
