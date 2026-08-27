@@ -39,6 +39,7 @@ async function runTests() {
     console.assert(prodRes.status === 200, 'Product endpoint should return 200');
     console.assert(prodRes.data.success === true, 'Product should be returned successfully');
     console.assert(prodRes.data.product.slug === 'origami-spoon', 'Default slug should be origami-spoon');
+    console.assert(!prodRes.data.product.pageData?.meta?.metaCapiToken, 'Security: CAPI Token must NEVER be exposed in public API');
     console.log('✅ Active Product loaded successfully:', prodRes.data.product.title);
 
     // 2. Test Phone Validation (Invalid Phone)

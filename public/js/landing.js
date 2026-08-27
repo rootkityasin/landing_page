@@ -1,3 +1,36 @@
+// Cookie extraction & fbclid preservation helpers
+function getCookie(name) {
+  try {
+    const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+    return match ? decodeURIComponent(match[3]) : '';
+  } catch (e) {
+    return '';
+  }
+}
+
+function ensureFbcCookie() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fbclid = urlParams.get('fbclid');
+    if (fbclid) {
+      const existingFbc = getCookie('_fbc');
+      if (!existingFbc || !existingFbc.includes(fbclid)) {
+        const creationTime = Date.now();
+        const fbcValue = `fb.1.${creationTime}.${fbclid}`;
+        document.cookie = `_fbc=${encodeURIComponent(fbcValue)};path=/;max-age=${90 * 24 * 60 * 60};SameSite=Lax`;
+      }
+    }
+  } catch (e) {}
+}
+ensureFbcCookie();
+
+function getFacebookCookies() {
+  ensureFbcCookie();
+  const fbp = getCookie('_fbp') || undefined;
+  const fbc = getCookie('_fbc') || undefined;
+  return { fbp, fbc };
+}
+
 // Global state
 let currentProduct = null;
 let selectedBundle = null;
@@ -698,12 +731,40 @@ function initMetaPixel(pixelId) {
   /* eslint-enable */
   fbq('init', pixelId);
   fbq('track', 'PageView', {}, { eventID: pageViewEventId });
+
+  const skuId = 'POLYGON-3IN1';
+  const defaultPrice = Number(selectedBundle?.price) || 666;
+  const productTitle = currentProduct?.title || '3-in-1 Folding Measuring Spoon';
+
   fbq('track', 'ViewContent', {
-    content_name: currentProduct?.title || 'Origami Spoon',
+    content_name: productTitle,
     content_type: 'product',
-    value: selectedBundle?.price || 550,
+    content_ids: [skuId],
+    contents: [
+      {
+        id: skuId,
+        quantity: 1,
+        item_price: defaultPrice
+      }
+    ],
+    num_items: 1,
+    value: defaultPrice,
     currency: 'BDT'
   }, { eventID: pageViewEventId });
+
+  // Relay PageView to Server CAPI for exact matching deduplication
+  const { fbp, fbc } = getFacebookCookies();
+  fetch('/api/tracking/capi-event', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event_name: 'PageView',
+      event_id: pageViewEventId,
+      event_source_url: window.location.href,
+      user_data: { fbp, fbc },
+      custom_data: {}
+    })
+  }).catch(() => {});
 }
 
 // Fire InitiateCheckout once
@@ -711,15 +772,52 @@ function fireInitiateCheckout() {
   if (initiateCheckoutFired) return;
   initiateCheckoutFired = true;
 
-  const eventId = 'init_' + Date.now();
+  const eventId = 'init_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  const quantity = selectedBundle?.id === 'bundle_3' ? 3 : (selectedBundle?.id === 'bundle_2' ? 2 : 1);
+  const itemPrice = Number(selectedBundle?.price) || 666;
+  const isFreeDelivery = (selectedBundle?.id === 'bundle_2' || selectedBundle?.id === 'bundle_3');
+  const deliveryCharge = isFreeDelivery ? 0 : (selectedZone === 'dhaka_outside' ? 130 : 60);
+  const totalAmount = itemPrice + deliveryCharge;
+  const skuId = 'POLYGON-3IN1';
+  const productTitle = currentProduct?.title || '3-in-1 Folding Measuring Spoon';
+
+  const customData = {
+    value: totalAmount,
+    currency: 'BDT',
+    content_type: 'product',
+    content_ids: [skuId],
+    contents: [
+      {
+        id: skuId,
+        quantity: quantity,
+        item_price: itemPrice
+      }
+    ],
+    num_items: quantity,
+    content_name: productTitle
+  };
+
+  // 1. Browser Meta Pixel
   if (window.fbq) {
-    fbq('track', 'InitiateCheckout', {
-      value: selectedBundle?.price || 550,
-      currency: 'BDT'
-    }, { eventID: eventId });
+    fbq('track', 'InitiateCheckout', customData, { eventID: eventId });
   }
 
-  // Relay to server-side Meta CAPI
+  // 2. Read available customer & cookies
+  const nameInput = document.getElementById('cust-name');
+  const phoneInput = document.getElementById('cust-phone');
+  const addressInput = document.getElementById('cust-address');
+  const { fbp, fbc } = getFacebookCookies();
+
+  const userData = {
+    name: nameInput?.value?.trim() || undefined,
+    phone: phoneInput?.value?.trim() || undefined,
+    address: addressInput?.value?.trim() || undefined,
+    delivery_zone: selectedZone,
+    fbp: fbp,
+    fbc: fbc
+  };
+
+  // 3. Relay to server-side Meta CAPI with the exact same eventId & customData
   fetch('/api/tracking/capi-event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -727,10 +825,8 @@ function fireInitiateCheckout() {
       event_name: 'InitiateCheckout',
       event_id: eventId,
       event_source_url: window.location.href,
-      custom_data: {
-        currency: 'BDT',
-        value: selectedBundle?.price || 550
-      }
+      user_data: userData,
+      custom_data: customData
     })
   }).catch(() => {});
 }
@@ -785,6 +881,7 @@ async function handleOrderSubmit(e) {
   }
 
   const orderEventId = 'order_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  const { fbp, fbc } = getFacebookCookies();
 
   try {
     const payload = {
@@ -793,9 +890,11 @@ async function handleOrderSubmit(e) {
       phone: cleanPhone,
       address: address,
       delivery_zone: selectedZone,
-      bundle_id: selectedBundle?.id || 'bundle_2',
+      bundle_id: selectedBundle?.id || 'bundle_1',
       color_variant: selectedColor,
-      event_id: orderEventId
+      event_id: orderEventId,
+      fbp: fbp,
+      fbc: fbc
     };
 
     const res = await fetch('/api/orders', {
@@ -807,7 +906,10 @@ async function handleOrderSubmit(e) {
     const data = await res.json();
 
     if (data.success && data.order) {
-      // 1. Store order details in sessionStorage and localStorage for instant offline/serverless resilience
+      const orderQty = data.order.quantity || ((data.order.bundle_name.includes('৩') || data.order.bundle_name.includes('3')) ? 3 : ((data.order.bundle_name.includes('২') || data.order.bundle_name.includes('2')) ? 2 : 1));
+      const skuId = 'POLYGON-3IN1';
+
+      // 1. Store order details in sessionStorage and localStorage
       try {
         sessionStorage.setItem('polygons_last_order', JSON.stringify(data.order));
         localStorage.setItem(`polygons_order_${data.order.order_number}`, JSON.stringify(data.order));
@@ -815,7 +917,7 @@ async function handleOrderSubmit(e) {
         console.warn('Storage save notice:', e);
       }
 
-      // 2. Prepare URL query with compact payload as fallback
+      // 2. Prepare URL query with compact payload
       let targetUrl = `/thankyou?orderId=${encodeURIComponent(data.order.order_number)}`;
       try {
         const compactObj = {
@@ -834,14 +936,24 @@ async function handleOrderSubmit(e) {
         targetUrl += `&d=${encoded}`;
       } catch (e) {}
 
-      // 3. Fire client-side purchase pixel
+      // 3. Fire client-side purchase pixel with complete parameters & exact matching eventID
       if (window.fbq) {
         fbq('track', 'Purchase', {
-          content_name: data.order.product_name,
-          value: data.order.total_amount,
+          value: Number(data.order.total_amount),
           currency: 'BDT',
-          order_id: data.order.order_number
-        }, { eventID: orderEventId });
+          content_type: 'product',
+          content_ids: [skuId],
+          contents: [
+            {
+              id: skuId,
+              quantity: orderQty,
+              item_price: Number(data.order.item_price)
+            }
+          ],
+          num_items: orderQty,
+          order_id: data.order.order_number,
+          content_name: data.order.product_name || '3-in-1 Folding Measuring Spoon'
+        }, { eventID: data.order.event_id || orderEventId });
       }
 
       // 4. Redirect to Thank You page

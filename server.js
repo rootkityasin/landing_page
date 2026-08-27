@@ -12,6 +12,25 @@ const sharp = require('sharp');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+function parseCookies(req) {
+  const list = {};
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return list;
+  cookieHeader.split(';').forEach(cookie => {
+    let [name, ...rest] = cookie.split('=');
+    name = name?.trim();
+    if (!name) return;
+    const value = rest.join('=').trim();
+    if (!value) return;
+    try {
+      list[name] = decodeURIComponent(value);
+    } catch (e) {
+      list[name] = value;
+    }
+  });
+  return list;
+}
+
 // Detect Vercel / Serverless
 const isVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
 
@@ -141,7 +160,14 @@ app.get('/api/products/active', async (req, res) => {
         id: product.id,
         slug: product.slug,
         title: product.title,
-        pageData: JSON.parse(product.page_data)
+        pageData: (() => {
+          const pd = JSON.parse(product.page_data);
+          if (pd.meta) {
+            delete pd.meta.metaCapiToken;
+            delete pd.meta.capiToken;
+          }
+          return pd;
+        })()
       }
     });
   } catch (err) {
@@ -180,46 +206,62 @@ app.post('/api/orders', async (req, res) => {
       delivery_zone,
       bundle_id,
       color_variant,
-      event_id
+      event_id,
+      fbp: reqFbp,
+      fbc: reqFbc
     } = req.body;
 
-    if (!customer_name || !phone || !address || !delivery_zone || !bundle_id) {
-      return res.status(400).json({ success: false, error: 'সবগুলো প্রয়োজনীয় ঘর পূরণ করুন (Please fill all required fields)' });
+    if (!customer_name || !phone || !address) {
+      return res.status(400).json({ success: false, error: 'সবগুলো ফিল্ড সঠিকভাবে পূরণ করুন' });
     }
 
-    // Bangladeshi phone validation (11 digits: 013, 014, 015, 016, 017, 018, 019)
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const bdPhoneRegex = /^(01[3-9]\d{8})$/;
+    const bdPhoneRegex = /^01[3-9]\d{8}$/;
     if (!bdPhoneRegex.test(cleanPhone)) {
-      return res.status(400).json({
-        success: false,
-        error: 'সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (উদা: 017XXXXXXXX)'
-      });
+      return res.status(400).json({ success: false, error: 'সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (উদা: 017XXXXXXXX)' });
     }
 
-    // Find product config to calculate price securely
-    let product;
+    let product = null;
     if (product_slug) {
       product = await dbGet('SELECT * FROM products WHERE slug = ?', [product_slug]);
     }
     if (!product) {
-      product = await dbGet('SELECT * FROM products WHERE is_default = 1 LIMIT 1') || await dbGet('SELECT * FROM products LIMIT 1');
+      product = await dbGet('SELECT * FROM products WHERE is_default = 1 LIMIT 1') ||
+                    await dbGet('SELECT * FROM products ORDER BY id ASC LIMIT 1');
     }
 
-    const pageData = product ? JSON.parse(product.page_data) : defaultOrigamiPageData;
-    const selectedBundle = pageData.bundles.find(b => b.id === bundle_id) || pageData.bundles[0];
+    const pageData = product ? JSON.parse(product.page_data) : null;
+    const bundles = pageData?.pricing?.bundles || [
+      { id: 'bundle_1', name: '১ সেট — ৳৬৬৬', price: 666, quantity: 1 },
+      { id: 'bundle_2', name: '২ সেট — ৳১,১৯৯', price: 1199, quantity: 2 },
+      { id: 'bundle_3', name: '৩ সেট — ৳১,৬৯৯', price: 1699, quantity: 3 }
+    ];
+
+    const selectedBundle = bundles.find(b => b.id === bundle_id) || bundles[0];
+    
+    // Calculate item quantity
+    let quantity = 1;
+    if (selectedBundle.id === 'bundle_3' || selectedBundle.name.includes('৩ সেট') || selectedBundle.name.includes('3 Set')) {
+      quantity = 3;
+    } else if (selectedBundle.id === 'bundle_2' || selectedBundle.name.includes('২ সেট') || selectedBundle.name.includes('2 Set')) {
+      quantity = 2;
+    } else if (selectedBundle.quantity) {
+      quantity = Number(selectedBundle.quantity);
+    }
 
     const itemPrice = Number(selectedBundle.price);
-    const deliveryDhaka = pageData.checkout && pageData.checkout.deliveryDhaka !== undefined && pageData.checkout.deliveryDhaka !== '' ? Number(pageData.checkout.deliveryDhaka) : 60;
-    const deliveryOutside = pageData.checkout && pageData.checkout.deliveryOutside !== undefined && pageData.checkout.deliveryOutside !== '' ? Number(pageData.checkout.deliveryOutside) : 130;
-    const deliveryRate = delivery_zone === 'dhaka_outside' ? deliveryOutside : deliveryDhaka;
-    const deliveryCharge = selectedBundle.freeDelivery ? 0 : deliveryRate;
+    const isFreeDelivery = (selectedBundle.id === 'bundle_2' || selectedBundle.id === 'bundle_3' || selectedBundle.freeDelivery);
+    const deliveryCharge = isFreeDelivery ? 0 : (delivery_zone === 'dhaka_outside' ? 130 : 60);
     const totalAmount = itemPrice + deliveryCharge;
-
     const chosenColor = color_variant || 'Red';
+
     const orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'];
+
+    const cookies = parseCookies(req);
+    const fbp = reqFbp || cookies['_fbp'] || undefined;
+    const fbc = reqFbc || cookies['_fbc'] || undefined;
 
     const result = await dbRun(
       `INSERT INTO orders (
@@ -241,7 +283,7 @@ app.post('/api/orders', async (req, res) => {
         selectedBundle.id,
         selectedBundle.name,
         chosenColor,
-        1,
+        quantity,
         itemPrice,
         deliveryCharge,
         totalAmount,
@@ -250,25 +292,43 @@ app.post('/api/orders', async (req, res) => {
       ]
     );
 
-    // Trigger Meta Server-Side Conversions API (CAPI) in background
+    const skuId = 'POLYGON-3IN1';
+    const productTitle = product ? product.title : '3-in-1 Folding Measuring Spoon';
+    const sharedEventId = event_id || `order_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+    // Trigger Meta Server-Side Conversions API (CAPI) with full parameters
     metaCapi.sendEvent({
       eventName: 'Purchase',
-      eventId: event_id || `order_${orderNumber}`,
-      eventSourceUrl: req.headers.referer || `http://localhost:${PORT}/p/${product ? product.slug : ''}`,
+      eventId: sharedEventId,
+      eventSourceUrl: req.headers.referer || `https://polygonsbd.90slabs.com/`,
       userData: {
         name: customer_name,
         phone: cleanPhone,
+        address: address,
+        delivery_zone: delivery_zone,
         ip: ip,
-        userAgent: userAgent
+        userAgent: userAgent,
+        fbp: fbp,
+        fbc: fbc,
+        external_id: cleanPhone
       },
       customData: {
-        currency: 'BDT',
         value: totalAmount,
+        currency: 'BDT',
+        content_type: 'product',
+        content_ids: [skuId],
+        contents: [
+          {
+            id: skuId,
+            quantity: quantity,
+            item_price: itemPrice
+          }
+        ],
+        num_items: quantity,
         order_id: orderNumber,
-        content_name: product ? product.title : 'Origami Spoon',
-        content_type: 'product'
+        content_name: productTitle
       }
-    }).catch(err => console.error('Meta CAPI Error:', err.message));
+    }).catch(err => console.error('Meta CAPI Purchase Error:', err.message));
 
     // Get WhatsApp number from settings
     const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
@@ -285,11 +345,13 @@ app.post('/api/orders', async (req, res) => {
         delivery_zone: delivery_zone,
         bundle_name: selectedBundle.name,
         color_variant: chosenColor,
+        quantity: quantity,
         item_price: itemPrice,
         delivery_charge: deliveryCharge,
         total_amount: totalAmount,
-        product_name: product ? product.title : 'Polygons 3-in-1 Folding Spoon',
-        whatsapp_number: waNumber
+        product_name: productTitle,
+        whatsapp_number: waNumber,
+        event_id: sharedEventId
       }
     });
   } catch (err) {
@@ -323,18 +385,28 @@ app.get('/api/orders/:id', async (req, res) => {
   }
 });
 
-// Client CAPI Relay (e.g. for InitiateCheckout)
+// Client CAPI Relay (for InitiateCheckout, ViewContent, etc.)
 app.post('/api/tracking/capi-event', async (req, res) => {
   try {
-    const { event_name, event_id, event_source_url, user_data, custom_data } = req.body;
+    const { event_name, event_id, event_source_url, user_data = {}, custom_data = {} } = req.body;
+    const cookies = parseCookies(req);
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'];
+
+    const fbp = user_data.fbp || cookies['_fbp'] || undefined;
+    const fbc = user_data.fbc || cookies['_fbc'] || undefined;
 
     await metaCapi.sendEvent({
       eventName: event_name || 'InitiateCheckout',
       eventId: event_id,
-      eventSourceUrl: event_source_url,
-      userData: { ...user_data, ip, userAgent },
+      eventSourceUrl: event_source_url || req.headers.referer || 'https://polygonsbd.90slabs.com/',
+      userData: {
+        ...user_data,
+        ip,
+        userAgent,
+        fbp,
+        fbc
+      },
       customData: custom_data || {}
     });
 

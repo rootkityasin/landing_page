@@ -72,8 +72,7 @@ const defaultOrigamiPageData = {
     pageTitle: "POLYGONS® Flat 3-in-1 Folding Measuring Spoons | ২ চামচে ৬টি সাইজ",
     metaDesc: "অরিজিনাল Polygons ফ্ল্যাট ৩-ইন-১ ফোল্ডিং মেজারিং চামচ (সেট অফ ২ - ৬টি সাইজ)। DuraBend™ টেকনোলজি, ম্যাগনেটিক ও লিক-প্রুফ ডিজাইন।",
     pixelId: "1997638254273409",
-    metaCapiToken: "EAAPJ5KufkmcBSQiO1W9ijQx2cSHtPNZCC2aCdkK8ROGyhLH3cIpxIShdNXs8B70PUIxugiSUBA8ZBWCg2bMxB0nPDtLfrOnZCvNVUqbsjqYkaBc4kHLUgNX2J7nyE1HIqYsh2MRC3KSlAVjvTeRPLG74yXnELvOkfsHZBuQosKrtEtveqt3XZB0yYAsM4lvyQyAZDZD",
-    testEventCode: "",
+        testEventCode: "",
     supportEmail: "info.polygonsbd@gmail.com"
   },
   theme: {
