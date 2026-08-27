@@ -472,12 +472,10 @@ function renderBundles(bundles) {
   bundlesContainer.innerHTML = bundles.map((b, i) => {
     const isSelected = b.id === selectedBundle.id;
     
-    // Delivery status badge for cards
+    // Delivery status badge for cards (only highlight free delivery for packages 2 & 3)
     let deliveryBadge = '';
     if (b.freeDelivery) {
       deliveryBadge = '<span class="font-extrabold text-[#D92143] bg-[#FEF5E4] border border-[#E0C375] px-2.5 py-0.5 rounded-full shadow-2xs">🚚 ফ্রি ডেলিভারি</span>';
-    } else {
-      deliveryBadge = '<span class="font-bold text-[#475569] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md text-[11px]">+ ডেলিভারি চার্জ (ঢাকা ৬০ / বাইরে ১৩০)</span>';
     }
 
     const badgeClasses = b.isPopular 
