@@ -612,8 +612,41 @@ function selectColor(color) {
   updateCheckoutSummary();
 }
 
+
+// Field Error Handlers
+function setFieldError(fieldId, errorMsg) {
+  const errBox = document.getElementById('err-' + fieldId);
+  const errText = document.getElementById('err-' + fieldId + '-text');
+  if (errBox) {
+    if (errText && errorMsg) errText.innerText = errorMsg;
+    errBox.classList.remove('hidden');
+  }
+  const inputEl = document.getElementById(fieldId);
+  if (inputEl) {
+    inputEl.classList.add('border-red-500', 'bg-red-50/50', 'ring-2', 'ring-red-300');
+  }
+}
+
+function clearFieldError(fieldId) {
+  const errBox = document.getElementById('err-' + fieldId);
+  if (errBox) {
+    errBox.classList.add('hidden');
+  }
+  const inputEl = document.getElementById(fieldId);
+  if (inputEl) {
+    inputEl.classList.remove('border-red-500', 'bg-red-50/50', 'ring-2', 'ring-red-300');
+  }
+}
+
+function clearAllFieldErrors() {
+  ['cust-name', 'cust-phone', 'cust-address', 'cust-zone'].forEach(clearFieldError);
+  const errorAlert = document.getElementById('order-error-alert');
+  if (errorAlert) errorAlert.classList.add('hidden');
+}
+
 // Select Delivery Zone (dhaka_inside / dhaka_outside)
 function selectZone(zone) {
+  clearFieldError('cust-zone');
   selectedZone = zone;
   
   document.querySelectorAll('.zone-card').forEach(el => {
@@ -848,38 +881,47 @@ async function handleOrderSubmit(e) {
   const phoneInput = document.getElementById('cust-phone');
   const addressInput = document.getElementById('cust-address');
   const submitBtn = document.getElementById('checkout-submit-btn') || document.getElementById('submit-order-btn');
-  const errorAlert = document.getElementById('order-error-alert');
 
-  if (errorAlert) errorAlert.classList.add('hidden');
+  clearAllFieldErrors();
 
-  const customerName = nameInput.value.trim();
-  const phone = phoneInput.value.trim();
-  const address = addressInput.value.trim();
+  const customerName = nameInput ? nameInput.value.trim() : '';
+  const phone = phoneInput ? phoneInput.value.trim() : '';
+  const address = addressInput ? addressInput.value.trim() : '';
+
+  let hasError = false;
+  let firstErrorEl = null;
 
   if (!customerName) {
-    showFormError('অনুগ্রহ করে আপনার সম্পূর্ণ নাম লিখুন।');
-    nameInput.focus();
-    return;
+    setFieldError('cust-name', 'অনুগ্রহ করে আপনার পুরো নাম লিখুন।');
+    if (!firstErrorEl) firstErrorEl = nameInput;
+    hasError = true;
   }
 
   const cleanPhone = phone.replace(/[^0-9]/g, '');
   const bdPhoneRegex = /^01[3-9]\d{8}$/;
   if (!bdPhoneRegex.test(cleanPhone)) {
-    showFormError('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
-    phoneInput.focus();
-    return;
+    setFieldError('cust-phone', 'সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
+    if (!firstErrorEl) firstErrorEl = phoneInput;
+    hasError = true;
   }
 
   if (!address || address.length < 5) {
-    showFormError('অনুগ্রহ করে আপনার বিস্তারিত ঠিকানা দিন (বাসা নং, রোড নং, এলাকা, থানা, জেলা)।');
-    addressInput.focus();
-    return;
+    setFieldError('cust-address', 'অনুগ্রহ করে আপনার বিস্তারিত ঠিকানা দিন (বাসা নং, রোড নং, এলাকা, থানা, জেলা)।');
+    if (!firstErrorEl) firstErrorEl = addressInput;
+    hasError = true;
   }
 
   if (!selectedBundle?.freeDelivery && !selectedZone) {
-    showFormError('অনুগ্রহ করে ডেলিভারি এরিয়া বেছে নিন (ঢাকার ভিতরে অথবা ঢাকার বাইরে)।');
-    const zoneCard = document.getElementById('zone-dhaka_inside');
-    if (zoneCard) zoneCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setFieldError('cust-zone', 'অনুগ্রহ করে ডেলিভারি এরিয়া বেছে নিন (ঢাকার ভিতরে অথবা ঢাকার বাইরে)।');
+    if (!firstErrorEl) firstErrorEl = document.getElementById('zone-dhaka_inside');
+    hasError = true;
+  }
+
+  if (hasError) {
+    if (firstErrorEl) {
+      firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (typeof firstErrorEl.focus === 'function') firstErrorEl.focus();
+    }
     return;
   }
 
