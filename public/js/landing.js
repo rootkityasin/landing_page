@@ -56,19 +56,16 @@ function getSlugFromUrl() {
   return urlParams.get('product') || null;
 }
 
-// Fetch Product Configuration (Instant Live Cache Invalidation + Local Cache Fallback)
+// Fetch Product Configuration (Always 100% Live from Server - Zero Stale Cache)
 async function loadProduct() {
   const slug = getSlugFromUrl();
-  const cacheKey = `polygons_prod_${slug || 'default'}`;
 
-  // Instant 0ms render from client cache if available
+  // Clear any legacy client localStorage caches
   try {
-    const cachedStr = localStorage.getItem(cacheKey);
-    if (cachedStr) {
-      const cached = JSON.parse(cachedStr);
-      if (cached && cached.pageData && !currentProduct) {
-        currentProduct = cached;
-        renderLandingPage(currentProduct.pageData);
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('polygons_prod_')) {
+        localStorage.removeItem(k);
       }
     }
   } catch (e) {}
@@ -82,6 +79,7 @@ async function loadProduct() {
         'Pragma': 'no-cache'
       }
     });
+    if (!res.ok) throw new Error(`Failed to fetch product (Status: ${res.status})`);
     const data = await res.json();
 
     if (!data.success || !data.product) {
@@ -98,13 +96,9 @@ async function loadProduct() {
     }
 
     currentProduct = data.product;
-    try {
-      localStorage.setItem(cacheKey, JSON.stringify(currentProduct));
-    } catch (e) {}
-
     renderLandingPage(currentProduct.pageData);
   } catch (err) {
-    console.error('Error loading product:', err);
+    console.error('Error loading live product data:', err);
   }
 }
 

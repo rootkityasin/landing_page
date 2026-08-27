@@ -444,7 +444,7 @@ function openEditorForProduct(productId) {
 async function loadProductIntoEditor(productId) {
   currentEditingProductId = productId;
   try {
-    const res = await fetch(`/api/admin/products/${productId}`, { headers: getAuthHeaders() });
+    const res = await fetch(`/api/admin/products/${productId}?_t=${Date.now()}`, { cache: "no-store", headers: getAuthHeaders() });
     const data = await res.json();
     if (!data.success || !data.product) return;
 
@@ -1174,22 +1174,7 @@ async function saveCurrentPageData() {
 
     const data = await res.json();
     if (data.success) {
-      showToast('All section changes saved successfully! 🎉');
-      try {
-        const prodSlug = currentEditingPageData?.slug || 'origami-spoon';
-        localStorage.setItem(`polygons_prod_${prodSlug}`, JSON.stringify({
-          id: targetId,
-          slug: prodSlug,
-          title: d.hero?.headline || 'Polygons Spoon Set',
-          pageData: d
-        }));
-        localStorage.setItem(`polygons_prod_default`, JSON.stringify({
-          id: targetId,
-          slug: prodSlug,
-          title: d.hero?.headline || 'Polygons Spoon Set',
-          pageData: d
-        }));
-      } catch (e) {}
+      showToast('✅ All section changes saved to live page!');
     } else {
       showToast(data.error || 'Failed to save changes', false);
     }
