@@ -276,16 +276,29 @@ function renderLandingPage(data) {
       const videoUrl = data.videoDemo.videoUrl.trim();
       const posterUrl = (data.videoDemo.posterUrl || '').trim();
 
-      const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
-      if (ytMatch) {
-        const videoId = ytMatch[1];
+      const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|live\/))([\w-]{11})/);
+      const vimeoMatch = videoUrl.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+      const gdriveMatch = videoUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+
+      if (videoUrl.startsWith('<iframe') && videoUrl.includes('</iframe>')) {
+        wrapper.innerHTML = videoUrl.replace('<iframe', '<iframe class="w-full h-full rounded-3xl"');
+      } else if (ytMatch) {
         wrapper.innerHTML = `
-          <iframe class="w-full h-full rounded-3xl" src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <iframe class="w-full h-full rounded-3xl" src="https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0&modestbranding=1" title="Product Demonstration Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        `;
+      } else if (vimeoMatch) {
+        wrapper.innerHTML = `
+          <iframe class="w-full h-full rounded-3xl" src="https://player.vimeo.com/video/${vimeoMatch[1]}?dnt=1" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        `;
+      } else if (gdriveMatch) {
+        wrapper.innerHTML = `
+          <iframe class="w-full h-full rounded-3xl" src="https://drive.google.com/file/d/${gdriveMatch[1]}/preview" frameborder="0" allow="autoplay"></iframe>
         `;
       } else {
         wrapper.innerHTML = `
           <video id="demo-video-player" class="w-full h-full object-cover rounded-3xl" controls playsinline preload="metadata" ${posterUrl ? `poster="${posterUrl}"` : ''}>
             <source src="${videoUrl}" type="video/mp4">
+            <source src="${videoUrl}">
             আপনার ব্রাউজার ভিডিওটি প্লে করতে পারছে না।
           </video>
         `;
