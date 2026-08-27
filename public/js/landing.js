@@ -258,62 +258,39 @@ function renderLandingPage(data) {
     }
   }
 
-  // 3. How It Works 3 Steps
-  const howTitleEl = document.getElementById('how-it-works-title');
-  if (howTitleEl) howTitleEl.innerText = data.howItWorks.title;
-  
-  const howSubEl = document.getElementById('how-it-works-subtitle');
-  if (howSubEl) howSubEl.innerText = data.howItWorks.subtitle;
+  // 2. Video Demonstration (How to Use)
+  if (data.videoDemo) {
+    const vBadge = document.getElementById('video-demo-badge');
+    if (vBadge && data.videoDemo.badge) {
+      const span = vBadge.querySelector('span');
+      if (span) span.innerText = data.videoDemo.badge;
+    }
+    const vTitle = document.getElementById('video-demo-title');
+    if (vTitle && data.videoDemo.title) vTitle.innerText = data.videoDemo.title;
 
-  const stepsContainer = document.getElementById('steps-container');
-  if (stepsContainer && data.howItWorks.steps) {
-    const stepColorThemes = [
-      {
-        border: 'border-[#D92143]/35 hover:border-[#D92143]',
-        badgeBg: 'bg-[#FEF5E4]',
-        badgeText: 'text-[#D92143]',
-        badgeBorder: 'border-[#D92143]/60',
-        imgBg: 'bg-[#FEF5E4]/40',
-        imgBorder: 'border-[#D92143]/20'
-      },
-      {
-        border: 'border-[#E0C375] hover:border-[#B45309]',
-        badgeBg: 'bg-[#FEF5E4]',
-        badgeText: 'text-[#9A3412]',
-        badgeBorder: 'border-[#E0C375]',
-        imgBg: 'bg-[#FEF5E4]/60',
-        imgBorder: 'border-[#E0C375]/40'
-      },
-      {
-        border: 'border-[#E0C375]/70 hover:border-[#B45309]',
-        badgeBg: 'bg-[#FEF5E4]',
-        badgeText: 'text-[#B45309]',
-        badgeBorder: 'border-[#E0C375]',
-        imgBg: 'bg-[#FEF5E4]/50',
-        imgBorder: 'border-[#E0C375]/40'
+    const vSub = document.getElementById('video-demo-subtitle');
+    if (vSub && data.videoDemo.subtitle) vSub.innerText = data.videoDemo.subtitle;
+
+    const wrapper = document.getElementById('video-player-wrapper');
+    if (wrapper && data.videoDemo.videoUrl) {
+      const videoUrl = data.videoDemo.videoUrl.trim();
+      const posterUrl = (data.videoDemo.posterUrl || '').trim();
+
+      const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
+      if (ytMatch) {
+        const videoId = ytMatch[1];
+        wrapper.innerHTML = `
+          <iframe class="w-full h-full rounded-3xl" src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        `;
+      } else {
+        wrapper.innerHTML = `
+          <video id="demo-video-player" class="w-full h-full object-cover rounded-3xl" controls playsinline preload="metadata" ${posterUrl ? `poster="${posterUrl}"` : ''}>
+            <source src="${videoUrl}" type="video/mp4">
+            আপনার ব্রাউজার ভিডিওটি প্লে করতে পারছে না।
+          </video>
+        `;
       }
-    ];
-
-    stepsContainer.innerHTML = data.howItWorks.steps.map((step, idx) => {
-      const theme = stepColorThemes[idx % stepColorThemes.length];
-      const stepNumber = toBanglaDigits(String(idx + 1).padStart(2, '0'));
-      return `
-      <div class="relative bg-white rounded-3xl border-2 ${theme.border} flex flex-col justify-between hover:shadow-lg transition duration-300 group">
-        <!-- Numbering Badge Positioned Above Div -->
-        <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-2xl ${theme.badgeBg} border-2 ${theme.badgeBorder} ${theme.badgeText} font-black text-base flex items-center justify-center shadow-md z-10 group-hover:scale-110 transition">
-          ${stepNumber}
-        </div>
-        
-        <!-- Full-Bleed Photo Directly Following Outer Card -->
-        <img src="${step.image || `/images/step${idx+1}.svg`}" width="600" height="600" style="aspect-ratio: 4/3;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/step${idx+1}.svg';" alt="${step.title}" class="w-full h-56 sm:h-64 object-cover rounded-t-[22px] transition duration-500 group-hover:scale-[1.01]" />
-
-        <!-- Step Title & Description Below Image -->
-        <div class="p-4 sm:p-5 text-center space-y-1.5">
-          <h3 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-snug">${step.title}</h3>
-          <p class="text-[#334155] text-xs sm:text-sm leading-relaxed">${step.desc}</p>
-        </div>
-      </div>`;
-    }).join('');
+    }
   }
 
   // 3. What's in 1 Set Box (1 সেটে কী কী পাচ্ছেন)

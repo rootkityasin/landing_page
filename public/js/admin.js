@@ -477,7 +477,7 @@ function populateEditorFields(d) {
   if (!d.topBar) d.topBar = {};
   if (!d.hero) d.hero = {};
   if (!d.problemSolution) d.problemSolution = { cards: [] };
-  if (!d.howItWorks) d.howItWorks = { steps: [] };
+  if (!d.videoDemo) d.videoDemo = {};
   if (!d.checkout) d.checkout = {};
   if (!d.bundles) d.bundles = [];
   if (!d.reviews) d.reviews = [];
@@ -546,27 +546,22 @@ function populateEditorFields(d) {
     </div>
   `).join('');
 
-  // 5. How It Works Steps & Images
-  if (document.getElementById('edit-howitworks-title')) {
-    document.getElementById('edit-howitworks-title').value = d.howItWorks?.title || '';
+  // 5. Video Demo Section
+  if (!d.videoDemo) {
+    d.videoDemo = {
+      badge: "🎥 ভিডিও ডেমোস্ট্রেশন",
+      title: "ভিডিওতে দেখুন এটি কীভাবে কাজ করে ও সহজে ব্যবহার করবেন",
+      subtitle: "মাত্র কয়েক সেকেন্ডে নিখুঁত পরিমাপ ও ব্যবহারের সহজ পদ্ধতি সরাসরি ভিডিওতে দেখে নিন",
+      videoUrl: "/uploads/media-1787674998296-587000979.mp4",
+      posterUrl: "/uploads/media-1787681475090-937220178.webp"
+    };
   }
-  const stepsContainer = document.getElementById('howitworks-steps-editor');
-  if (stepsContainer) {
-    stepsContainer.innerHTML = (d.howItWorks?.steps || []).map((step, i) => `
-      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-        <div class="font-bold text-xs text-slate-700">Step #${i + 1} (${step.number || '0' + (i+1)})</div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <input type="text" id="edit-step-title-${i}" value="${step.title}" placeholder="Step Title" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold" />
-          <textarea id="edit-step-desc-${i}" rows="2" placeholder="Step Description" class="px-3 py-2 rounded-xl border border-slate-200 text-xs">${step.desc}</textarea>
-        </div>
-        <div class="flex items-center gap-3">
-          <input type="file" accept="image/*" onchange="uploadMediaFile(this, 'edit-step-img-${i}', 'step-preview-${i}')" class="text-xs text-slate-500" />
-          <input type="text" id="edit-step-img-${i}" value="${step.image || `/images/step${i+1}.svg`}" placeholder="Image Path" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-latin" />
-          <img id="step-preview-${i}" src="${step.image || `/images/step${i+1}.svg`}" class="w-10 h-10 object-contain rounded border bg-white" />
-        </div>
-      </div>
-    `).join('');
-  }
+  if (document.getElementById('edit-video-badge')) document.getElementById('edit-video-badge').value = d.videoDemo.badge || '';
+  if (document.getElementById('edit-video-title')) document.getElementById('edit-video-title').value = d.videoDemo.title || '';
+  if (document.getElementById('edit-video-subtitle')) document.getElementById('edit-video-subtitle').value = d.videoDemo.subtitle || '';
+  if (document.getElementById('edit-video-url')) document.getElementById('edit-video-url').value = d.videoDemo.videoUrl || '';
+  if (document.getElementById('edit-video-poster')) document.getElementById('edit-video-poster').value = d.videoDemo.posterUrl || '';
+  previewAdminVideo();
 
   // 6. What's in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
   if (!d.whatsIncluded) {
@@ -1020,7 +1015,7 @@ async function saveCurrentPageData() {
   if (!d.topBar) d.topBar = {};
   if (!d.hero) d.hero = {};
   if (!d.problemSolution) d.problemSolution = { cards: [] };
-  if (!d.howItWorks) d.howItWorks = { steps: [] };
+  if (!d.videoDemo) d.videoDemo = {};
   if (!d.checkout) d.checkout = {};
   if (!d.bundles) d.bundles = [];
   if (!d.reviews) d.reviews = [];
@@ -1087,18 +1082,14 @@ async function saveCurrentPageData() {
     if (sd) c.solutionDesc = sd.value.trim();
   });
 
-  // 5. How It Works
-  if (document.getElementById('edit-howitworks-title')) {
-    d.howItWorks.title = document.getElementById('edit-howitworks-title').value.trim();
-  }
-  (d.howItWorks.steps || []).forEach((s, i) => {
-    const st = document.getElementById(`edit-step-title-${i}`);
-    const sd = document.getElementById(`edit-step-desc-${i}`);
-    const si = document.getElementById(`edit-step-img-${i}`);
-    if (st) s.title = st.value.trim();
-    if (sd) s.desc = sd.value.trim();
-    if (si) s.image = si.value.trim();
-  });
+  // 5. Video Demo
+  delete d.howItWorks;
+  if (!d.videoDemo) d.videoDemo = {};
+  if (document.getElementById('edit-video-badge')) d.videoDemo.badge = document.getElementById('edit-video-badge').value.trim();
+  if (document.getElementById('edit-video-title')) d.videoDemo.title = document.getElementById('edit-video-title').value.trim();
+  if (document.getElementById('edit-video-subtitle')) d.videoDemo.subtitle = document.getElementById('edit-video-subtitle').value.trim();
+  if (document.getElementById('edit-video-url')) d.videoDemo.videoUrl = document.getElementById('edit-video-url').value.trim();
+  if (document.getElementById('edit-video-poster')) d.videoDemo.posterUrl = document.getElementById('edit-video-poster').value.trim();
 
   // 6. What's Included in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
   if (!d.whatsIncluded) d.whatsIncluded = {};
@@ -1360,3 +1351,62 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('global-settings-form')?.addEventListener('submit', handleSaveSettings);
   document.getElementById('new-product-form')?.addEventListener('submit', handleCreateProduct);
 });
+
+// Video Demo Preview & Upload Handlers
+function previewAdminVideo() {
+  const previewBox = document.getElementById('admin-video-preview-box');
+  if (!previewBox) return;
+  const urlInput = document.getElementById('edit-video-url');
+  const posterInput = document.getElementById('edit-video-poster');
+  const videoUrl = urlInput ? urlInput.value.trim() : '';
+  const posterUrl = posterInput ? posterInput.value.trim() : '';
+
+  if (!videoUrl) {
+    previewBox.innerHTML = '<p class="text-xs text-slate-400">কোনো ভিডিও নেই</p>';
+    return;
+  }
+
+  const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
+  if (ytMatch) {
+    previewBox.innerHTML = `<iframe class="w-full h-full rounded-2xl" src="https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0" frameborder="0" allowfullscreen></iframe>`;
+  } else {
+    previewBox.innerHTML = `<video class="w-full h-full object-cover rounded-2xl" controls preload="metadata" ${posterUrl ? `poster="${posterUrl}"` : ''}><source src="${videoUrl}" type="video/mp4"></video>`;
+  }
+}
+
+async function uploadVideoFile(inputEl, targetInputId) {
+  if (!inputEl.files || inputEl.files.length === 0) return;
+  const file = inputEl.files[0];
+  const formData = new FormData();
+  formData.append('media', file);
+
+  const targetInput = document.getElementById(targetInputId);
+  const origText = targetInput ? targetInput.placeholder : '';
+  if (targetInput) targetInput.placeholder = 'ভিডিও আপলোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন';
+
+  try {
+    const res = await fetch('/api/admin/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + (adminToken || 'admin123')
+      },
+      body: formData
+    });
+    const data = await res.json();
+    if (data.success && data.url) {
+      if (targetInput) {
+        targetInput.value = data.url;
+        targetInput.placeholder = origText;
+      }
+      previewAdminVideo();
+      showAdminToast('✅ ভিডিও সফলভাবে আপলোড হয়েছে!');
+    } else {
+      alert('ভিডিও আপলোড ব্যর্থ হয়েছে: ' + (data.error || 'Unknown error'));
+      if (targetInput) targetInput.placeholder = origText;
+    }
+  } catch (err) {
+    console.error('Video upload error:', err);
+    alert('ভিডিও আপলোডে সমস্যা হয়েছে: ' + err.message);
+    if (targetInput) targetInput.placeholder = origText;
+  }
+}
