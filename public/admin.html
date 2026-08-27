@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard & Landing Page CMS | Polygons</title>
   
-  <link rel="stylesheet" href="/css/styles.min.css?v=9.5" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=9.8" />
   
   <!-- Favicons -->
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -480,10 +480,11 @@
               <div>
                 <label class="block font-bold text-slate-700 text-xs mb-1">Poster / Thumbnail Image (Optional)</label>
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <img id="video-poster-preview-img" src="/uploads/media-1787681475090-937220178.webp" alt="Poster Preview" class="w-11 h-11 object-cover rounded-xl border border-slate-300 bg-white flex-shrink-0 shadow-2xs" />
                   <input type="text" id="edit-video-poster" oninput="previewAdminVideo()" placeholder="/uploads/poster.webp" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs font-latin outline-none bg-white" />
                   <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl cursor-pointer inline-flex items-center justify-center gap-1.5 transition flex-shrink-0 border border-slate-300">
                     <span>🖼️ Upload Image</span>
-                    <input type="file" accept="image/*" onchange="uploadMediaFile(this, 'edit-video-poster')" class="hidden" />
+                    <input type="file" accept="image/*" onchange="uploadMediaFile(this, 'edit-video-poster', 'video-poster-preview-img')" class="hidden" />
                   </label>
                 </div>
               </div>
@@ -766,6 +767,6 @@
     </div>
   </div>
 
-  <script src="/js/admin.js?v=9.5"></script>
+  <script src="/js/admin.js?v=9.8"></script>
 </body>
 </html>

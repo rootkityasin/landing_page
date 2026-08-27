@@ -561,6 +561,7 @@ function populateEditorFields(d) {
   if (document.getElementById('edit-video-subtitle')) document.getElementById('edit-video-subtitle').value = d.videoDemo.subtitle || '';
   if (document.getElementById('edit-video-url')) document.getElementById('edit-video-url').value = d.videoDemo.videoUrl || '';
   if (document.getElementById('edit-video-poster')) document.getElementById('edit-video-poster').value = d.videoDemo.posterUrl || '';
+  const pImg = document.getElementById('video-poster-preview-img'); if (pImg && d.videoDemo.posterUrl) pImg.src = d.videoDemo.posterUrl;
   previewAdminVideo();
 
   // 6. What's in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
@@ -978,7 +979,7 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
   formData.append('media', file);
 
   try {
-    showAdminToast('Uploading media...');
+    showAdminToast('Uploading image...');
     const res = await fetch('/api/admin/upload', {
       method: 'POST',
       headers: {
@@ -1007,9 +1008,12 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
         const previewImg = document.getElementById(previewImgId);
         if (previewImg) previewImg.src = data.url;
       }
+      if (typeof previewAdminVideo === 'function') {
+        previewAdminVideo();
+      }
       // Auto-save immediately to database
       await saveCurrentPageData();
-      showAdminToast('✅ Media uploaded and saved successfully!');
+      showAdminToast('✅ Image uploaded and saved successfully!');
     } else {
       alert('Upload failed: ' + (data.error || 'Unknown error'));
     }
@@ -1358,16 +1362,30 @@ function previewAdminVideo() {
   const videoUrl = urlInput ? urlInput.value.trim() : '';
   const posterUrl = posterInput ? posterInput.value.trim() : '';
 
+  const posterPreviewImg = document.getElementById('video-poster-preview-img');
+  if (posterPreviewImg && posterUrl) {
+    posterPreviewImg.src = posterUrl;
+  }
+
   if (!videoUrl) {
     previewBox.innerHTML = '<p class="text-xs text-slate-400">No video selected</p>';
     return;
   }
 
-  const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
-  if (ytMatch) {
+  const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|live\/))([\w-]{11})/);
+  const vimeoMatch = videoUrl.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+  const gdriveMatch = videoUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+
+  if (videoUrl.startsWith('<iframe') && videoUrl.includes('</iframe>')) {
+    previewBox.innerHTML = videoUrl.replace('<iframe', '<iframe class="w-full h-full rounded-2xl"');
+  } else if (ytMatch) {
     previewBox.innerHTML = `<iframe class="w-full h-full rounded-2xl" src="https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0" frameborder="0" allowfullscreen></iframe>`;
+  } else if (vimeoMatch) {
+    previewBox.innerHTML = `<iframe class="w-full h-full rounded-2xl" src="https://player.vimeo.com/video/${vimeoMatch[1]}?dnt=1" frameborder="0" allowfullscreen></iframe>`;
+  } else if (gdriveMatch) {
+    previewBox.innerHTML = `<iframe class="w-full h-full rounded-2xl" src="https://drive.google.com/file/d/${gdriveMatch[1]}/preview" frameborder="0" allow="autoplay"></iframe>`;
   } else {
-    previewBox.innerHTML = `<video class="w-full h-full object-cover rounded-2xl" controls preload="metadata" ${posterUrl ? `poster="${posterUrl}"` : ''}><source src="${videoUrl}" type="video/mp4"></video>`;
+    previewBox.innerHTML = `<video class="w-full h-full object-cover rounded-2xl" controls playsinline preload="metadata" ${posterUrl ? `poster="${posterUrl}"` : ''}><source src="${videoUrl}" type="video/mp4"><source src="${videoUrl}"></video>`;
   }
 }
 
