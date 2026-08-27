@@ -519,7 +519,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               
               <!-- Inside Dhaka -->
-              <div onclick="selectZone('dhaka_inside')" id="zone-dhaka_inside" class="zone-card selected rounded-xl p-3.5 flex items-center justify-between">
+              <div onclick="selectZone('dhaka_inside')" id="zone-dhaka_inside" class="zone-card rounded-xl p-3.5 flex items-center justify-between cursor-pointer transition">
                 <div class="flex items-center gap-3">
                   <div class="zone-radio-circle">
                     <div class="zone-radio-dot"></div>
@@ -530,7 +530,7 @@
               </div>
 
               <!-- Outside Dhaka -->
-              <div onclick="selectZone('dhaka_outside')" id="zone-dhaka_outside" class="zone-card rounded-xl p-3.5 flex items-center justify-between">
+              <div onclick="selectZone('dhaka_outside')" id="zone-dhaka_outside" class="zone-card rounded-xl p-3.5 flex items-center justify-between cursor-pointer transition">
                 <div class="flex items-center gap-3">
                   <div class="zone-radio-circle">
                     <div class="zone-radio-dot"></div>
@@ -546,8 +546,8 @@
           <!-- Live Order Summary Breakdown -->
           <div class="bg-[#FEF5E4]/60 rounded-2xl p-4 border border-[#E0C375]/50 space-y-2 text-sm">
             <div class="flex justify-between text-[#334155]">
-              <span id="summary-bundle-name">২ সেট (ফ্যামিলি প্যাক)</span>
-              <span id="summary-item-price" class="font-black text-[#0F172A]">৳১,১৯৯</span>
+              <span id="summary-bundle-name">১ সেট — ৳৬৬৬</span>
+              <span id="summary-item-price" class="font-black text-[#0F172A]">৳৬৬৬</span>
             </div>
             <div class="flex justify-between text-[#334155]">
               <span>নির্বাচিত কালার:</span>
@@ -555,17 +555,17 @@
             </div>
             <div class="flex justify-between text-[#334155]">
               <span>ডেলিভারি চার্জ:</span>
-              <span id="summary-delivery-charge" class="font-bold text-[#334155]">৳৬০</span>
+              <span id="summary-delivery-charge" class="font-bold text-[#334155]"><span class="text-slate-400 font-medium">এরিয়া বেছে নিন</span></span>
             </div>
             <div class="border-t border-[#E0C375]/40 pt-2 flex justify-between items-baseline text-base font-extrabold text-[#0F172A]">
               <span>Total:</span>
-              <span id="summary-total-amount" class="text-xl font-black text-[#D92143]">৳১,১৯৯</span>
+              <span id="summary-total-amount" class="text-xl font-black text-[#D92143]">৳৬৬৬</span>
             </div>
           </div>
 
           <!-- Submit Order Button -->
           <button type="submit" id="submit-order-btn" style="background-color: #D92143 !important; color: #FFFFFF !important;" class="w-full bg-[#D92143] hover:bg-[#BF1A37] text-white font-black text-base sm:text-lg py-3.5 sm:py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center transition active:scale-98">
-            <span id="submit-btn-text">ক্যাশ অন ডেলিভারি (৳৭২৬)</span>
+            <span id="submit-btn-text">ক্যাশ অন ডেলিভারি (৳৬৬৬)</span>
           </button>
 
           <!-- Risk-Free COD Assurance -->
@@ -731,7 +731,7 @@
   <div id="sticky-mobile-bar" class="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[#E0C375]/40 px-4 py-2.5 z-40 shadow-2xl flex items-center justify-between gap-3">
     <div class="leading-tight pl-1">
       <div class="text-[11px] text-[#64748B] font-bold">Total:</div>
-      <div id="mobile-bar-price" class="text-xl font-black text-[#D92143] leading-none pt-0.5">৳৭২৬</div>
+      <div id="mobile-bar-price" class="text-xl font-black text-[#D92143] leading-none pt-0.5">৳৬৬৬</div>
     </div>
     <button onclick="scrollToCheckout()" style="background-color: #D92143 !important; color: #FFFFFF !important;" class="w-auto bg-[#D92143] hover:bg-[#BF1A37] text-white font-black py-2.5 px-5 rounded-2xl shadow-lg flex items-center justify-center gap-2 transition active:scale-95 flex-shrink-0">
       <svg class="w-5 h-5 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

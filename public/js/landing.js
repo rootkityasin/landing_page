@@ -35,7 +35,7 @@ function getFacebookCookies() {
 let currentProduct = null;
 let selectedBundle = null;
 let selectedColor = 'Red';
-let selectedZone = 'dhaka_inside';
+let selectedZone = null;
 let initiateCheckoutFired = false;
 const pageViewEventId = 'view_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
 
@@ -641,9 +641,22 @@ function updateCheckoutSummary() {
     ? Number(pageData.checkout.deliveryOutside)
     : 130;
 
-  const deliveryRate = selectedZone === 'dhaka_outside' ? deliveryOutside : deliveryDhaka;
+  let deliveryCharge = 0;
+  let deliveryHtml = '';
 
-  const deliveryCharge = selectedBundle.freeDelivery ? 0 : deliveryRate;
+  if (selectedBundle.freeDelivery) {
+    deliveryCharge = 0;
+    deliveryHtml = '<span class="text-[#D92143] font-bold">ফ্রি (৳০)</span>';
+  } else if (!selectedZone) {
+    // No delivery zone chosen yet by default
+    deliveryCharge = 0;
+    deliveryHtml = '<span class="text-slate-400 font-medium text-xs">এরিয়া বেছে নিন</span>';
+  } else {
+    // Zone selected (inside Dhaka 60 / outside Dhaka 130)
+    deliveryCharge = selectedZone === 'dhaka_outside' ? deliveryOutside : deliveryDhaka;
+    deliveryHtml = `৳${toBanglaDigits(deliveryCharge)}`;
+  }
+
   const grandTotal = itemPrice + deliveryCharge;
 
   const bNameEl = document.getElementById('summary-bundle-name');
@@ -668,17 +681,13 @@ function updateCheckoutSummary() {
 
   const deliveryEl = document.getElementById('summary-delivery-charge');
   if (deliveryEl) {
-    if (selectedBundle.freeDelivery) {
-      deliveryEl.innerHTML = `<span class="text-[#D92143] font-bold">ফ্রি (৳০)</span>`;
-    } else {
-      deliveryEl.innerText = `৳${toBanglaDigits(deliveryCharge)}`;
-    }
+    deliveryEl.innerHTML = deliveryHtml;
   }
 
   const grandTotalEl = document.getElementById('summary-total-amount') || document.getElementById('summary-grand-total');
   if (grandTotalEl) grandTotalEl.innerText = `৳${toBanglaDigits(grandTotal)}`;
 
-  // Update Submit Button Text (Only Cash on Delivery and Price)
+  // Update Submit Button Text
   const submitBtnText = document.getElementById('submit-btn-text');
   if (submitBtnText) {
     submitBtnText.innerText = `ক্যাশ অন ডেলিভারি (৳${toBanglaDigits(grandTotal)})`;
@@ -864,6 +873,13 @@ async function handleOrderSubmit(e) {
   if (!address || address.length < 5) {
     showFormError('অনুগ্রহ করে আপনার বিস্তারিত ঠিকানা দিন (বাসা নং, রোড নং, এলাকা, থানা, জেলা)।');
     addressInput.focus();
+    return;
+  }
+
+  if (!selectedBundle?.freeDelivery && !selectedZone) {
+    showFormError('অনুগ্রহ করে ডেলিভারি এরিয়া বেছে নিন (ঢাকার ভিতরে অথবা ঢাকার বাইরে)।');
+    const zoneCard = document.getElementById('zone-dhaka_inside');
+    if (zoneCard) zoneCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
