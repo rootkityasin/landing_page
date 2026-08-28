@@ -777,7 +777,7 @@ function initMetaPixel(pixelId) {
       event_name: 'ViewContent',
       event_id: viewContentEventId,
       event_source_url: window.location.href,
-      user_data: { fbp, fbc },
+      user_data: { fbp, fbc, user_agent: navigator.userAgent },
       custom_data: {
         content_name: productTitle,
         content_type: 'product',
@@ -845,7 +845,8 @@ function fireInitiateCheckout() {
     address: addressInput?.value?.trim() || undefined,
     delivery_zone: selectedZone,
     fbp: fbp,
-    fbc: fbc
+    fbc: fbc,
+    user_agent: navigator.userAgent
   };
 
   // 3. Relay to server-side Meta CAPI with the exact same eventId & customData
@@ -941,7 +942,8 @@ async function handleOrderSubmit(e) {
       color_variant: selectedColor,
       event_id: orderEventId,
       fbp: fbp,
-      fbc: fbc
+      fbc: fbc,
+      user_agent: navigator.userAgent
     };
 
     const res = await fetch('/api/orders', {

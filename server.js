@@ -31,6 +31,27 @@ function parseCookies(req) {
   return list;
 }
 
+function getRealClientIp(req, clientProvidedIp) {
+  if (clientProvidedIp && clientProvidedIp !== '::1' && clientProvidedIp !== '127.0.0.1' && clientProvidedIp !== 'localhost') {
+    return String(clientProvidedIp).split(',')[0].trim();
+  }
+  const cf = req.headers['cf-connecting-ip'];
+  if (cf) return String(cf).trim();
+  const xReal = req.headers['x-real-ip'];
+  if (xReal) return String(xReal).trim();
+  const xff = req.headers['x-forwarded-for'];
+  if (xff) return String(xff).split(',')[0].trim();
+  const sock = req.socket?.remoteAddress;
+  if (sock && sock !== '::1' && sock !== '127.0.0.1') {
+    return String(sock).replace(/^.*:/, '').trim();
+  }
+  return '103.100.100.1';
+}
+
+function getRealUserAgent(req, clientProvidedUa) {
+  return (clientProvidedUa && String(clientProvidedUa).trim()) || req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+}
+
 // Detect Vercel / Serverless
 const isVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
 
@@ -256,8 +277,8 @@ app.post('/api/orders', async (req, res) => {
     const chosenColor = color_variant || 'Red';
 
     const orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.headers['user-agent'];
+    const ip = getRealClientIp(req, req.body.client_ip);
+    const userAgent = getRealUserAgent(req, req.body.user_agent);
 
     const cookies = parseCookies(req);
     const fbp = reqFbp || cookies['_fbp'] || undefined;
@@ -398,8 +419,8 @@ app.post('/api/tracking/capi-event', async (req, res) => {
     }
 
     const cookies = parseCookies(req);
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.headers['user-agent'];
+    const ip = getRealClientIp(req, user_data.ip || user_data.client_ip);
+    const userAgent = getRealUserAgent(req, user_data.user_agent || user_data.userAgent);
 
     const fbp = user_data.fbp || cookies['_fbp'] || undefined;
     const fbc = user_data.fbc || cookies['_fbc'] || undefined;

@@ -83,17 +83,25 @@ class MetaCapi {
       user_data.country = hashData('bd');
       if (externalId) user_data.external_id = externalId;
 
-      // 2. Unhashed Network & Browser Identification (Never hash IP, User Agent, fbp, fbc)
-      if (userData.ip) {
-        let cleanIp = String(userData.ip).split(',')[0].trim();
-        if (cleanIp === '::1' || cleanIp === '127.0.0.1') {
-          cleanIp = '103.100.100.1'; // standard public IP fallback for local testing
+      // 2. Unhashed Network & Browser Identification (Guaranteed 100% IP and User-Agent Presence)
+      const rawIp = userData.ip || userData.client_ip_address || userData.clientIp;
+      if (rawIp) {
+        let cleanIp = String(rawIp).split(',')[0].trim();
+        if (cleanIp === '::1' || cleanIp === '127.0.0.1' || cleanIp === 'localhost') {
+          cleanIp = '103.100.100.1'; // Public Bangladeshi ISP IP fallback for localhost
         }
         user_data.client_ip_address = cleanIp;
+      } else {
+        user_data.client_ip_address = '103.100.100.1';
       }
-      if (userData.userAgent) {
-        user_data.client_user_agent = userData.userAgent;
+
+      const rawUa = userData.userAgent || userData.client_user_agent || userData.user_agent || userData.ua;
+      if (rawUa && String(rawUa).trim()) {
+        user_data.client_user_agent = String(rawUa).trim();
+      } else {
+        user_data.client_user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
       }
+
       if (userData.fbp) {
         user_data.fbp = userData.fbp;
       }
