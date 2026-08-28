@@ -263,7 +263,7 @@ function renderLandingPage(data) {
     if (vTitle && data.videoDemo.title) vTitle.innerText = data.videoDemo.title;
 
     const vSub = document.getElementById('video-demo-subtitle');
-    if (vSub && data.videoDemo.subtitle) vSub.innerText = data.videoDemo.subtitle;
+    if (vSub) { if (data.videoDemo.subtitle) { vSub.innerText = data.videoDemo.subtitle; vSub.style.display = 'block'; } else { vSub.style.display = 'none'; } }
 
     const wrapper = document.getElementById('video-player-wrapper');
     if (wrapper && data.videoDemo.videoUrl) {
