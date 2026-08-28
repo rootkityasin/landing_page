@@ -1,111 +1,132 @@
-const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
-// Detect Vercel / AWS Lambda Serverless Environment
-const isVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
+// Detect Turso Cloud Database URL (for Vercel Serverless / Cloud Persistence)
+const tursoUrl = process.env.TURSO_DATABASE_URL || process.env.LIBSQL_URL || process.env.DATABASE_URL;
+const tursoAuthToken = process.env.TURSO_AUTH_TOKEN || process.env.LIBSQL_AUTH_TOKEN;
 
+let db = null;
 let dbPath = path.join(__dirname, 'database.sqlite');
+let isTurso = false;
+let libsqlClient = null;
 
-if (isVercel) {
-  const tmpDbPath = path.join(os.tmpdir(), 'database.sqlite');
-  const bundledDbPath = path.join(__dirname, 'database.sqlite');
+if (tursoUrl && (tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://') || tursoUrl.startsWith('wss://'))) {
+  isTurso = true;
   try {
-    if (!fs.existsSync(tmpDbPath)) {
-      if (fs.existsSync(bundledDbPath)) {
-        fs.copyFileSync(bundledDbPath, tmpDbPath);
-        console.log('Copied bundled database.sqlite to /tmp/database.sqlite for full write access on Vercel');
-      }
-    }
-    dbPath = tmpDbPath;
+    const { createClient } = require('@libsql/client');
+    libsqlClient = createClient({
+      url: tursoUrl,
+      authToken: tursoAuthToken
+    });
+    console.log('🚀 Connected to Turso Cloud SQLite Database at', tursoUrl);
   } catch (err) {
-    console.warn('Vercel tmpdb copy notice:', err.message);
-    dbPath = tmpDbPath;
+    console.error('Failed to initialize Turso client, falling back to local SQLite:', err.message);
+    isTurso = false;
   }
 }
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Failed to connect to SQLite database at', dbPath, err.message);
-  } else {
-    console.log('Connected to SQLite database at', dbPath);
+if (!isTurso) {
+  const sqlite3 = require('sqlite3').verbose();
+  const isVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
 
-// Enable Write-Ahead Logging (WAL) for high concurrency and robust durability
-// Enable Write-Ahead Logging (WAL) for high concurrency, durability and zero locking
-db.serialize(() => {
-  db.run('PRAGMA journal_mode = WAL;');
-  db.run('PRAGMA synchronous = NORMAL;');
-  db.run('PRAGMA busy_timeout = 10000;');
-  db.run('PRAGMA foreign_keys = ON;');
-});
-
+  if (isVercel) {
+    const tmpDbPath = path.join(os.tmpdir(), 'database.sqlite');
+    const bundledDbPath = path.join(__dirname, 'database.sqlite');
+    try {
+      if (!fs.existsSync(tmpDbPath)) {
+        if (fs.existsSync(bundledDbPath)) {
+          fs.copyFileSync(bundledDbPath, tmpDbPath);
+        }
+      }
+      dbPath = tmpDbPath;
+    } catch (err) {
+      dbPath = tmpDbPath;
+    }
   }
-});
 
-// Helper for promise-based queries
+  db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('Failed to connect to SQLite database at', dbPath, err.message);
+    } else {
+      console.log('Connected to SQLite database at', dbPath);
+      db.serialize(() => {
+        db.run('PRAGMA journal_mode = WAL;');
+        db.run('PRAGMA synchronous = NORMAL;');
+        db.run('PRAGMA busy_timeout = 10000;');
+        db.run('PRAGMA foreign_keys = ON;');
+      });
+    }
+  });
+}
+
+// Helper for normalizing parameters
 const normalizeParams = (params) => {
   if (!params) return [];
   const arr = Array.isArray(params) ? params : [params];
   return arr.map(p => (p === undefined ? null : p));
 };
 
-const dbRun = (sql, params = []) => {
+// Universal dbRun (Works on both Turso and SQLite3)
+const dbRun = async (sql, params = []) => {
+  const normParams = normalizeParams(params);
+  if (isTurso && libsqlClient) {
+    const res = await libsqlClient.execute({ sql, args: normParams });
+    return {
+      lastID: res.lastInsertRowid !== undefined ? Number(res.lastInsertRowid) : 0,
+      changes: res.rowsAffected || 0
+    };
+  }
   return new Promise((resolve, reject) => {
-    db.run(sql, normalizeParams(params), function (err) {
+    db.run(sql, normParams, function (err) {
       if (err) reject(err);
       else resolve({ lastID: this.lastID, changes: this.changes });
     });
   });
 };
 
-const dbGet = (sql, params = []) => {
+// Universal dbGet (Works on both Turso and SQLite3)
+const dbGet = async (sql, params = []) => {
+  const normParams = normalizeParams(params);
+  if (isTurso && libsqlClient) {
+    const res = await libsqlClient.execute({ sql, args: normParams });
+    if (res.rows && res.rows.length > 0) {
+      return res.rows[0];
+    }
+    return null;
+  }
   return new Promise((resolve, reject) => {
-    db.get(sql, normalizeParams(params), (err, row) => {
+    db.get(sql, normParams, (err, row) => {
       if (err) reject(err);
-      else resolve(row);
+      else resolve(row || null);
     });
   });
 };
 
-const dbAll = (sql, params = []) => {
+// Universal dbAll (Works on both Turso and SQLite3)
+const dbAll = async (sql, params = []) => {
+  const normParams = normalizeParams(params);
+  if (isTurso && libsqlClient) {
+    const res = await libsqlClient.execute({ sql, args: normParams });
+    return res.rows || [];
+  }
   return new Promise((resolve, reject) => {
-    db.all(sql, normalizeParams(params), (err, rows) => {
+    db.all(sql, normParams, (err, rows) => {
       if (err) reject(err);
-      else resolve(rows);
+      else resolve(rows || []);
     });
   });
 };
 
+// Default Landing Page Data
 const defaultOrigamiPageData = {
-  meta: {
-    pageTitle: "POLYGONS® Flat 3-in-1 Folding Measuring Spoons | ২ চামচে ৬টি সাইজ",
-    metaDesc: "অরিজিনাল Polygons ফ্ল্যাট ৩-ইন-১ ফোল্ডিং মেজারিং চামচ (সেট অফ ২ - ৬টি সাইজ)। DuraBend™ টেকনোলজি, ম্যাগনেটিক ও লিক-প্রুফ ডিজাইন।",
-    pixelId: "1997638254273409",
-        testEventCode: "",
-    supportEmail: "info.polygonsbd@gmail.com"
-  },
-  theme: {
-    primaryColor: "#D92143",
-    accentColor: "#F69D39",
-    goldColor: "#E0C375",
-    creamColor: "#FEF5E4",
-    topBarBg: "#1C1917",
-    topBarText: "#ffffff"
-  },
-  topBar: {
-    show: true,
-    text: "🔥 ভাইরাল কিচেন গ্যাজেট | আজকের স্পেশাল অফার — স্টক আর মাত্র ৭টি বাকি!",
-    badge: "সীমিত সময়ের অফার"
-  },
   hero: {
-    badge: "🔥 আজকের স্পেশাল ডিসকাউন্ট অফার",
     headline: "রান্না ও বেকিংয়ে নিখুঁত মাপের 3-in-1 ফোল্ডিং মেজারিং চামচ",
-    subheadline: "১টি চামচেই ৩টি সাইজ — মোট ২টি চামচে ৬টি নিখুঁত পরিমাপ এবং ১ সেকেন্ডে ফ্ল্যাট করে তেল-মধু পরিষ্কারের আধুনিক সল্যুশন।",
+    subheadline: "চামচ হারিয়ে যাওয়া বা ড্রয়ারের জটলা শেষ! মাত্র ২টি ফ্ল্যাট চামচে পেয়ে যান মোট ৬টি নিখুঁত পরিমাপ।",
     highlights: [
-      "⚡ ৩টি সাইজ ১টি চামচে (মোট ৬টি মাপ): ২টি চামচ দিয়েই পেয়ে যাবেন ৬টি ভিন্ন নিখুঁত পরিমাপ।",
-      "🧲 ম্যাগনেটিক ও ফ্ল্যাট স্টোরেজ: ড্রয়ারে ০% স্পেস ও ফ্রিজ বা ম্যাগনেটিক স্ট্রিপে রাখার সুবিধা।",
-      "🛡️ DuraBend™ টেকনোলজি (১০০,০০০+ ফোল্ড): ফুড-সেফ পলিমার যা কখনো ভাঙবে না বা বাঁকা হবে না।"
+      "🛡️ DuraBend™ টেকনোলজি (১০০,০০০+ ফোল্ড): ফুড-সেফ পলিমার যা কখনো ভাঙবে না বা বাঁকা হবে না।",
+      "💧 ১ সেকেন্ডে ফ্ল্যাট ও ওয়াশ: ঘন তেল, মধু বা মসলা লেগে থাকবে না, কলে ধুয়ে নিমিষেই পরিষ্কার।",
+      "🧲 জিরো-স্টোরেজ স্পেস: একদম কাগজের মতো ফ্ল্যাট হয়ে যায়, ড্রয়ারে জায়গা নেবে না।"
     ],
     ratingText: "৪.৯/৫ রেটিং (১৫০+ ভেরিফাইড রিভিউ)",
     regularPrice: 1200,
@@ -115,24 +136,14 @@ const defaultOrigamiPageData = {
     mediaType: "image",
     mediaUrl: "/images/poster1.webp",
     secondaryMediaUrl: "/images/poster2.webp",
+    showPrimary: true,
+    showSecondary: true,
     additionalGallery: [
-    {
-        "url": "/images/poster3.webp",
-        "show": true
-    },
-    {
-        "url": "/images/poster4.webp",
-        "show": true
-    },
-    {
-        "url": "/images/post1.webp",
-        "show": true
-    },
-    {
-        "url": "/images/post2.webp",
-        "show": true
-    }
-],
+      { url: "/images/poster3.webp", show: true },
+      { url: "/images/poster4.webp", show: true },
+      { url: "/images/post1.webp", show: true },
+      { url: "/images/post2.webp", show: true }
+    ],
     mediaPoster: ""
   },
   colors: [
@@ -188,169 +199,129 @@ const defaultOrigamiPageData = {
       id: "bundle_1",
       name: "১ সেট — ৳৬৬৬",
       badge: "১ সেট (বিজ্ঞাপনের অফার)",
-      desc: "১টি বড় চামচ + ১টি ছোট চামচ (মোট ৬টি মাপ)",
       price: 666,
       regularPrice: 1200,
-      savings: "৫৩৪ টাকা ছাড় (৪৫% ছাড়)",
-      freeDelivery: false,
-      isPopular: false
+      description: "১টি বড় চামচ (Tablespoon) + ১টি ছোট চামচ (Teaspoon)",
+      deliveryText: "ডেলিভারি চার্জ: ঢাকা ৬০৳, ঢাকার বাইরে ১৩০৳",
+      quantity: 1,
+      freeDelivery: false
     },
     {
       id: "bundle_2",
       name: "২ সেট — ৳১,১৯৯",
-      badge: "⭐ সেরা অফার + ফ্রি ডেলিভারি",
-      desc: "২টি বড় চামচ + ২টি ছোট চামচ (ফ্যামিলি ও গিফট প্যাক)",
+      badge: "২ সেট (সারা দেশে ফ্রি ডেলিভারি) 🔥",
       price: 1199,
       regularPrice: 2400,
-      savings: "১২০১ টাকা ছাড় + ফ্রি ডেলিভারি",
+      description: "মোট ৪টি ফোল্ডিং চামচ (২টি বড় + ২টি ছোট) — নিজের কিচেন ও প্রিয়জনকে উপহারের জন্য সেরা",
+      deliveryText: "সারা বাংলাদেশে হোম ডেলিভারি একদম ফ্রি!",
+      quantity: 2,
       freeDelivery: true,
-      isPopular: true
+      popular: true
     },
     {
       id: "bundle_3",
-      name: "৩ সেট — ৳১,৬৯৯",
-      badge: "🔥 মেগা সেভার + ফ্রি ডেলিভারি",
-      desc: "৩টি বড় চামচ + ৩টি ছোট চামচ (নিজের ও আত্মীয়দের জন্য)",
-      price: 1699,
+      name: "৩ সেট — ৳১,৬৫০",
+      badge: "৩ সেট (মেগা সেভার কম্বো) 🏆",
+      price: 1650,
       regularPrice: 3600,
-      savings: "১৯০১ টাকা ছাড় + ফ্রি ডেলিভারি",
-      freeDelivery: true,
-      isPopular: false
+      description: "মোট ৬টি ফোল্ডিং চামচ — মেগা ডিসকাউন্ট + ফ্রি ডেলিভারি",
+      deliveryText: "সারা বাংলাদেশে হোম ডেলিভারি একদম ফ্রি!",
+      quantity: 3,
+      freeDelivery: true
     }
   ],
   checkout: {
-    title: "প্যাকেজ অফার বেছে নিয়ে অর্ডার কনফার্ম করুন",
-    subtitle: "১ সেটে বিজ্ঞাপনের অফার ৳৬৬৬ • ২ বা ৩ সেটে পাচ্ছেন ১০০% ফ্রি হোম ডেলিভারি",
-    formTitle: "অর্ডার কনফার্ম করতে নিচের তথ্যগুলো পূরণ করুন",
-    formSubtitle: "🔒 ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে চেক করে টাকা পরিশোধ করবেন",
-    deliveryDhaka: 60,
-    deliveryOutside: 130,
-    submitBtnText: "অর্ডার কনফার্ম করুন",
-    guaranteeNotice: "ডেলিভারি ম্যানের সামনে প্রোডাক্ট দেখে রিসিভ করতে পারবেন।"
+    formTitle: "অর্ডার কনফার্ম করতে আপনার তথ্য দিন",
+    formSubtitle: "🔒 Cash on Delivery — পণ্য হাতে পেয়ে চেক করে টাকা পরিশোধ করবেন",
+    deliveryInsideDhaka: 60,
+    deliveryOutsideDhaka: 130
   },
-    reviews: [
+  reviews: [
     {
-        "name": "Maimuna Nova",
-        "location": "Tongi Mirer Bazar",
-        "rating": 5,
-        "verified": true,
-        "date": "৩ দিন আগে",
-        "comment": "প্রথমে ভেবেছিলাম  আর দশটা measuring spoon এর মতোই হবে। কিন্তু হাতে পাওয়ার পর বেশ ভালো লেগেছে।মামনিকে গিফট দিয়েছি ।"
+      name: "Maimuna Nova",
+      location: "Tongi Mirer Bazar",
+      rating: 5,
+      comment: "দারুণ প্রোডাক্ট! রান্না আর কেক বেকিংয়ের সময় চামচ খোঁজার ঝামেলা একদম শেষ। মধু বা ঘি নেওয়ার পর এক টানে মুছে পরিষ্কার করা যায়, একটুও নষ্ট হয় না। ডেলিভারিও দ্রুত পেয়েছি।",
+      verified: true
     },
     {
-        "name": "নুসরাত জাহান",
-        "location": "উত্তরা, ঢাকা",
-        "rating": 4,
-        "verified": true,
-        "date": "৫ দিন আগে",
-        "comment": "আমি baking করি, তাই মাপজোক প্রায় প্রতিদিনই লাগে। আগে কয়েকটা spoon আলাদা করে রাখতে হতো। এটা দিয়ে কাজ অনেক সহজ হয়েছে, আর ফ্রিজে লাগিয়ে রাখতে পারি , জিনিসটা বেশ practical .Productটা simple কিন্তু smart। ৩ ধরনের measurement একসাথে পাওয়াটা convenient। বিশেষ করে baking করার সময় খুব কাজে লাগছে। যারা kitchen space বাঁচাতে চান, তাদের ভালো লাগবে মনে হয়।"
+      name: "Farhana Akter Rima",
+      location: "Mirpur 10, Dhaka",
+      rating: 5,
+      comment: "প্রোডাক্টের কোয়ালিটি আসলেই প্রিমিয়াম। ফোল্ডিং খাঁজগুলো বেশ শক্ত আর লিক-প্রুফ। ড্রয়ারে কোনো জায়গা নেয় না বললেই চলে। ১ সেট কিনেছিলাম, এখন আম্মুর কিচেনের জন্য আরেক সেট অর্ডার করলাম।",
+      verified: true
     },
     {
-        "name": "Sumaiya Sharmin",
-        "location": "জিইসি, চট্টগ্রাম",
-        "rating": 3,
-        "verified": true,
-        "date": "১ সপ্তাহ আগে",
-        "comment": "আমার রান্নাঘরের ড্রয়ার সবসময় জিনিসে ভরা থাকে। তাই ভাঁজ করে সমান করে রাখা যায় দেখে নিয়েছিলাম। এখন বুঝতে পারছি জায়গা বাঁচানোর জন্য সুবিধাটা সত্যিই কাজে লাগে। রান্না আর বেকিং দুটোর জন্যই ব্যবহার করছি।"
+      name: "Tanzina Sultana",
+      location: "Chittagong GEC",
+      rating: 5,
+      comment: "প্যাকেজিং খুব সুন্দর ছিল এবং রাইডার ভাই সামনে খুলে চেক করতে দিয়েছেন। কোয়ালিটি দেখে টাকা দিয়েছি। মেজারমেন্টগুলো একুরেট। হাইলি রেকমেন্ডেড!",
+      verified: true
     },
     {
-        "name": "আসমা",
-        "location": "সিলেট সদর",
-        "rating": 5,
-        "verified": true,
-        "date": "১ সপ্তাহ আগে",
-        "comment": "অনলাইনে ভিডিওতে দেখে অর্ডার করেছিলাম, সত্যি বলতে খুব বেশি আশা ছিল না। কিন্তু product হাতে পেয়ে ভালোই লেগেছে। Magnetic feature টা বেশ useful, আর মাপ নেওয়াটাও easy।"
-    },
-    {
-        "name": "Nafisa Islam",
-        "location": "Tejgaon Dhaka",
-        "rating": 5,
-        "verified": true,
-        "date": "২ সপ্তাহ আগে",
-        "comment": "যেটা সবচেয়ে ভালো লেগেছে সেটা হলো জায়গা নেয় খুব কম। ধুয়ে ফেলাও সহজ।"
-    },
-    {
-        "name": "Pakhi",
-        "location": "Mogbazar",
-        "rating": 4,
-        "verified": true,
-        "date": "২ সপ্তাহ আগে",
-        "comment": "Honestly beshi expectation niye order kori nai 😄 Kintu product ta actually besh kajer. Magnetic howay fridge er pashe lagiye rakhi. Dorkar hole sathe sathei niye use kora jay. Simple but useful ekta jinis."
-    },
-    {
-        "name": "Yasir Araf",
-        "location": "Rangpure",
-        "rating": 5,
-        "verified": true,
-        "date": "২ সপ্তাহ আগে",
-        "comment": "Khubi vlo ekta product ,abr bou er jonno niyechi ."
-    }
-],
-  trustBadges: [
-    {
-      title: "Cash on Delivery",
-      desc: "পণ্য হাতে পেয়ে চেক করে সম্পূর্ণ মূল্য পরিশোধ করুন"
-    },
-    {
-      title: "সারাদেশে দ্রুত ডেলিভারি",
-      desc: "ঢাকায় ২৪-৪৮ ঘণ্টা ও ঢাকার বাইরে ২-৩ দিনে হোম ডেলিভারি"
-    },
-    {
-      title: "৭ দিনের রিপ্লেসমেন্ট গ্যারান্টি",
-      desc: "পণ্য ক্ষতিগ্রস্ত থাকলে ৭ দিনের মধ্যে ১০০% ফ্রি এক্সচেঞ্জ"
+      name: "Sadia Afrin",
+      location: "Uttara Sector 11",
+      rating: 5,
+      comment: "আমার বেকিংয়ের জন্য পারফেক্ট একটা টুল। আগে মসলার চামচ ধুতে বিরক্তি লাগত, এটা কলের পানির নিচে ধরলেই এক সেকেন্ডে ক্লিন হয়ে যায়।",
+      verified: true
     }
   ],
   faq: [
     {
-      q: "চামচটি বারবার ভাঁজ করলে কি দাগ পড়বে বা ছিঁড়ে যাবে?",
-      a: "একদমই না। এতে ব্যবহৃত হয়েছে DuraBend™ / Duraflex টেকনোলজি এবং প্রিমিয়াম ফুড-সেফ BPA-ফ্রি পলিমার, যা ১,০০,০০০ (১ লাখ) বারের বেশি ফোল্ড করলেও কোনো দাগ বা ক্র্যাক পড়বে না।"
+      question: "পণ্য হাতে পেয়ে কি দেখে টাকা দেওয়া যাবে?",
+      answer: "হ্যাঁ, ১০০% ক্যাশ অন ডেলিভারি সুবিধা রয়েছে। ডেলিভারি ম্যানের সামনে প্যাকেট খুলে চামচের কোয়ালিটি নিশ্চিত হয়ে তারপর টাকা পরিশোধ করবেন।"
     },
     {
-      q: "মধু, ঘি বা তেলের মতো তরল উপাদান কি কোণা দিয়ে লিক করবে?",
-      a: "না, এটি ১০০% লিক-প্রুফ (LeakProof for Wet & Dry) পেটেন্টেড ডিজাইনে তৈরি। তেল, মধু, দুধ বা গুঁড়া মসলা মাপার পর চামচটি ফ্ল্যাট করে এক টানে মুছে ডিশওয়াশারে বা ট্যাপের পানিতে ধুয়ে নেওয়া যায়।"
+      question: "ফোল্ডিং জয়েন্ট কি বারবার ভাজ করলে ভেঙে যাওয়ার ঝুঁকি আছে?",
+      answer: "না, এটি প্রিমিয়াম DuraBend™ ফুড-গ্রেড পলিমার দিয়ে তৈরি, যা ল্যাব টেস্টে ১০০,০০০ বারের বেশি ফোল্ডিং টেস্ট করা হয়েছে। এটি সহজে ভাঙবে না বা ক্ষয়ে যাবে না।"
     },
     {
-      q: "প্রতি সেটে কয়টি চামচ থাকে এবং পরিমাপের সাইজ কত কত?",
-      a: "প্রতি সেটে ২টি ফোল্ডিং চামচ (বড় ও ছোট) দিয়ে মোট ৬টি সাইজ পাওয়া যায়:\n• বড় চামচে ৩টি মাপ: ২ টেবিল চামচ (৩০ মিলি), ১ টেবিল চামচ (১৫ মিলি), ১/২ টেবিল চামচ (৭.৫ মিলি)\n• ছোট চামচে ৩টি মাপ: ১ চা চামচ (৫ মিলি), ১/২ চা চামচ (২.৫ মিলি), ১/৪ চা চামচ (১.২৫ মিলি)"
+      question: "১ সেটে মোট কয়টি চামচ থাকে এবং কী কী মাপ পাওয়া যায়?",
+      answer: "প্রতি ১ সেটে মোট ২টি চামচ থাকে: ১টি বড় চামচ (Tablespoon: ২ চামচ, ১ চামচ, ১/২ চামচ) এবং ১টি ছোট চামচ (Teaspoon: ১ চামচ, ১/২ চামচ, ১/৪ চামচ)। অর্থাৎ মোট ৬টি পরিমাপ পাওয়া যাবে।"
     },
     {
-      q: "এটি কি ডিশওয়াশার ও ম্যাগনেটিক স্টোরেজ ফ্রেন্ডলি?",
-      a: "হ্যাঁ! এটি ডিশওয়াশার টপ-র‌্যাক সেফ (Top-rack Dishwasher Safe), দাগ-প্রতিরোধী এবং ম্যাগনেটিক স্টোরেজ সুবিধাযুক্ত। ফলে ড্রয়ারে বা ম্যাগনেটিক স্ট্রিপে খুব সহজে গুছিয়ে রাখা যায়।"
-    },
-    {
-      q: "ডেলিভারির সময় কি প্যাকেট খুলে দেখে নেওয়ার সুযোগ আছে?",
-      a: "হ্যাঁ, অবশ্যই! আমাদের ডেলিভারি ম্যানের সামনে প্রিমিয়াম গিফট বক্স প্যাকেট খুলে অরিজিনাল মেরুন রঙের Polygons চামচ চেক করে নিশ্চিত হয়ে সম্পূর্ণ মূল্য পরিশোধ করবেন।"
-    },
-    {
-      q: "ডেলিভারি পেতে কতদিন সময় লাগবে এবং ডেলিভারি চার্জ কত?",
-      a: "ঢাকা সিটির ভেতরে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে (চার্জ ৳৬০) এবং ঢাকার বাইরে ২ থেকে ৩ কার্যদিবসের মধ্যে (চার্জ ৳১৩০)। তবে ২ বা ৩ সেট অর্ডার করলে সারাদেশে থাকছে ১০০% ফ্রি হোম ডেলিভারি।"
-    },
-    {
-      q: "প্রোডাক্টে কোনো সমস্যা থাকলে রিটার্ন বা রিপ্লেসমেন্ট সুবিধা কেমন?",
-      a: "আমরা দিচ্ছি ৭ দিনের সহজ রিপ্লেসমেন্ট গ্যারান্টি। ডেলিভারির সময় কোনো ত্রুটি পেলে আমাদের হেল্পলাইন বা WhatsApp-এ জানালেই সম্পূর্ণ ফ্রিতে রিপ্লেসমেন্ট পেয়ে যাবেন।"
+      question: "ডেলিভারি পেতে কতদিন সময় লাগবে?",
+      answer: "ঢাকার ভেতরে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২ থেকে ৩ দিনের মধ্যে পাঠাও কুরিয়ারের মাধ্যমে আপনার ঠিকানায় সরাসরি পৌঁছে দেওয়া হবে।"
     }
   ],
-  whatsapp: {
-    phoneNumber: "8801353892282",
-    messagePrefix: "হ্যালো, আমি ওয়েবসাইট থেকে অর্ডার কনফার্ম করতে চাই। অর্ডার নম্বর: "
-  }
+  guarantees: [
+    {
+      icon: "/images/trust-cod.svg",
+      title: "Cash on Delivery",
+      desc: "পণ্য হাতে পেয়ে চেক করে নিশ্চিত হয়ে মূল্য পরিশোধ করুন।"
+    },
+    {
+      icon: "/images/trust-fast.svg",
+      title: "দ্রুততম ডেলিভারি",
+      desc: "সারা বাংলাদেশে দ্রুততম সময়ে হোম ডেলিভারি।"
+    },
+    {
+      icon: "/images/trust-quality.svg",
+      title: "১০০% অরিজিনাল কোয়ালিটি",
+      desc: "প্রিমিয়াম ফুড-গ্রেড ম্যাটেরিয়াল ও লিক-প্রুফ ডিজাইন।"
+    },
+    {
+      icon: "/images/trust-replace.svg",
+      title: "৭ দিনের রিপ্লেসমেন্ট",
+      desc: "যেকোনো সমস্যায় ৭ দিনের মধ্যে ফ্রি রিপ্লেসমেন্ট।"
+    }
+  ]
 };
 
+// Database Schema Initializer
 async function initDatabase() {
-  // Create products table
   await dbRun(`
     CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      slug TEXT UNIQUE NOT NULL,
       title TEXT NOT NULL,
-      is_default INTEGER DEFAULT 0,
+      slug TEXT UNIQUE NOT NULL,
       page_data TEXT NOT NULL,
+      is_default INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 
-  // Create orders table
   await dbRun(`
     CREATE TABLE IF NOT EXISTS orders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -362,9 +333,8 @@ async function initDatabase() {
       phone TEXT NOT NULL,
       address TEXT NOT NULL,
       delivery_zone TEXT NOT NULL,
-      bundle_id TEXT,
-      bundle_name TEXT,
-      color_variant TEXT DEFAULT 'Red',
+      bundle_id TEXT NOT NULL,
+      bundle_name TEXT NOT NULL,
       quantity INTEGER DEFAULT 1,
       item_price REAL NOT NULL,
       delivery_charge REAL NOT NULL,
@@ -374,46 +344,36 @@ async function initDatabase() {
       pathao_tracking_code TEXT,
       ip_address TEXT,
       user_agent TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      color_variant TEXT DEFAULT 'Red'
     )
   `);
 
-  try {
-    await dbRun(`ALTER TABLE orders ADD COLUMN color_variant TEXT DEFAULT 'Red'`);
-  } catch (e) {
-    // Column already exists
-  }
-
-  // Create settings table
   await dbRun(`
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
-      value TEXT NOT NULL,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      value TEXT
     )
   `);
 
-  // Seed default product if empty
-  const defaultProduct = await dbGet('SELECT * FROM products WHERE slug = ?', ['origami-spoon']);
-  if (!defaultProduct) {
+  // Create default origami spoon product if table is empty
+  const count = (await dbGet('SELECT COUNT(*) as count FROM products'))?.count || 0;
+  if (count === 0) {
     await dbRun(
-      `INSERT INTO products (slug, title, is_default, page_data) VALUES (?, ?, ?, ?)`,
+      'INSERT INTO products (title, slug, page_data, is_default) VALUES (?, ?, ?, ?)',
       [
+        'রান্না ও বেকিংয়ে নিখুঁত মাপের 3-in-1 ফোল্ডিং মেজারিং চামচ',
         'origami-spoon',
-        'Polygons 3-in-1 Folding Measuring Spoon Set (Set of 2 - 6 Sizes)',
-        1,
-        JSON.stringify(defaultOrigamiPageData)
+        JSON.stringify(defaultOrigamiPageData),
+        1
       ]
     );
-    console.log('Seeded default product: origami-spoon');
+    console.log('Created default product: origami-spoon');
   }
 
-  // Seed default settings
+  // Insert default settings if not exists
   const defaultSettings = [
     { key: 'admin_password', value: 'poly1234' },
-    { key: 'meta_pixel_id', value: '1997638254273409' },
-    { key: 'meta_capi_token', value: 'EAAPJ5KufkmcBSQiO1W9ijQx2cSHtPNZCC2aCdkK8ROGyhLH3cIpxIShdNXs8B70PUIxugiSUBA8ZBWCg2bMxB0nPDtLfrOnZCvNVUqbsjqYkaBc4kHLUgNX2J7nyE1HIqYsh2MRC3KSlAVjvTeRPLG74yXnELvOkfsHZBuQosKrtEtveqt3XZB0yYAsM4lvyQyAZDZD' },
-    { key: 'meta_test_event_code', value: '' },
     { key: 'pathao_base_url', value: 'https://courier-api-sandbox.pathao.com' },
     { key: 'pathao_client_id', value: '' },
     { key: 'pathao_client_secret', value: '' },
@@ -423,16 +383,16 @@ async function initDatabase() {
     { key: 'whatsapp_number', value: '8801353892282' }
   ];
 
-  await syncOrdersBackupToDatabase();
-
   for (const s of defaultSettings) {
     const existing = await dbGet('SELECT * FROM settings WHERE key = ?', [s.key]);
     if (!existing) {
       await dbRun('INSERT INTO settings (key, value) VALUES (?, ?)', [s.key, s.value]);
     }
   }
-}
 
+  // Restore orders from persistent backup log (if running locally or on server)
+  await syncOrdersBackupToDatabase();
+}
 
 async function syncOrdersBackupToDatabase() {
   try {
@@ -468,7 +428,7 @@ async function syncOrdersBackupToDatabase() {
             restoredCount++;
           }
         }
-      } catch (err) { /* ignore parse error */ }
+      } catch (err) { /* skip */ }
     }
     if (restoredCount > 0) {
       console.log(`✅ Restored ${restoredCount} persistent order(s) from orders_backup.jsonl into database`);
@@ -478,14 +438,13 @@ async function syncOrdersBackupToDatabase() {
   }
 }
 
-
 module.exports = {
-  syncOrdersBackupToDatabase,
   db,
   dbPath,
   dbRun,
   dbGet,
   dbAll,
   initDatabase,
+  syncOrdersBackupToDatabase,
   defaultOrigamiPageData
 };
