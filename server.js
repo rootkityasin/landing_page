@@ -404,10 +404,16 @@ app.post('/api/orders', async (req, res) => {
     const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
     const waNumber = waSetting ? waSetting.value : '8801353892282';
 
+    let orderDbId = result.lastID;
+    if (!orderDbId || orderDbId === 0) {
+      const fetchedOrder = await dbGet('SELECT id FROM orders WHERE order_number = ?', [orderNumber]);
+      orderDbId = fetchedOrder ? fetchedOrder.id : orderDbId;
+    }
+
     res.json({
       success: true,
       order: {
-        id: result.lastID,
+        id: orderDbId,
         order_number: orderNumber,
         customer_name: customer_name.trim(),
         phone: cleanPhone,

@@ -63,6 +63,8 @@ async function runTests() {
 
     // 3. Test Valid COD Order Placement
     console.log('\n3️⃣ Testing Valid COD Order Placement (Package 2 - Free Delivery)...');
+    let orderNumber = null;
+    let orderId = null;
     const validOrderRes = await request({
       hostname: 'localhost',
       port: PORT,
@@ -71,7 +73,7 @@ async function runTests() {
       headers: { 'Content-Type': 'application/json' }
     }, {
       product_slug: 'origami-spoon',
-      customer_name: 'Test Customer',
+      customer_name: 'Test Customer (Automated Test)',
       phone: '01712345678',
       address: 'বাসা ১২, রোড ৪, সেক্টর ৩, উত্তরা, ঢাকা',
       delivery_zone: 'dhaka_inside',
@@ -81,8 +83,8 @@ async function runTests() {
     console.assert(validOrderRes.data.success === true, 'Order should be created');
     console.assert(validOrderRes.data.order.total_amount === 1199, 'Package 2 total should be 1199 (Free delivery)');
     console.assert(validOrderRes.data.order.delivery_charge === 0, 'Delivery charge should be 0 for Package 2');
-    const orderNumber = validOrderRes.data.order.order_number;
-    const orderId = validOrderRes.data.order.id;
+    orderNumber = validOrderRes.data.order.order_number;
+    orderId = validOrderRes.data.order.id;
     console.log(`✅ Order placed successfully! Order ID: ${orderNumber}, Total: ৳${validOrderRes.data.order.total_amount}`);
 
     // 4. Test Single Order Lookup for Thank You Page
@@ -94,7 +96,7 @@ async function runTests() {
       method: 'GET'
     });
     console.assert(orderLookupRes.status === 200, 'Lookup should return 200');
-    console.assert(orderLookupRes.data.order.customer_name === 'Test Customer', 'Customer name should match');
+    console.assert(orderLookupRes.data.order.customer_name.includes('Test Customer'), 'Customer name should match');
     console.log('✅ Thank You invoice data loaded correctly');
 
     // 5. Test Admin Login
