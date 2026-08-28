@@ -105,7 +105,7 @@ async function runTests() {
       path: '/api/admin/login',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
-    }, { password: 'admin123' });
+    }, { password: 'poly1234' });
     console.assert(loginRes.status === 200, 'Admin login should return 200');
     const token = loginRes.data.token;
     console.log('✅ Admin login successful');

@@ -134,9 +134,9 @@ async function verifyAdminAuth(req, res, next) {
       return res.status(401).json({ success: false, error: 'Unauthorized: Please log in' });
     }
 
-    const dbPass = (await dbGet("SELECT value FROM settings WHERE key = 'admin_password'"))?.value || 'admin123';
+    const dbPass = (await dbGet("SELECT value FROM settings WHERE key = 'admin_password'"))?.value || 'poly1234';
 
-    if (token === dbPass || token === 'admin123') {
+    if (token === dbPass || token === 'poly1234') {
       return next();
     }
     return res.status(401).json({ success: false, error: 'Invalid admin credentials. Please log in again.' });
@@ -148,6 +148,17 @@ async function verifyAdminAuth(req, res, next) {
 
 app.get('/api/admin/verify', verifyAdminAuth, (req, res) => {
   res.json({ success: true, message: 'Authenticated' });
+});
+
+/* ========================================================
+   ADMIN & API ANTI-CACHE MIDDLEWARE (Zero Caching)
+   ======================================================== */
+app.use(['/admin', '/admin.html', '/api/admin', '/js/admin.js', '/css/styles.min.css'], (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+  next();
 });
 
 /* ========================================================
@@ -453,7 +464,7 @@ app.post('/api/tracking/capi-event', async (req, res) => {
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { password } = req.body;
-    const dbPass = (await dbGet("SELECT value FROM settings WHERE key = 'admin_password'"))?.value || 'admin123';
+    const dbPass = (await dbGet("SELECT value FROM settings WHERE key = 'admin_password'"))?.value || 'poly1234';
 
     if (password === dbPass) {
       return res.json({ success: true, token: dbPass });
@@ -907,7 +918,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`=======================================================`);
     console.log(`🚀 Origami COD Landing Page Server running on http://localhost:${PORT}`);
-    console.log(`📦 Admin Dashboard: http://localhost:${PORT}/admin (Pass: admin123)`);
+    console.log(`📦 Admin Dashboard: http://localhost:${PORT}/admin`);
     console.log(`🎯 Product Landing Page: http://localhost:${PORT}/p/origami-spoon`);
     console.log(`=======================================================`);
   });

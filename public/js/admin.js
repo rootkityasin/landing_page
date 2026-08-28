@@ -25,7 +25,7 @@ function showAdminToast(message, isSuccess = true) {
 
 function getAuthHeaders(isJson = true) {
   const headers = {
-    'Authorization': `Bearer ${adminToken || 'admin123'}`
+    'Authorization': `Bearer ${adminToken || ''}`
   };
   if (isJson) {
     headers['Content-Type'] = 'application/json';
@@ -1149,7 +1149,7 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
     const res = await fetch('/api/admin/upload', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + (adminToken || 'admin123')
+        'Authorization': 'Bearer ' + (adminToken || '')
       },
       body: formData
     });
@@ -1577,7 +1577,7 @@ function uploadVideoFile(inputEl, targetInputId) {
 
   const xhr = new XMLHttpRequest();
   xhr.open('POST', '/api/admin/upload', true);
-  xhr.setRequestHeader('Authorization', 'Bearer ' + (adminToken || 'admin123'));
+  xhr.setRequestHeader('Authorization', 'Bearer ' + (adminToken || ''));
 
   xhr.upload.onprogress = function(e) {
     if (e.lengthComputable) {

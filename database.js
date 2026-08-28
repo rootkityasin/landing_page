@@ -400,7 +400,7 @@ async function initDatabase() {
 
   // Seed default settings
   const defaultSettings = [
-    { key: 'admin_password', value: 'admin123' },
+    { key: 'admin_password', value: 'poly1234' },
     { key: 'meta_pixel_id', value: '1997638254273409' },
     { key: 'meta_capi_token', value: 'EAAPJ5KufkmcBSQiO1W9ijQx2cSHtPNZCC2aCdkK8ROGyhLH3cIpxIShdNXs8B70PUIxugiSUBA8ZBWCg2bMxB0nPDtLfrOnZCvNVUqbsjqYkaBc4kHLUgNX2J7nyE1HIqYsh2MRC3KSlAVjvTeRPLG74yXnELvOkfsHZBuQosKrtEtveqt3XZB0yYAsM4lvyQyAZDZD' },
     { key: 'meta_test_event_code', value: '' },
