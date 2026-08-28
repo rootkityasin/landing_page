@@ -139,7 +139,7 @@ const defaultOrigamiPageData = {
     badge: "🎥 ভিডিও ডেমোস্ট্রেশন",
     title: "ভিডিওতে দেখুন এটি কীভাবে কাজ করে ও সহজে ব্যবহার করবেন",
     subtitle: "মাত্র কয়েক সেকেন্ডে নিখুঁত পরিমাপ ও ব্যবহারের সহজ পদ্ধতি সরাসরি ভিডিওতে দেখে নিন",
-    videoUrl: "/uploads/media-1787674998296-587000979.mp4",
+    videoUrl: "https://www.youtube.com/shorts/XbY3X_GNwbk",
     posterUrl: "/uploads/media-1787681475090-937220178.webp"
   },
   whatsIncluded: {
