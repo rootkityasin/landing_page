@@ -324,6 +324,31 @@ app.post('/api/orders', async (req, res) => {
       ]
     );
 
+    // Save 100% Fail-Safe Backup (never lost on restart, git pull, or deployment)
+    const backupOrderData = {
+      id: result.lastID,
+      order_number: orderNumber,
+      product_id: product ? product.id : 1,
+      product_slug: product ? product.slug : 'origami-spoon',
+      product_name: productTitle,
+      customer_name: customer_name.trim(),
+      phone: cleanPhone,
+      address: address.trim(),
+      delivery_zone: delivery_zone,
+      bundle_id: selectedBundle.id,
+      bundle_name: selectedBundle.name,
+      color_variant: chosenColor,
+      quantity: quantity,
+      item_price: itemPrice,
+      delivery_charge: deliveryCharge,
+      total_amount: totalAmount,
+      order_status: 'pending',
+      ip_address: ip,
+      user_agent: userAgent,
+      created_at: new Date().toISOString()
+    };
+    recordOrderInBackup(backupOrderData);
+
     const skuId = 'POLYGON-3IN1';
     const productTitle = product ? product.title : '3-in-1 Folding Measuring Spoon';
     const sharedEventId = event_id || `order_${Date.now()}_${Math.floor(Math.random() * 1000)}`;

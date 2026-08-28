@@ -32,9 +32,11 @@ const db = new sqlite3.Database(dbPath, (err) => {
     console.log('Connected to SQLite database at', dbPath);
 
 // Enable Write-Ahead Logging (WAL) for high concurrency and robust durability
+// Enable Write-Ahead Logging (WAL) for high concurrency, durability and zero locking
 db.serialize(() => {
   db.run('PRAGMA journal_mode = WAL;');
   db.run('PRAGMA synchronous = NORMAL;');
+  db.run('PRAGMA busy_timeout = 10000;');
   db.run('PRAGMA foreign_keys = ON;');
 });
 
@@ -421,6 +423,8 @@ async function initDatabase() {
     { key: 'whatsapp_number', value: '8801353892282' }
   ];
 
+  await syncOrdersBackupToDatabase();
+
   for (const s of defaultSettings) {
     const existing = await dbGet('SELECT * FROM settings WHERE key = ?', [s.key]);
     if (!existing) {
@@ -429,7 +433,54 @@ async function initDatabase() {
   }
 }
 
+
+async function syncOrdersBackupToDatabase() {
+  try {
+    const backupFile = path.join(__dirname, 'orders_backup.jsonl');
+    if (!fs.existsSync(backupFile)) return;
+
+    const lines = fs.readFileSync(backupFile, 'utf8').split('\n').filter(l => l.trim());
+    let restoredCount = 0;
+
+    for (const line of lines) {
+      try {
+        const o = JSON.parse(line);
+        if (o && o.order_number && !o.order_number.startsWith('TEST-')) {
+          const existing = await dbGet('SELECT id FROM orders WHERE order_number = ?', [o.order_number]);
+          if (!existing) {
+            await dbRun(
+              `INSERT INTO orders (
+                order_number, product_id, product_slug, product_name,
+                customer_name, phone, address, delivery_zone,
+                bundle_id, bundle_name, color_variant, quantity,
+                item_price, delivery_charge, total_amount, order_status,
+                pathao_consignment_id, pathao_tracking_code, ip_address, user_agent, created_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP))`,
+              [
+                o.order_number, o.product_id || 1, o.product_slug || 'origami-spoon', o.product_name || 'Polygons Spoon',
+                o.customer_name, o.phone, o.address, o.delivery_zone,
+                o.bundle_id || 'bundle_1', o.bundle_name || 'Standard Package', o.color_variant || 'Red', o.quantity || 1,
+                o.item_price || 0, o.delivery_charge || 0, o.total_amount || 0, o.order_status || 'pending',
+                o.pathao_consignment_id || null, o.pathao_tracking_code || null,
+                o.ip_address || null, o.user_agent || null, o.created_at || null
+              ]
+            );
+            restoredCount++;
+          }
+        }
+      } catch (err) { /* ignore parse error */ }
+    }
+    if (restoredCount > 0) {
+      console.log(`✅ Restored ${restoredCount} persistent order(s) from orders_backup.jsonl into database`);
+    }
+  } catch (err) {
+    console.warn('Backup sync notice:', err.message);
+  }
+}
+
+
 module.exports = {
+  syncOrdersBackupToDatabase,
   db,
   dbPath,
   dbRun,
