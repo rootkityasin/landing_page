@@ -8,14 +8,19 @@ function showToast(message, isSuccess = true) {
   const msgEl = document.getElementById('toast-message');
   const iconEl = document.getElementById('toast-icon');
 
+  if (!toast || !msgEl) return;
   msgEl.innerText = message;
-  iconEl.innerText = isSuccess ? '✓' : '⚠️';
+  if (iconEl) iconEl.innerText = isSuccess ? '✓' : '⚠️';
   toast.className = `fixed bottom-6 right-6 z-50 ${isSuccess ? 'bg-slate-900 border-emerald-500' : 'bg-rose-900 border-rose-500'} text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border text-sm font-semibold transition transform duration-300`;
   toast.classList.remove('hidden');
 
   setTimeout(() => {
     toast.classList.add('hidden');
   }, 3500);
+}
+
+function showAdminToast(message, isSuccess = true) {
+  return showToast(message, isSuccess);
 }
 
 function getAuthHeaders(isJson = true) {
@@ -974,7 +979,7 @@ async function onGalleryUrlChange(idx, val) {
 // Universal Client-Side Image Compressor before Upload (Prevents 413 on Vercel/Cloudflare/Nginx)
 async function compressImageBeforeUpload(file, maxDimension = 2000, quality = 0.88) {
   if (!file.type.startsWith('image/') || file.type === 'image/svg+xml' || file.type === 'image/gif') {
-    return file; // SVGs and GIFs are untouched
+    return file;
   }
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -1080,7 +1085,408 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
   } finally {
     inputEl.value = '';
   }
-};
+}
+
+// Save all updated sections to database
+async function saveCurrentPageData() {
+  if (!currentEditingProductId || !currentEditingPageData) return;
+
+  const d = currentEditingPageData;
+  if (!d.meta) d.meta = {};
+  if (!d.topBar) d.topBar = {};
+  if (!d.hero) d.hero = {};
+  if (!d.problemSolution) d.problemSolution = { cards: [] };
+  if (!d.videoDemo) d.videoDemo = {};
+  if (!d.checkout) d.checkout = {};
+  if (!d.bundles) d.bundles = [];
+  if (!d.reviews) d.reviews = [];
+  if (!d.faq) d.faq = [];
+
+  // 1. Meta
+  if (document.getElementById('edit-meta-title')) d.meta.pageTitle = document.getElementById('edit-meta-title').value.trim();
+  if (document.getElementById('edit-meta-pixel')) d.meta.pixelId = document.getElementById('edit-meta-pixel').value.trim();
+
+  // 2. Top bar
+  if (document.getElementById('edit-topbar-text')) d.topBar.text = document.getElementById('edit-topbar-text').value.trim();
+  if (document.getElementById('edit-topbar-show')) d.topBar.show = document.getElementById('edit-topbar-show').value === 'true';
+
+  // 3. Hero
+  if (document.getElementById('edit-hero-badge')) d.hero.badge = document.getElementById('edit-hero-badge').value.trim();
+  if (document.getElementById('edit-hero-headline')) d.hero.headline = document.getElementById('edit-hero-headline').value.trim();
+  if (document.getElementById('edit-hero-subheadline')) d.hero.subheadline = document.getElementById('edit-hero-subheadline').value.trim();
+  if (document.getElementById('edit-hero-discount-price')) d.hero.discountedPrice = Number(document.getElementById('edit-hero-discount-price').value);
+  if (document.getElementById('edit-hero-regular-price')) d.hero.regularPrice = Number(document.getElementById('edit-hero-regular-price').value);
+  if (document.getElementById('edit-hero-discount-badge')) d.hero.discountBadge = document.getElementById('edit-hero-discount-badge').value.trim();
+  if (document.getElementById('edit-hero-rating')) d.hero.ratingText = document.getElementById('edit-hero-rating').value.trim();
+  if (document.getElementById('edit-hero-cta')) d.hero.ctaText = document.getElementById('edit-hero-cta').value.trim();
+  
+  // Primary Image 1
+  if (document.getElementById('edit-hero-media-url')) d.hero.mediaUrl = document.getElementById('edit-hero-media-url').value.trim();
+  if (document.getElementById('edit-hero-show-1')) d.hero.showPrimary = document.getElementById('edit-hero-show-1').checked;
+
+  // Secondary Image 2
+  if (document.getElementById('edit-hero-sec-media-url')) d.hero.secondaryMediaUrl = document.getElementById('edit-hero-sec-media-url').value.trim();
+  if (document.getElementById('edit-hero-show-2')) d.hero.showSecondary = document.getElementById('edit-hero-show-2').checked;
+
+  // Sync Additional Gallery items from DOM
+  const addGallery = [];
+  (d.hero.additionalGallery || []).forEach((item, i) => {
+    const urlInput = document.getElementById(`edit-gallery-url-${i}`);
+    const showCheckbox = document.getElementById(`edit-gallery-show-${i}`);
+    const url = urlInput ? urlInput.value.trim() : (typeof item === 'string' ? item : item.url);
+    const show = showCheckbox ? showCheckbox.checked : (item.show !== false);
+    if (url) {
+      addGallery.push({ url, show });
+    }
+  });
+  d.hero.additionalGallery = addGallery;
+
+  // Keep d.hero.gallery synchronized for backwards compatibility
+  const combinedList = [];
+  if (d.hero.mediaUrl) combinedList.push({ url: d.hero.mediaUrl, show: d.hero.showPrimary !== false });
+  if (d.hero.secondaryMediaUrl) combinedList.push({ url: d.hero.secondaryMediaUrl, show: d.hero.showSecondary !== false });
+  addGallery.forEach(g => combinedList.push(g));
+  d.hero.gallery = combinedList;
+
+  // 4. Problem vs Solution
+  if (document.getElementById('edit-probsol-title')) {
+    d.problemSolution.title = document.getElementById('edit-probsol-title').value.trim();
+  }
+  (d.problemSolution.cards || []).forEach((c, i) => {
+    const pt = document.getElementById(`edit-prob-title-${i}`);
+    const st = document.getElementById(`edit-sol-title-${i}`);
+    const pd = document.getElementById(`edit-prob-desc-${i}`);
+    const sd = document.getElementById(`edit-sol-desc-${i}`);
+    if (pt) c.problemTitle = pt.value.trim();
+    if (st) c.solutionTitle = st.value.trim();
+    if (pd) c.problemDesc = pd.value.trim();
+    if (sd) c.solutionDesc = sd.value.trim();
+  });
+
+  // 5. Video Demo
+  delete d.howItWorks;
+  if (!d.videoDemo) d.videoDemo = {};
+  if (document.getElementById('edit-video-badge')) d.videoDemo.badge = document.getElementById('edit-video-badge').value.trim();
+  if (document.getElementById('edit-video-title')) d.videoDemo.title = document.getElementById('edit-video-title').value.trim();
+  if (document.getElementById('edit-video-subtitle')) d.videoDemo.subtitle = document.getElementById('edit-video-subtitle').value.trim();
+  if (document.getElementById('edit-video-url')) d.videoDemo.videoUrl = document.getElementById('edit-video-url').value.trim();
+  if (document.getElementById('edit-video-poster')) d.videoDemo.posterUrl = document.getElementById('edit-video-poster').value.trim();
+
+  // 6. What's Included in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
+  if (!d.whatsIncluded) d.whatsIncluded = {};
+  if (document.getElementById('edit-included-title')) d.whatsIncluded.title = document.getElementById('edit-included-title').value.trim();
+  if (document.getElementById('edit-included-subtitle')) d.whatsIncluded.subtitle = document.getElementById('edit-included-subtitle').value.trim();
+  if (document.getElementById('edit-included-large-title')) d.whatsIncluded.largeSpoonTitle = document.getElementById('edit-included-large-title').value.trim();
+  if (document.getElementById('edit-included-large-badge')) d.whatsIncluded.largeSpoonBadge = document.getElementById('edit-included-large-badge').value.trim();
+  if (document.getElementById('edit-included-large-usage')) d.whatsIncluded.largeSpoonUsage = document.getElementById('edit-included-large-usage').value.trim();
+  if (document.getElementById('edit-included-small-title')) d.whatsIncluded.smallSpoonTitle = document.getElementById('edit-included-small-title').value.trim();
+  if (document.getElementById('edit-included-small-badge')) d.whatsIncluded.smallSpoonBadge = document.getElementById('edit-included-small-badge').value.trim();
+  if (document.getElementById('edit-included-small-usage')) d.whatsIncluded.smallSpoonUsage = document.getElementById('edit-included-small-usage').value.trim();
+  if (document.getElementById('edit-included-banner-title')) d.whatsIncluded.bannerTitle = document.getElementById('edit-included-banner-title').value.trim();
+  if (document.getElementById('edit-included-banner-desc')) d.whatsIncluded.bannerDesc = document.getElementById('edit-included-banner-desc').value.trim();
+
+  // 7. Unified Package Offers & Checkout Section
+  if (!d.checkout) d.checkout = {};
+  if (document.getElementById('edit-checkout-title')) {
+    d.checkout.title = document.getElementById('edit-checkout-title').value.trim();
+  }
+  if (document.getElementById('edit-checkout-subtitle')) {
+    d.checkout.subtitle = document.getElementById('edit-checkout-subtitle').value.trim();
+  }
+
+  (d.bundles || []).forEach((b, i) => {
+    const bn = document.getElementById(`edit-bundle-name-${i}`);
+    const bb = document.getElementById(`edit-bundle-badge-${i}`);
+    const bp = document.getElementById(`edit-bundle-price-${i}`);
+    const bs = document.getElementById(`edit-bundle-savings-${i}`);
+    const bd = document.getElementById(`edit-bundle-desc-${i}`);
+    const bf = document.getElementById(`edit-bundle-free-${i}`);
+    const bpop = document.getElementById(`edit-bundle-popular-${i}`);
+    if (bn) b.name = bn.value.trim();
+    if (bb) b.badge = bb.value.trim();
+    if (bp) b.price = Number(bp.value) || 0;
+    if (bs) b.savings = bs.value.trim();
+    if (bd) b.desc = bd.value.trim();
+    if (bf) b.freeDelivery = bf.checked;
+    if (bpop) b.isPopular = bpop.checked;
+  });
+
+  // 8. Delivery
+  if (document.getElementById('edit-delivery-dhaka')) {
+    d.checkout.deliveryDhaka = Number(document.getElementById('edit-delivery-dhaka').value);
+  }
+  if (document.getElementById('edit-delivery-outside')) {
+    d.checkout.deliveryOutside = Number(document.getElementById('edit-delivery-outside').value);
+  }
+
+  // 9. Reviews (Directly synced from DOM inputs - completely replaces previous data)
+  d.reviews = syncReviewsFromDOM();
+
+  // 10. FAQs (Directly synced from DOM inputs - completely replaces previous data)
+  d.faq = syncFaqsFromDOM();
+
+  try {
+    const targetId = currentEditingProductId || 1;
+    const res = await fetch(`/api/admin/products/${targetId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        title: d.hero?.headline || d.meta?.pageTitle || 'Polygons Spoon Set',
+        page_data: d
+      })
+    });
+
+    if (res.status === 401) {
+      triggerRelogin('Unauthorized or session expired. Please sign in to save changes.');
+      return;
+    }
+
+    const data = await res.json();
+    if (data.success) {
+      showToast('✅ All section changes saved to live page!');
+    } else {
+      showToast(data.error || 'Failed to save changes', false);
+    }
+  } catch (err) {
+    console.error('Save error:', err);
+    showToast(err.message || 'Server error!', false);
+  }
+}
+
+/* ==========================================
+   DATABASE BACKUP / RESTORE HELPERS
+   ========================================== */
+async function exportDatabase() {
+  try {
+    const token = getAdminToken();
+    const res = await fetch('/api/admin/database/export', {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) {
+      throw new Error('Failed to download database backup');
+    }
+    const blob = await res.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = `database-backup-${Date.now()}.sqlite`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+    showToast('Database snapshot downloaded successfully! 💾');
+  } catch (err) {
+    alert('Export error: ' + err.message);
+  }
+}
+
+async function importDatabase(inputEl) {
+  if (!inputEl || !inputEl.files || !inputEl.files[0]) return;
+  const file = inputEl.files[0];
+  if (!confirm(`Are you sure you want to restore "${file.name}"? This will replace the current database with the uploaded backup.`)) {
+    inputEl.value = '';
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('database', file);
+
+  try {
+    const token = getAdminToken();
+    const res = await fetch('/api/admin/database/import', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showToast('Database imported & restored successfully! 🚀');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
+    } else {
+      alert(data.error || 'Failed to restore database');
+    }
+  } catch (err) {
+    alert('Import error: ' + err.message);
+  } finally {
+    inputEl.value = '';
+  }
+}
+
+/* ==========================================
+   TAB 4: SETTINGS
+   ========================================== */
+async function loadSettings() {
+  try {
+    const res = await fetch('/api/admin/settings', { headers: getAuthHeaders() });
+    const data = await res.json();
+    if (!data.success) return;
+
+    const s = data.settings || {};
+    document.getElementById('set-pathao-base-url').value = s.pathao_base_url || 'https://courier-api-sandbox.pathao.com';
+    document.getElementById('set-pathao-client-id').value = s.pathao_client_id || '';
+    document.getElementById('set-pathao-client-secret').value = s.pathao_client_secret || '';
+    document.getElementById('set-pathao-username').value = s.pathao_username || '';
+    document.getElementById('set-pathao-password').value = s.pathao_password || '';
+    document.getElementById('set-pathao-store-id').value = s.pathao_store_id || '';
+    document.getElementById('set-meta-pixel-id').value = s.meta_pixel_id || '';
+    document.getElementById('set-meta-test-code').value = s.meta_test_event_code || '';
+    document.getElementById('set-meta-capi-token').value = s.meta_capi_token || '';
+    document.getElementById('set-whatsapp-number').value = s.whatsapp_number || '8801353892282';
+  } catch (err) {
+    console.error('Error loading settings:', err);
+  }
+}
+
+async function handleSaveSettings(e) {
+  e.preventDefault();
+
+  const settings = {
+    pathao_base_url: document.getElementById('set-pathao-base-url').value.trim(),
+    pathao_client_id: document.getElementById('set-pathao-client-id').value.trim(),
+    pathao_client_secret: document.getElementById('set-pathao-client-secret').value.trim(),
+    pathao_username: document.getElementById('set-pathao-username').value.trim(),
+    pathao_password: document.getElementById('set-pathao-password').value.trim(),
+    pathao_store_id: document.getElementById('set-pathao-store-id').value.trim(),
+    meta_pixel_id: document.getElementById('set-meta-pixel-id').value.trim(),
+    meta_test_event_code: document.getElementById('set-meta-test-code').value.trim(),
+    meta_capi_token: document.getElementById('set-meta-capi-token').value.trim(),
+    whatsapp_number: document.getElementById('set-whatsapp-number').value.trim()
+  };
+
+  const newPass = document.getElementById('set-admin-password').value.trim();
+  if (newPass) {
+    settings.admin_password = newPass;
+    adminToken = newPass;
+    localStorage.setItem('origami_admin_token', newPass);
+  }
+
+  try {
+    const res = await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(settings)
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showToast('Global settings saved successfully!');
+    } else {
+      showToast('Failed to save settings', false);
+    }
+  } catch (err) {
+    showToast('Server error!', false);
+  }
+}
+
+// Handle Add Product Form
+async function handleCreateProduct(e) {
+  e.preventDefault();
+  const title = document.getElementById('new-prod-title').value.trim();
+  const slug = document.getElementById('new-prod-slug').value.trim();
+
+  try {
+    const res = await fetch('/api/admin/products', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ title, slug })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      closeNewProductModal();
+      showToast(`New product landing funnel created: /p/${data.slug}`);
+      fetchProducts();
+    } else {
+      alert(data.error || 'Could not create product');
+    }
+  } catch (err) {
+    alert('Failed to create product funnel');
+  }
+}
+
+// Initial Boot
+document.addEventListener('DOMContentLoaded', () => {
+  checkAuth();
+
+  document.getElementById('admin-login-form')?.addEventListener('submit', handleLogin);
+  document.getElementById('global-settings-form')?.addEventListener('submit', handleSaveSettings);
+  document.getElementById('new-product-form')?.addEventListener('submit', handleCreateProduct);
+});
+
+// Video Demo Preview & Upload Handlers
+function previewAdminVideo() {
+  const previewBox = document.getElementById('admin-video-preview-box');
+  if (!previewBox) return;
+  const urlInput = document.getElementById('edit-video-url');
+  const posterInput = document.getElementById('edit-video-poster');
+  const videoUrl = urlInput ? urlInput.value.trim() : '';
+  const posterUrl = posterInput ? posterInput.value.trim() : '';
+
+  const posterPreviewImg = document.getElementById('video-poster-preview-img');
+  if (posterPreviewImg && posterUrl) {
+    posterPreviewImg.src = posterUrl;
+  }
+
+  if (!videoUrl) {
+    previewBox.innerHTML = '<p class="text-xs text-slate-400">No video selected</p>';
+    return;
+  }
+
+  const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|live\/))([\w-]{11})/);
+  const vimeoMatch = videoUrl.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+  const gdriveMatch = videoUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+
+  if (videoUrl.startsWith('<iframe') && videoUrl.includes('</iframe>')) {
+    previewBox.innerHTML = videoUrl.replace('<iframe', '<iframe class="w-full h-full rounded-2xl"');
+  } else if (ytMatch) {
+    previewBox.innerHTML = `<iframe class="w-full h-full rounded-2xl" src="https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0" frameborder="0" allowfullscreen></iframe>`;
+  } else if (vimeoMatch) {
+    previewBox.innerHTML = `<iframe class="w-full h-full rounded-2xl" src="https://player.vimeo.com/video/${vimeoMatch[1]}?dnt=1" frameborder="0" allowfullscreen></iframe>`;
+  } else if (gdriveMatch) {
+    previewBox.innerHTML = `<iframe class="w-full h-full rounded-2xl" src="https://drive.google.com/file/d/${gdriveMatch[1]}/preview" frameborder="0" allow="autoplay"></iframe>`;
+  } else {
+    previewBox.innerHTML = `<video class="w-full h-full object-cover rounded-2xl" controls playsinline preload="metadata" ${posterUrl ? `poster="${posterUrl}"` : ''}><source src="${videoUrl}" type="video/mp4"><source src="${videoUrl}"></video>`;
+  }
+}
+
+function uploadVideoFile(inputEl, targetInputId) {
+  if (!inputEl.files || inputEl.files.length === 0) return;
+  const file = inputEl.files[0];
+  const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+
+  const targetInput = document.getElementById(targetInputId);
+  const uploadBtnLabel = inputEl.closest('label');
+  const origBtnHtml = uploadBtnLabel ? uploadBtnLabel.innerHTML : '';
+
+  if (uploadBtnLabel) {
+    uploadBtnLabel.classList.add('opacity-75', 'pointer-events-none');
+    uploadBtnLabel.innerHTML = `<span>⏳ 0% (${fileSizeMB}MB)</span>`;
+  }
+  if (targetInput) targetInput.placeholder = `Uploading video... (${fileSizeMB}MB)`;
+
+  const formData = new FormData();
+  formData.append('media', file);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/admin/upload', true);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + (adminToken || 'admin123'));
+
+  xhr.upload.onprogress = function(e) {
+    if (e.lengthComputable) {
+      const percent = Math.round((e.loaded / e.total) * 100);
+      if (uploadBtnLabel) {
+        uploadBtnLabel.innerHTML = `<span>⏳ ${percent}% (${fileSizeMB}MB)</span>`;
+      }
+      if (targetInput) {
+        targetInput.placeholder = `Uploading video... ${percent}%`;
+      }
+    }
+  };
 
   xhr.onload = function() {
     if (uploadBtnLabel) {
