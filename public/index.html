@@ -14,8 +14,8 @@
   <link rel="preload" href="/fonts/font-4.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- Precompiled & Minified Production CSS with Self-Hosted Fonts (Zero External Dependencies) -->
-  <link rel="preload" as="style" href="/css/styles.min.css?v=21.0" />
-  <link rel="stylesheet" href="/css/styles.min.css?v=21.0" />
+  <link rel="preload" as="style" href="/css/styles.min.css?v=22.0" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=22.0" />
 
   <!-- Favicons -->
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -221,26 +221,32 @@
           <div id="hero-media-container" class="relative">
             <div class="space-y-3">
               <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white">
-                <img id="main-hero-display-img" src="/uploads/media-1787682523203-498536091.webp" alt="রান্না ও বেকিংয়ে নিখুঁত মাপের 4-in-1 ফোল্ডিং মেজারিং চামচ" width="650" height="650" style="aspect-ratio: 1/1;" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
+                <img id="main-hero-display-img" src="/images/poster1.webp" alt="রান্না ও বেকিংয়ে নিখুঁত মাপের 3-in-1 ফোল্ডিং মেজারিং চামচ" width="650" height="650" style="aspect-ratio: 1/1;" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
                 <div class="absolute bottom-3 left-3 bg-[#1C1917]/90 backdrop-blur-md text-white text-xs px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-lg font-latin border border-[#E0C375]/30">
                   <span class="w-2 h-2 rounded-full bg-[#F69D39] live-dot"></span>
                   <span>১০০% Genuine Polygons® Product</span>
                 </div>
               </div>
 
-              <!-- Thumbnails switcher -->
-              <div class="grid grid-cols-4 gap-2">
-                <button type="button" onclick="switchHeroImg('/images/variant-red-full.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-[#D92143] bg-white shadow-xs p-1 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/variant-red.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-contain rounded-xl" alt="মারুন রেড ভ্যারিয়েন্ট" />
+              <!-- Thumbnails switcher (6 ordered showcase images) -->
+              <div class="grid grid-cols-6 gap-2">
+                <button type="button" onclick="switchHeroImg('/images/poster1.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-[#D92143] bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/poster1.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ১" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/images/variant-black-full.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-1 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/variant-black.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-contain rounded-xl" alt="ক্লাসিক ব্ল্যাক ভ্যারিয়েন্ট" />
+                <button type="button" onclick="switchHeroImg('/images/poster2.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/poster2.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ২" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/uploads/media-1787682523203-498536091.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/uploads/media-1787682523203-498536091.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="লাইফস্টাইল ভিউ ১" />
+                <button type="button" onclick="switchHeroImg('/images/poster3.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/poster3.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ৩" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/uploads/media-1787682554429-21106470.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/uploads/media-1787682554429-21106470.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="লাইফস্টাইল ভিউ ২" />
+                <button type="button" onclick="switchHeroImg('/images/poster4.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/poster4.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ৪" />
+                </button>
+                <button type="button" onclick="switchHeroImg('/images/post1.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/post1.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্ট ১" />
+                </button>
+                <button type="button" onclick="switchHeroImg('/images/post2.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
+                  <img src="/images/post2.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্ট ২" />
                 </button>
               </div>
             </div>
@@ -953,6 +959,6 @@
   </div>
 
   <!-- Main JavaScript File -->
-  <script src="/js/landing.js?v=21.0" defer></script>
+  <script src="/js/landing.js?v=22.0" defer></script>
 </body>
 </html>
