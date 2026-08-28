@@ -877,11 +877,85 @@ async function toggleHeroSecondaryShow(isChecked) {
   showToast(isChecked ? 'Secondary image is now VISIBLE on site 👁️' : 'Secondary image is now HIDDEN on site 🚫');
 }
 
+// Synchronize all Hero Image inputs before reordering or saving
+function syncHeroInputsToData() {
+  if (!currentEditingPageData?.hero) return;
+  const h = currentEditingPageData.hero;
+  const pInput = document.getElementById('edit-hero-media-url');
+  if (pInput) h.mediaUrl = pInput.value.trim();
+  const sInput = document.getElementById('edit-hero-sec-media-url');
+  if (sInput) h.secondaryMediaUrl = sInput.value.trim();
+}
+
+function populateHeroImageFields(h) {
+  if (!h) return;
+  const pInput = document.getElementById('edit-hero-media-url');
+  const pImg = document.getElementById('hero-preview-img');
+  const pCheck = document.getElementById('edit-hero-show-1');
+  const pLabel = document.getElementById('label-hero-show-1');
+
+  if (pInput) pInput.value = h.mediaUrl || '';
+  if (pImg) pImg.src = h.mediaUrl || '/images/post1.jpeg';
+  if (pCheck) pCheck.checked = h.showPrimary !== false;
+  if (pLabel) pLabel.innerText = h.showPrimary !== false ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+
+  const sInput = document.getElementById('edit-hero-sec-media-url');
+  const sImg = document.getElementById('hero-sec-preview-img');
+  const sCheck = document.getElementById('edit-hero-show-2');
+  const sLabel = document.getElementById('label-hero-show-2');
+
+  if (sInput) sInput.value = h.secondaryMediaUrl || '';
+  if (sImg) sImg.src = h.secondaryMediaUrl || '/images/post2.png';
+  if (sCheck) sCheck.checked = h.showSecondary !== false;
+  if (sLabel) sLabel.innerText = h.showSecondary !== false ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+}
+
+// Move Any Image Up or Down Across Entire Showcase List
+async function moveHeroImage(fromIndex, offset) {
+  if (!currentEditingPageData?.hero) return;
+  const h = currentEditingPageData.hero;
+  syncHeroInputsToData();
+
+  const allImages = [
+    { url: h.mediaUrl || '/images/post1.jpeg', show: h.showPrimary !== false },
+    { url: h.secondaryMediaUrl || '/images/post2.png', show: h.showSecondary !== false },
+    ...(h.additionalGallery || []).map(item => (typeof item === 'string' ? { url: item, show: true } : { url: item.url || '', show: item.show !== false }))
+  ];
+
+  const targetIndex = fromIndex + offset;
+  if (targetIndex < 0 || targetIndex >= allImages.length) return;
+
+  // Swap positions
+  const temp = allImages[fromIndex];
+  allImages[fromIndex] = allImages[targetIndex];
+  allImages[targetIndex] = temp;
+
+  // Write back to current page data
+  h.mediaUrl = allImages[0].url;
+  h.showPrimary = allImages[0].show;
+
+  h.secondaryMediaUrl = allImages[1].url;
+  h.showSecondary = allImages[1].show;
+
+  h.additionalGallery = allImages.slice(2);
+
+  // Update UI and preview elements
+  populateHeroImageFields(h);
+  renderHeroGalleryEditor();
+
+  // Auto-save immediately to database
+  await saveCurrentPageData();
+  showToast(`📸 Photo moved to Position #${targetIndex + 1}! Saved successfully! 🎉`);
+}
+
 function renderHeroGalleryEditor() {
   const container = document.getElementById('hero-gallery-editor-container');
   if (!container || !currentEditingPageData?.hero) return;
 
-  const gallery = currentEditingPageData.hero.additionalGallery || [];
+  const h = currentEditingPageData.hero;
+  const gallery = h.additionalGallery || [];
+  const totalCount = 2 + gallery.length;
+
   if (gallery.length === 0) {
     container.innerHTML = `<div class="p-3 bg-slate-50 border border-dashed border-slate-300 rounded-xl text-center text-xs text-slate-500 font-semibold">No extra showcase images added. Click "+ Add Showcase Image" above to add more pictures to the gallery!</div>`;
     return;
@@ -890,13 +964,29 @@ function renderHeroGalleryEditor() {
   container.innerHTML = gallery.map((item, i) => {
     const isShown = item.show !== false;
     const url = typeof item === 'string' ? item : (item.url || '');
+    const currentPos = i + 3;
+    const globalIndex = i + 2;
+
     return `
       <div class="bg-slate-50 p-4 rounded-xl border ${isShown ? 'border-slate-200' : 'border-dashed border-slate-300 opacity-75'} space-y-3 transition">
-        <div class="flex items-center justify-between">
-          <span class="font-bold text-slate-800 text-xs">
-            📸 Extra Showcase Image #${i + 3}
-          </span>
-          <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="bg-[#FEF5E4] text-[#D92143] font-black text-xs px-2.5 py-1 rounded-lg border border-[#E0C375]/50">Position #${currentPos}</span>
+            <span class="font-bold text-slate-800 text-xs">
+              📸 Extra Showcase Image
+            </span>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Move Up Button -->
+            <button type="button" onclick="moveHeroImage(${globalIndex}, -1)" class="bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs transition flex items-center gap-1">
+              <span>⬆️ Move Up</span>
+            </button>
+            <!-- Move Down Button -->
+            ${globalIndex < totalCount - 1 ? `
+              <button type="button" onclick="moveHeroImage(${globalIndex}, 1)" class="bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs transition flex items-center gap-1">
+                <span>⬇️ Move Down</span>
+              </button>
+            ` : ''}
             <!-- Show / Hide Toggle Switch -->
             <label class="flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-700 select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:bg-slate-50 transition">
               <input type="checkbox" id="edit-gallery-show-${i}" ${isShown ? 'checked' : ''} onchange="toggleHeroGalleryItemShow(${i}, this.checked)" class="rounded text-[#D92143] cursor-pointer" />
@@ -915,8 +1005,8 @@ function renderHeroGalleryEditor() {
           <div class="flex items-center gap-1.5 flex-wrap font-latin">
             <button type="button" onclick="setQuickImage('edit-gallery-url-${i}', 'gallery-preview-img-${i}', '/images/hero-spoon.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100">hero-spoon.svg</button>
             <button type="button" onclick="setQuickImage('edit-gallery-url-${i}', 'gallery-preview-img-${i}', '/images/comp-origami.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100">comp-origami.svg</button>
-            <button type="button" onclick="setQuickImage('edit-gallery-url-${i}', 'gallery-preview-img-${i}', '/images/step1.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100">step1.svg</button>
-            <button type="button" onclick="setQuickImage('edit-gallery-url-${i}', 'gallery-preview-img-${i}', '/images/step2.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100">step2.svg</button>
+            <button type="button" onclick="setQuickImage('edit-gallery-url-${i}', 'gallery-preview-img-${i}', '/images/post1.jpeg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100">post1.jpeg</button>
+            <button type="button" onclick="setQuickImage('edit-gallery-url-${i}', 'gallery-preview-img-${i}', '/images/post2.png')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100">post2.png</button>
           </div>
         </div>
 

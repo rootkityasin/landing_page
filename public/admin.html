@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard & Landing Page CMS | Polygons</title>
   
-  <link rel="stylesheet" href="/css/styles.min.css?v=17.0" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=18.0" />
   
   <!-- Favicons -->
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -355,19 +355,29 @@
 
             <!-- Hero Primary Image (Media 1) -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="block font-bold text-slate-800 text-xs">1. Primary Hero Image</label>
-                <div class="flex items-center gap-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="bg-[#FEF5E4] text-[#D92143] font-black text-xs px-2.5 py-1 rounded-lg border border-[#E0C375]/50">Position #1</span>
+                  <label class="block font-bold text-slate-800 text-xs">Primary Hero Image (Main Product Image)</label>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <!-- Reorder: Move Down Button -->
+                  <button type="button" onclick="moveHeroImage(0, 1)" class="bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs transition flex items-center gap-1">
+                    <span>⬇️ Move Down</span>
+                  </button>
                   <!-- Show/Hide Toggle -->
                   <label class="flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-700 select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:bg-slate-50 transition">
                     <input type="checkbox" id="edit-hero-show-1" checked onchange="toggleHeroPrimaryShow(this.checked)" class="rounded text-[#D92143] cursor-pointer" />
                     <span id="label-hero-show-1">👁️ Shown on Site</span>
                   </label>
-                  <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
-                    <span>Quick Select:</span>
-                    <button type="button" onclick="setQuickImage('edit-hero-media-url', 'hero-preview-img', '/images/post1.jpeg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post1.jpeg</button>
-                    <button type="button" onclick="setQuickImage('edit-hero-media-url', 'hero-preview-img', '/images/post2.png')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post2.png</button>
-                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                <span>Quick Select:</span>
+                <div class="flex items-center gap-1.5 flex-wrap font-latin">
+                  <button type="button" onclick="setQuickImage('edit-hero-media-url', 'hero-preview-img', '/images/post1.jpeg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post1.jpeg</button>
+                  <button type="button" onclick="setQuickImage('edit-hero-media-url', 'hero-preview-img', '/images/post2.png')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post2.png</button>
+                  <button type="button" onclick="setQuickImage('edit-hero-media-url', 'hero-preview-img', '/images/hero-spoon.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">hero-spoon.svg</button>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -381,19 +391,32 @@
 
             <!-- Hero Secondary Image (Media 2) -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="block font-bold text-slate-800 text-xs">2. Secondary Showcase Image</label>
-                <div class="flex items-center gap-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="bg-[#FEF5E4] text-[#D92143] font-black text-xs px-2.5 py-1 rounded-lg border border-[#E0C375]/50">Position #2</span>
+                  <label class="block font-bold text-slate-800 text-xs">Secondary Showcase Image</label>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <!-- Reorder: Move Up & Move Down Buttons -->
+                  <button type="button" onclick="moveHeroImage(1, -1)" class="bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs transition flex items-center gap-1">
+                    <span>⬆️ Move Up</span>
+                  </button>
+                  <button type="button" onclick="moveHeroImage(1, 1)" class="bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 shadow-2xs transition flex items-center gap-1">
+                    <span>⬇️ Move Down</span>
+                  </button>
                   <!-- Show/Hide Toggle -->
                   <label class="flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-700 select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:bg-slate-50 transition">
                     <input type="checkbox" id="edit-hero-show-2" checked onchange="toggleHeroSecondaryShow(this.checked)" class="rounded text-[#D92143] cursor-pointer" />
                     <span id="label-hero-show-2">👁️ Shown on Site</span>
                   </label>
-                  <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
-                    <span>Quick Select:</span>
-                    <button type="button" onclick="setQuickImage('edit-hero-sec-media-url', 'hero-sec-preview-img', '/images/post2.png')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post2.png</button>
-                    <button type="button" onclick="setQuickImage('edit-hero-sec-media-url', 'hero-sec-preview-img', '/images/post1.jpeg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post1.jpeg</button>
-                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                <span>Quick Select:</span>
+                <div class="flex items-center gap-1.5 flex-wrap font-latin">
+                  <button type="button" onclick="setQuickImage('edit-hero-sec-media-url', 'hero-sec-preview-img', '/images/post2.png')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post2.png</button>
+                  <button type="button" onclick="setQuickImage('edit-hero-sec-media-url', 'hero-sec-preview-img', '/images/post1.jpeg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">post1.jpeg</button>
+                  <button type="button" onclick="setQuickImage('edit-hero-sec-media-url', 'hero-sec-preview-img', '/images/comp-origami.svg')" class="bg-white px-2 py-0.5 rounded border hover:bg-slate-100 font-latin">comp-origami.svg</button>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -767,6 +790,6 @@
     </div>
   </div>
 
-  <script src="/js/admin.js?v=17.0"></script>
+  <script src="/js/admin.js?v=18.0"></script>
 </body>
 </html>
