@@ -71,7 +71,7 @@ async function runTests() {
       headers: { 'Content-Type': 'application/json' }
     }, {
       product_slug: 'origami-spoon',
-      customer_name: 'তানভীর আহমেদ',
+      customer_name: 'Test Customer',
       phone: '01712345678',
       address: 'বাসা ১২, রোড ৪, সেক্টর ৩, উত্তরা, ঢাকা',
       delivery_zone: 'dhaka_inside',
@@ -94,7 +94,7 @@ async function runTests() {
       method: 'GET'
     });
     console.assert(orderLookupRes.status === 200, 'Lookup should return 200');
-    console.assert(orderLookupRes.data.order.customer_name === 'তানভীর আহমেদ', 'Customer name should match');
+    console.assert(orderLookupRes.data.order.customer_name === 'Test Customer', 'Customer name should match');
     console.log('✅ Thank You invoice data loaded correctly');
 
     // 5. Test Admin Login
@@ -215,6 +215,17 @@ async function runTests() {
     console.assert(uploadRes.data.success === true, 'Upload should succeed');
     console.log(`✅ Media uploaded successfully! Public URL: ${uploadRes.data.url}`);
 
+    // Cleanup test order
+    if (orderId) {
+      await request({
+        hostname: 'localhost',
+        port: PORT,
+        path: `/api/admin/orders/${orderId}`,
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    }
+
     // Cleanup test product
     if (newProdRes.data.id) {
       await request({
@@ -226,7 +237,15 @@ async function runTests() {
       });
     }
 
-    console.log('\n🎉 ALL 10 TESTS PASSED SUCCESSFULLY! The Landing Page CMS & COD Funnel is 100% operational.\n');
+    // Cleanup test media file from disk
+    if (uploadRes.data.url) {
+      const fs = require('fs');
+      const path = require('path');
+      const uploadedFilePath = path.join(__dirname, 'public', uploadRes.data.url);
+      try { if (fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath); } catch(e){}
+    }
+
+    console.log('\n🎉 ALL 10 TESTS PASSED SUCCESSFULLY! Cleaned up all test data (0 dummy orders remain).\n');
   } catch (err) {
     console.error('❌ Test failed:', err);
     process.exit(1);

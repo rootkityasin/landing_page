@@ -1087,13 +1087,13 @@ function validatePhoneLive(inputEl) {
 
 // Live Social Proof Notification Popup (FOMO & Trust Trigger)
 const recentCustomers = [
-  { name: 'তানভীর আহমেদ', area: 'উত্তরা, ঢাকা', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '২' },
-  { name: 'মেহজাবিন চৌধুরী', area: 'জিইসি, চট্টগ্রাম', pkg: '১ সেট ট্রায়াল প্যাক', mins: '৪' },
-  { name: 'রোকসানা পারভীন', area: 'মিরপুর ১০, ঢাকা', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '১' },
-  { name: 'ফারহানা সুলতানা', area: 'ধানমন্ডি, ঢাকা', pkg: '৩ সেটের সুপার সেভার প্যাক', mins: '৫' },
-  { name: 'আরিফুল ইসলাম', area: 'উপশহর, সিলেট', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '৩' },
-  { name: 'নুসরাত জাহান', area: 'খালিশপুর, খুলনা', pkg: '১ সেট ট্রায়াল প্যাক', mins: '৬' },
-  { name: 'মাহমুদুল হাসান', area: 'বোয়ালিয়া, রাজশাহী', pkg: '২ সেটের ফ্যামিলি প্যাক', mins: '২' }
+  { name: 'Maimuna Nova', area: 'টঙ্গী, গাজীপুর', pkg: '২ সেটের কম্বো প্যাক', mins: '৩' },
+  { name: 'নুসরাত জাহান', area: 'উত্তরা, ঢাকা', pkg: '১ সেট স্পুন', mins: '৫' },
+  { name: 'Sumaiya Sharmin', area: 'জিইসি, চট্টগ্রাম', pkg: '২ সেটের কম্বো প্যাক', mins: '২' },
+  { name: 'আসমা', area: 'সিলেট সদর', pkg: '৩ সেটের সুপার সেভার প্যাক', mins: '৪' },
+  { name: 'Nafisa Islam', area: 'তেজগাঁও, ঢাকা', pkg: '২ সেটের কম্বো প্যাক', mins: '১' },
+  { name: 'Pakhi', area: 'মগবাজার, ঢাকা', pkg: '১ সেট স্পুন', mins: '৬' },
+  { name: 'Yasir Araf', area: 'রংপুর সদর', pkg: '২ সেটের কম্বো প্যাক', mins: '৭' }
 ];
 
 let socialProofIndex = 0;

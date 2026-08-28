@@ -714,6 +714,26 @@ app.post('/api/admin/orders/:id/dispatch-pathao', verifyAdminAuth, async (req, r
   }
 });
 
+// Delete a single order
+app.delete('/api/admin/orders/:id', verifyAdminAuth, async (req, res) => {
+  try {
+    await dbRun('DELETE FROM orders WHERE id = ?', [req.params.id]);
+    res.json({ success: true, message: 'Order deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Clear all dummy/test orders
+app.post('/api/admin/orders/clear-all', verifyAdminAuth, async (req, res) => {
+  try {
+    await dbRun('DELETE FROM orders');
+    res.json({ success: true, message: 'All orders cleared successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // CSV Export
 app.get('/api/admin/export-csv', verifyAdminAuth, async (req, res) => {
   try {
