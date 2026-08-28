@@ -257,7 +257,7 @@ function renderLandingPage(data) {
     const vBadge = document.getElementById('video-demo-badge');
     if (vBadge && data.videoDemo.badge) {
       const span = vBadge.querySelector('span');
-      if (span) span.innerText = data.videoDemo.badge;
+      if (span) span.innerText = data.videoDemo.badge || '🎥 Video Demonstration';
     }
     const vTitle = document.getElementById('video-demo-title');
     if (vTitle && data.videoDemo.title) vTitle.innerText = data.videoDemo.title;

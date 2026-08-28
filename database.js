@@ -154,7 +154,7 @@ const defaultOrigamiPageData = {
     ]
   },
   videoDemo: {
-    badge: "🎥 ভিডিও ডেমোস্ট্রেশন",
+    badge: "🎥 Video Demonstration",
     title: "ভিডিওতে দেখুন এটি কীভাবে কাজ করে ও সহজে ব্যবহার করবেন",
     subtitle: "",
     videoUrl: "https://www.youtube.com/shorts/XbY3X_GNwbk",
@@ -278,7 +278,7 @@ const defaultOrigamiPageData = {
 ],
   trustBadges: [
     {
-      title: "ক্যাশ অন ডেলিভারি",
+      title: "Cash on Delivery",
       desc: "পণ্য হাতে পেয়ে চেক করে সম্পূর্ণ মূল্য পরিশোধ করুন"
     },
     {
