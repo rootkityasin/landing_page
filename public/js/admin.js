@@ -979,7 +979,7 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
   formData.append('media', file);
 
   try {
-    showAdminToast('Uploading image...');
+    showToast('Uploading image...');
     const res = await fetch('/api/admin/upload', {
       method: 'POST',
       headers: {
@@ -1013,7 +1013,7 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
       }
       // Auto-save immediately to database
       await saveCurrentPageData();
-      showAdminToast('✅ Image uploaded and saved successfully!');
+      showToast('✅ Image uploaded and saved successfully!');
     } else {
       alert('Upload failed: ' + (data.error || 'Unknown error'));
     }
@@ -1448,7 +1448,7 @@ function uploadVideoFile(inputEl, targetInputId) {
         targetInput.value = data.url;
       }
       previewAdminVideo();
-      showAdminToast('✅ Video uploaded successfully!');
+      showToast('✅ Video uploaded successfully!');
       saveCurrentPageData();
     } else {
       alert('Video upload failed: ' + (data.error || 'Unknown error'));
