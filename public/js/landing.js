@@ -156,7 +156,7 @@ function renderLandingPage(data) {
   if (heroSubheadlineEl) heroSubheadlineEl.innerText = data.hero.subheadline;
 
   const heroRatingEl = document.getElementById('hero-rating-text');
-  if (heroRatingEl) heroRatingEl.innerText = data.hero.ratingText || '৪.৯/৫ রেটিং (৩৫০+ ভেরিফাইড রিভিউ)';
+  if (heroRatingEl) heroRatingEl.innerText = data.hero.ratingText || '৪.৯/৫ রেটিং (১৫০+ ভেরিফাইড রিভিউ)';
   
   const heroRegPriceEl = document.getElementById('hero-regular-price');
   if (heroRegPriceEl) heroRegPriceEl.innerText = `৳${toBanglaDigits(data.hero.regularPrice)}`;
