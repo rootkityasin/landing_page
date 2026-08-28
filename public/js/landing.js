@@ -236,8 +236,8 @@ function renderLandingPage(data) {
 
       heroMediaEl.innerHTML = `
         <div class="space-y-3">
-          <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white">
-            <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" width="1200" height="1200" style="aspect-ratio: 1/1;" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
+          <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[560px]">
+            <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" width="1067" height="1600" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[560px] sm:max-h-[640px] md:max-h-[680px] object-contain mx-auto transition duration-300" />
             <div class="absolute bottom-3 left-3 bg-[#1C1917]/90 backdrop-blur-md text-white text-xs px-3.5 py-1.5 rounded-xl flex items-center gap-2 shadow-lg font-latin border border-[#E0C375]/30">
               <span class="w-2 h-2 rounded-full bg-[#F69D39] live-dot"></span>
               <span>১০০% Genuine Polygons® Product</span>
@@ -1034,12 +1034,12 @@ function switchHeroImg(imgUrl, btnEl) {
     mainImg.src = imgUrl;
   }
   document.querySelectorAll('.hero-thumb-btn').forEach(btn => {
-    btn.classList.remove('border-emerald-600');
+    btn.classList.remove('border-[#D92143]');
     btn.classList.add('border-slate-200');
   });
   if (btnEl) {
     btnEl.classList.remove('border-slate-200');
-    btnEl.classList.add('border-emerald-600');
+    btnEl.classList.add('border-[#D92143]');
   }
 }
 
