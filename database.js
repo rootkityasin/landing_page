@@ -161,7 +161,7 @@ const defaultOrigamiPageData = {
     posterUrl: "/uploads/media-1787681475090-937220178.webp"
   },
   whatsIncluded: {
-    badge: "১ সেটের সম্পূর্ণ বক্স (গিফট প্যাকেজিং)",
+    badge: "1 Set Complete Box (Gift Packaging)",
     title: "আমাদের ১ সেট প্রোডাক্টে কী কী পাচ্ছেন?",
     subtitle: "প্রতি ১ সেটে থাকবে মোট ২টি স্মার্ট ফোল্ডিং চামচ — যা একসাথে রিপ্লেস করবে ৬টি ট্র্যাডিশনাল মেজারিং চামচ",
     largeSpoonTitle: "১. বড় মেজারিং চামচ (Tablespoon)",

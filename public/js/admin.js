@@ -585,7 +585,7 @@ function populateEditorFields(d) {
   // 6. What's in 1 Set Box (১ সেটে কী কী পাচ্ছেন)
   if (!d.whatsIncluded) {
     d.whatsIncluded = {
-      badge: "১ সেটের সম্পূর্ণ বক্স (গিফট প্যাকেজিং)",
+      badge: "1 Set Complete Box (Gift Packaging)",
       title: "আমাদের ১ সেট প্রোডাক্টে কী কী পাচ্ছেন?",
       subtitle: "প্রতি ১ সেটে থাকবে মোট ২টি স্মার্ট ফোল্ডিং চামচ — যা একসাথে রিপ্লেস করবে ৬টি ট্র্যাডিশনাল মেজারিং চামচ",
       largeSpoonTitle: "১. বড় মেজারিং চামচ (Tablespoon)",
