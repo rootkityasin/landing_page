@@ -740,54 +740,61 @@ function toggleFaq(buttonEl) {
   }
 }
 
-// Meta Pixel tracking helper
+// Meta Pixel ViewContent tracking helper
 function initMetaPixel(pixelId) {
-  if (window.fbq && window.fbq.loaded) return;
-  /* eslint-disable */
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  /* eslint-enable */
-  fbq('init', pixelId);
-  fbq('track', 'PageView', {}, { eventID: pageViewEventId });
+  if (window.viewContentTracked) return;
+  window.viewContentTracked = true;
 
   const skuId = 'POLYGON-3IN1';
   const defaultPrice = Number(selectedBundle?.price) || 666;
   const productTitle = currentProduct?.title || '3-in-1 Folding Measuring Spoon';
+  const viewContentEventId = 'vc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
 
-  fbq('track', 'ViewContent', {
-    content_name: productTitle,
-    content_type: 'product',
-    content_ids: [skuId],
-    contents: [
-      {
-        id: skuId,
-        quantity: 1,
-        item_price: defaultPrice
-      }
-    ],
-    num_items: 1,
-    value: defaultPrice,
-    currency: 'BDT'
-  }, { eventID: pageViewEventId });
+  if (window.fbq) {
+    fbq('track', 'ViewContent', {
+      content_name: productTitle,
+      content_type: 'product',
+      content_ids: [skuId],
+      contents: [
+        {
+          id: skuId,
+          quantity: 1,
+          item_price: defaultPrice
+        }
+      ],
+      num_items: 1,
+      value: defaultPrice,
+      currency: 'BDT'
+    }, { eventID: viewContentEventId });
+  }
 
-  // Relay PageView to Server CAPI for exact matching deduplication
+  // Relay ViewContent to Server CAPI with matching eventID
   const { fbp, fbc } = getFacebookCookies();
   fetch('/api/tracking/capi-event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      event_name: 'PageView',
-      event_id: pageViewEventId,
+      event_name: 'ViewContent',
+      event_id: viewContentEventId,
       event_source_url: window.location.href,
       user_data: { fbp, fbc },
-      custom_data: {}
-    })
+      custom_data: {
+        content_name: productTitle,
+        content_type: 'product',
+        content_ids: [skuId],
+        contents: [
+          {
+            id: skuId,
+            quantity: 1,
+            item_price: defaultPrice
+          }
+        ],
+        num_items: 1,
+        value: defaultPrice,
+        currency: 'BDT'
+      }
+    }),
+    keepalive: true
   }).catch(() => {});
 }
 

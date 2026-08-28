@@ -388,7 +388,15 @@ app.get('/api/orders/:id', async (req, res) => {
 // Client CAPI Relay (for InitiateCheckout, ViewContent, etc.)
 app.post('/api/tracking/capi-event', async (req, res) => {
   try {
-    const { event_name, event_id, event_source_url, user_data = {}, custom_data = {} } = req.body;
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) { body = {}; }
+    }
+    const { event_name, event_id, event_source_url, user_data = {}, custom_data = {} } = body || {};
+    if (!event_id) {
+      return res.status(400).json({ success: false, error: 'event_id is required' });
+    }
+
     const cookies = parseCookies(req);
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'];
@@ -397,7 +405,7 @@ app.post('/api/tracking/capi-event', async (req, res) => {
     const fbc = user_data.fbc || cookies['_fbc'] || undefined;
 
     await metaCapi.sendEvent({
-      eventName: event_name || 'InitiateCheckout',
+      eventName: event_name || 'PageView',
       eventId: event_id,
       eventSourceUrl: event_source_url || req.headers.referer || 'https://polygonsbd.90slabs.com/',
       userData: {
@@ -410,7 +418,7 @@ app.post('/api/tracking/capi-event', async (req, res) => {
       customData: custom_data || {}
     });
 
-    res.json({ success: true });
+    res.json({ success: true, event_id });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

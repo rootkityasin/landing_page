@@ -9,7 +9,7 @@
   <link rel="preload" href="/fonts/font-1.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- Precompiled CSS with local fonts -->
-  <link rel="stylesheet" href="/css/styles.min.css?v=12.0" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=13.0" />
   
   <!-- Favicons -->
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -50,8 +50,10 @@
       }
     }
   </style>
-  <!-- Meta Pixel Code -->
+  <!-- Meta Pixel Code with Synchronized CAPI PageView Deduplication -->
   <script>
+    window.pageViewEventId = 'pv_ty_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -60,8 +62,37 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
+    
     fbq('init', '1997638254273409');
-    fbq('track', 'PageView');
+    fbq('track', 'PageView', {}, { eventID: window.pageViewEventId });
+
+    // Send matching PageView CAPI event to server with exact same eventID for 100% deduplication
+    (function sendPageViewCapi() {
+      function getCookie(name) {
+        var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+      }
+      var fbp = getCookie('_fbp');
+      var fbc = getCookie('_fbc');
+      var payload = JSON.stringify({
+        event_name: 'PageView',
+        event_id: window.pageViewEventId,
+        event_source_url: window.location.href,
+        user_data: { fbp: fbp, fbc: fbc },
+        custom_data: {}
+      });
+
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/tracking/capi-event', new Blob([payload], { type: 'application/json' }));
+      } else {
+        fetch('/api/tracking/capi-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true
+        }).catch(function() {});
+      }
+    })();
   </script>
   <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1997638254273409&ev=PageView&noscript=1"
@@ -273,6 +304,6 @@
     <p class="text-slate-400 font-latin text-xs">© 2026 Polygons LLC. All Rights Reserved.</p>
   </footer>
 
-  <script src="/js/thankyou.js?v=12.0"></script>
+  <script src="/js/thankyou.js?v=13.0"></script>
 </body>
 </html>
