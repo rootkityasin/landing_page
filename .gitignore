@@ -12,3 +12,9 @@ yarn-error.log*
 scratch/
 .DS_Store
 Thumbs.db
+
+# SQLite Database & Order Backups (CRITICAL: Never overwrite live database)
+database.sqlite*
+*.sqlite*
+*.db*
+orders_backup.jsonl

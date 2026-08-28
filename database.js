@@ -30,6 +30,14 @@ const db = new sqlite3.Database(dbPath, (err) => {
     console.error('Failed to connect to SQLite database at', dbPath, err.message);
   } else {
     console.log('Connected to SQLite database at', dbPath);
+
+// Enable Write-Ahead Logging (WAL) for high concurrency and robust durability
+db.serialize(() => {
+  db.run('PRAGMA journal_mode = WAL;');
+  db.run('PRAGMA synchronous = NORMAL;');
+  db.run('PRAGMA foreign_keys = ON;');
+});
+
   }
 });
 
