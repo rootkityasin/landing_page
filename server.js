@@ -79,7 +79,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 300 * 1024 * 1024 }, // 50MB max
+  limits: { fileSize: 500 * 1024 * 1024 }, // 50MB max
   fileFilter: (req, file, cb) => {
     // Accept all images and video files
     if (file.mimetype && (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/'))) {
@@ -98,8 +98,8 @@ const compression = require('compression');
 
 app.use(compression());
 app.use(cors());
-app.use(express.json({ limit: '300mb' }));
-app.use(express.urlencoded({ extended: true, limit: '300mb' }));
+app.use(express.json({ limit: '500mb' }));
+app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
 // Optimized static assets serving with 1-Year Efficient Cache Lifetimes (Google Lighthouse 100 benchmark)
 if (isVercel) {
