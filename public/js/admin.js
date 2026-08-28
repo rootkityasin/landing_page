@@ -280,6 +280,14 @@ async function updateOrderStatus(orderId, newStatus) {
   }
 }
 
+function setOrderStatusFilter(status) {
+  const filterEl = document.getElementById('order-status-filter');
+  if (filterEl) {
+    filterEl.value = status;
+    fetchOrders();
+  }
+}
+
 async function dispatchOrderToPathao(orderId) {
   if (!confirm('Are you sure you want to dispatch this order to Pathao Courier?')) return;
 
@@ -291,10 +299,15 @@ async function dispatchOrderToPathao(orderId) {
 
     const data = await res.json();
     if (data.success) {
-      showToast(`Pathao Consignment Created! ID: ${data.consignment_id}`);
+      showToast(`✅ Pathao Consignment Created! ID: ${data.consignment_id}`);
+      // Automatically show 'all' orders so the newly dispatched order remains 100% visible with its tracking code badge!
+      const filterEl = document.getElementById('order-status-filter');
+      if (filterEl && filterEl.value === 'pending') {
+        filterEl.value = 'all';
+      }
       fetchOrders();
     } else {
-      alert(`Pathao Error: ${data.error}`);
+      alert(`Pathao Error: ${data.error || 'Failed to dispatch'}`);
     }
   } catch (err) {
     alert('Failed to dispatch order to Pathao Courier.');

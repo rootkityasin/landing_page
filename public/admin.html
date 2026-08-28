@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard & Landing Page CMS | Polygons</title>
   
-  <link rel="stylesheet" href="/css/styles.min.css?v=19.0" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=20.0" />
   
   <!-- Favicons -->
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -130,26 +130,41 @@
         </div>
       </div>
 
-      <!-- Stats Cards -->
+      <!-- Stats Cards (Clickable Quick Filters) -->
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <p class="text-xs text-slate-500 font-semibold">Total Orders</p>
+        <div onclick="setOrderStatusFilter('all')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-emerald-500 hover:shadow-md transition">
+          <p class="text-xs text-slate-500 font-semibold flex items-center justify-between">
+            <span>Total Orders</span>
+            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">ALL</span>
+          </p>
           <h3 id="stat-total-orders" class="text-2xl font-black text-slate-900 font-latin mt-1">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <p class="text-xs text-amber-600 font-semibold">Pending</p>
+        <div onclick="setOrderStatusFilter('pending')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-amber-500 hover:shadow-md transition">
+          <p class="text-xs text-amber-600 font-semibold flex items-center justify-between">
+            <span>Pending</span>
+            <span class="text-[10px] bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded font-bold">⏳</span>
+          </p>
           <h3 id="stat-pending-orders" class="text-2xl font-black text-amber-600 font-latin mt-1">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <p class="text-xs text-blue-600 font-semibold">Confirmed</p>
+        <div onclick="setOrderStatusFilter('confirmed')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-blue-500 hover:shadow-md transition">
+          <p class="text-xs text-blue-600 font-semibold flex items-center justify-between">
+            <span>Confirmed</span>
+            <span class="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-bold">✓</span>
+          </p>
           <h3 id="stat-confirmed-orders" class="text-2xl font-black text-blue-600 font-latin mt-1">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <p class="text-xs text-purple-600 font-semibold">Pathao Dispatched</p>
+        <div onclick="setOrderStatusFilter('dispatched')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-purple-500 hover:shadow-md transition">
+          <p class="text-xs text-purple-600 font-semibold flex items-center justify-between">
+            <span>Pathao Dispatched</span>
+            <span class="text-[10px] bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded font-bold">🚚</span>
+          </p>
           <h3 id="stat-dispatched-orders" class="text-2xl font-black text-purple-600 font-latin mt-1">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <p class="text-xs text-emerald-600 font-semibold">Delivered</p>
+        <div onclick="setOrderStatusFilter('delivered')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs cursor-pointer hover:border-emerald-500 hover:shadow-md transition">
+          <p class="text-xs text-emerald-600 font-semibold flex items-center justify-between">
+            <span>Delivered</span>
+            <span class="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-bold">🎉</span>
+          </p>
           <h3 id="stat-delivered-orders" class="text-2xl font-black text-emerald-600 font-latin mt-1">0</h3>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -198,8 +213,13 @@
             </tbody>
           </table>
         </div>
-        <div id="orders-empty-msg" class="hidden p-12 text-center text-slate-400">
-          No orders found.
+        <div id="orders-empty-msg" class="hidden p-12 text-center text-slate-500 space-y-3">
+          <div class="text-4xl">📦</div>
+          <div class="font-bold text-slate-700 text-base">No orders found in this filter view.</div>
+          <p class="text-xs text-slate-400">You may have a specific status filter selected above.</p>
+          <button type="button" onclick="setOrderStatusFilter('all')" class="mt-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs transition inline-flex items-center gap-1.5">
+            <span>👁️ View All Orders</span>
+          </button>
         </div>
       </div>
 
@@ -790,6 +810,6 @@
     </div>
   </div>
 
-  <script src="/js/admin.js?v=19.0"></script>
+  <script src="/js/admin.js?v=20.0"></script>
 </body>
 </html>
