@@ -17,7 +17,7 @@ A high-converting, Direct-to-Consumer (DTC) single product landing page and Cash
 3. Open in your browser:
    - **Main Landing Page**: [http://localhost:3000/](http://localhost:3000/)
    - **Product Page**: [http://localhost:3000/p/origami-spoon](http://localhost:3000/p/origami-spoon)
-   - **Admin Dashboard**: [http://localhost:3000/admin](http://localhost:3000/admin) (Default Password: `admin123`)
+   - **Admin Dashboard**: [http://localhost:3000/admin](http://localhost:3000/admin)
    - **Thank You Page**: [http://localhost:3000/thankyou](http://localhost:3000/thankyou)
 
 ## Key Features
