@@ -356,7 +356,7 @@ function renderLandingPage(data) {
       reviewsContainer.innerHTML = reviewsList.map((rev, i) => {
         const initial = (rev.name || 'ক').trim().substring(0, 1) || 'ক';
         const ratingCount = Math.max(1, Math.min(5, Number(rev.rating) || 5));
-        const stars = '★'.repeat(ratingCount);
+        const stars = '★'.repeat(ratingCount) + '☆'.repeat(5 - ratingCount);
         const locationText = rev.location ? `<p class="text-xs text-[#475569] font-bold">${rev.location}</p>` : '';
         const verifiedBadge = rev.verified !== false ? `<span class="inline-flex items-center text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded ml-1.5 shadow-2xs">✓ ভেরিফাইড ক্রেতা</span>` : '';
         const dateText = rev.date ? `<span class="text-[11px] text-slate-400 font-medium">${rev.date}</span>` : '';

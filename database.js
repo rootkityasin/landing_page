@@ -202,36 +202,60 @@ const defaultOrigamiPageData = {
   },
     reviews: [
     {
-        "name": "তানভীর আহমেদ",
-        "location": "ধানমন্ডি, ঢাকা",
+        "name": "Maimuna Nova",
+        "location": "Tongi Mirer Bazar",
         "rating": 5,
         "verified": true,
         "date": "৩ দিন আগে",
-        "comment": "প্রোডাক্টটি যেমন ছবিতে দেখেছি ঠিক তেমনই পেয়েছি। রান্না ও বেকিংয়ের সময় বিভিন্ন চামচ খোঁজার ঝামেলা একদম শেষ। ১ সেকেন্ডেই ফোল্ড করা যায় এবং ধোয়াও খুব সহজ।"
+        "comment": "প্রথমে ভেবেছিলাম  আর দশটা measuring spoon এর মতোই হবে। কিন্তু হাতে পাওয়ার পর বেশ ভালো লেগেছে।মামনিকে গিফট দিয়েছি ।"
     },
     {
         "name": "নুসরাত জাহান",
         "location": "উত্তরা, ঢাকা",
-        "rating": 5,
+        "rating": 4,
         "verified": true,
         "date": "৫ দিন আগে",
-        "comment": "অসাধারণ একটি কিচেন গ্যাজেট! তেলের পরিমাপের পর সাবান পানি দিয়ে ফ্ল্যাট করে ধুয়ে মুছে ড্রয়ারে রেখে দেওয়া যায়। কোয়ালিটি ১০০% অরিজিনাল।"
+        "comment": "আমি baking করি, তাই মাপজোক প্রায় প্রতিদিনই লাগে। আগে কয়েকটা spoon আলাদা করে রাখতে হতো। এটা দিয়ে কাজ অনেক সহজ হয়েছে, আর ফ্রিজে লাগিয়ে রাখতে পারি , জিনিসটা বেশ practical .Productটা simple কিন্তু smart। ৩ ধরনের measurement একসাথে পাওয়াটা convenient। বিশেষ করে baking করার সময় খুব কাজে লাগছে। যারা kitchen space বাঁচাতে চান, তাদের ভালো লাগবে মনে হয়।"
     },
     {
-        "name": "মাহমুদুল হাসান",
+        "name": "Sumaiya Sharmin",
         "location": "জিইসি, চট্টগ্রাম",
-        "rating": 5,
+        "rating": 3,
         "verified": true,
         "date": "১ সপ্তাহ আগে",
-        "comment": "অর্ডার করার ২ দিনের মাথায় ডেলিভারি পেয়েছি। গিফট বক্স প্যাকেজিং এবং মেটেরিয়াল প্রিমিয়াম। ফোল্ডিং মেকানিজম খুব স্ট্রং।"
+        "comment": "আমার রান্নাঘরের ড্রয়ার সবসময় জিনিসে ভরা থাকে। তাই ভাঁজ করে সমান করে রাখা যায় দেখে নিয়েছিলাম। এখন বুঝতে পারছি জায়গা বাঁচানোর জন্য সুবিধাটা সত্যিই কাজে লাগে। রান্না আর বেকিং দুটোর জন্যই ব্যবহার করছি।"
     },
     {
-        "name": "ফারহানা আক্তার",
+        "name": "আসমা",
         "location": "সিলেট সদর",
         "rating": 5,
         "verified": true,
+        "date": "১ সপ্তাহ আগে",
+        "comment": "অনলাইনে ভিডিওতে দেখে অর্ডার করেছিলাম, সত্যি বলতে খুব বেশি আশা ছিল না। কিন্তু product হাতে পেয়ে ভালোই লেগেছে। Magnetic feature টা বেশ useful, আর মাপ নেওয়াটাও easy।"
+    },
+    {
+        "name": "Nafisa Islam",
+        "location": "Tejgaon Dhaka",
+        "rating": 5,
+        "verified": true,
         "date": "২ সপ্তাহ আগে",
-        "comment": "রান্নাঘরে অনেক জায়গা বাঁচায়। আগে একগাদা চামচ রাখতে হতো, এখন মাত্র ২টা চামচেই সব কাজ নিখুঁতভাবে হয়ে যায়। ধন্যবাদ পলিগনস টিমকে।"
+        "comment": "যেটা সবচেয়ে ভালো লেগেছে সেটা হলো জায়গা নেয় খুব কম। ধুয়ে ফেলাও সহজ।"
+    },
+    {
+        "name": "Pakhi",
+        "location": "Mogbazar",
+        "rating": 4,
+        "verified": true,
+        "date": "২ সপ্তাহ আগে",
+        "comment": "Honestly beshi expectation niye order kori nai 😄 Kintu product ta actually besh kajer. Magnetic howay fridge er pashe lagiye rakhi. Dorkar hole sathe sathei niye use kora jay. Simple but useful ekta jinis."
+    },
+    {
+        "name": "Yasir Araf",
+        "location": "Rangpure",
+        "rating": 5,
+        "verified": true,
+        "date": "২ সপ্তাহ আগে",
+        "comment": "Khubi vlo ekta product ,abr bou er jonno niyechi ."
     }
 ],
   trustBadges: [
