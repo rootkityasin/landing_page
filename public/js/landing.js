@@ -415,7 +415,7 @@ function renderLandingPage(data) {
   // 8. FAQs
   const faqSection = document.getElementById('faq-section');
   const faqContainer = document.getElementById('faq-container');
-  const faqList = Array.isArray(data.faq) ? data.faq.filter(item => item && item.q) : [];
+  const faqList = Array.isArray(data.faq) ? data.faq.filter(item => item && (item.question || item.q)) : [];
   if (faqSection && faqContainer) {
     const faqWrapperCard = faqContainer.closest('.bg-white');
     if (faqList.length === 0) {
@@ -426,11 +426,11 @@ function renderLandingPage(data) {
       faqContainer.innerHTML = faqList.map((item, idx) => `
         <div class="faq-item bg-white rounded-2xl border border-[#E0C375]/40 overflow-hidden transition">
           <button onclick="toggleFaq(this)" class="w-full text-left p-4 sm:p-5 font-bold text-[#0F172A] text-sm sm:text-base flex items-center justify-between gap-4 hover:bg-[#FEF5E4]/40 transition">
-            <span>${item.q}</span>
+            <span>${item.question || item.q}</span>
             <span class="faq-icon text-[#F69D39] transition-transform duration-300 font-extrabold text-sm">▼</span>
           </button>
           <div class="faq-answer px-4 sm:px-5 text-[#334155] text-sm leading-relaxed border-t border-[#E0C375]/20 bg-[#FEF5E4]/20">
-            ${item.a || ''}
+            ${item.answer || item.a || ''}
           </div>
         </div>
       `).join('');

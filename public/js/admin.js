@@ -45,13 +45,17 @@ function triggerRelogin(msg = 'Please sign in with your admin password.') {
   }
 }
 
-// Authentication Flow
+// Authentication Flow (Optimistic + Silent Verify)
 async function checkAuth() {
   const modal = document.getElementById('login-modal');
   if (!adminToken) {
-    modal.classList.remove('hidden');
+    if (modal) modal.classList.remove('hidden');
     return;
   }
+
+  // If token exists, load admin data immediately for instant responsive UX
+  if (modal) modal.classList.add('hidden');
+  initAdminData();
 
   try {
     const res = await fetch('/api/admin/verify', { headers: getAuthHeaders() });
@@ -59,11 +63,8 @@ async function checkAuth() {
       triggerRelogin('Session expired. Please sign in again.');
       return;
     }
-    modal.classList.add('hidden');
-    initAdminData();
   } catch (err) {
-    modal.classList.add('hidden');
-    initAdminData();
+    // Keep local data loaded if offline or slow network
   }
 }
 
@@ -702,28 +703,6 @@ function syncReviewsFromDOM() {
   return reviews;
 }
 
-function syncFaqsFromDOM() {
-  const container = document.getElementById('faq-editor-container');
-  if (!container) return currentEditingPageData?.faq || [];
-  
-  const items = container.querySelectorAll('.faq-editor-item');
-  const faqs = [];
-  items.forEach((item, i) => {
-    const qEl = document.getElementById(`edit-faq-q-${i}`);
-    const aEl = document.getElementById(`edit-faq-a-${i}`);
-    const q = qEl ? qEl.value.trim() : '';
-    const a = aEl ? aEl.value.trim() : '';
-    if (q || a) {
-      faqs.push({ q, a });
-    }
-  });
-
-  if (currentEditingPageData) {
-    currentEditingPageData.faq = faqs;
-  }
-  return faqs;
-}
-
 function renderReviewsEditor(d) {
   const reviewsContainer = document.getElementById('reviews-editor-container');
   if (!reviewsContainer) return;
@@ -816,6 +795,28 @@ function deleteReview(index) {
   renderReviewsEditor(currentEditingPageData);
 }
 
+function syncFaqsFromDOM() {
+  const container = document.getElementById('faq-editor-container');
+  if (!container) return currentEditingPageData?.faq || [];
+  
+  const items = container.querySelectorAll('.faq-editor-item');
+  const faqs = [];
+  items.forEach((item, i) => {
+    const qEl = document.getElementById(`edit-faq-q-${i}`);
+    const aEl = document.getElementById(`edit-faq-a-${i}`);
+    const q = qEl ? qEl.value.trim() : '';
+    const a = aEl ? aEl.value.trim() : '';
+    if (q || a) {
+      faqs.push({ question: q, answer: a, q, a });
+    }
+  });
+
+  if (currentEditingPageData) {
+    currentEditingPageData.faq = faqs;
+  }
+  return faqs;
+}
+
 function renderFaqEditor(d) {
   const faqContainer = document.getElementById('faq-editor-container');
   if (!faqContainer) return;
@@ -836,11 +837,11 @@ function renderFaqEditor(d) {
           </div>
           <div>
             <label class="block text-[11px] font-bold text-slate-600 mb-1">Question</label>
-            <input type="text" id="edit-faq-q-${i}" value="${(f.q || '').replace(/"/g, '&quot;')}" placeholder="Question" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold bg-white" />
+            <input type="text" id="edit-faq-q-${i}" value="${(f.question || f.q || '').replace(/"/g, '&quot;')}" placeholder="Question" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold bg-white" />
           </div>
           <div>
             <label class="block text-[11px] font-bold text-slate-600 mb-1">Answer</label>
-            <textarea id="edit-faq-a-${i}" rows="2" placeholder="Answer" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white">${f.a || ''}</textarea>
+            <textarea id="edit-faq-a-${i}" rows="2" placeholder="Answer" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white">${f.answer || f.a || ''}</textarea>
           </div>
         </div>
       `).join('')}
@@ -858,6 +859,8 @@ function addFaqItem() {
   syncFaqsFromDOM();
   if (!currentEditingPageData.faq) currentEditingPageData.faq = [];
   currentEditingPageData.faq.push({
+    question: "How do I fold and use the spoon?",
+    answer: "Simply pinch along the engraved measurement lines to fold into the required spoon volume.",
     q: "How do I fold and use the spoon?",
     a: "Simply pinch along the engraved measurement lines to fold into the required spoon volume."
   });
