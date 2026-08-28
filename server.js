@@ -135,16 +135,18 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
-// Admin Auth Middleware (Basic token / session verification)
+// Admin Auth Middleware (Multi-channel proxy-proof token verification)
 async function verifyAdminAuth(req, res, next) {
   try {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || authHeader === 'Bearer' || authHeader === 'Bearer ' || authHeader === 'Bearer null' || authHeader === 'Bearer undefined') {
-      return res.status(401).json({ success: false, error: 'Unauthorized: Please log in' });
+    const rawAuth = req.headers['authorization'] || req.headers['x-admin-token'] || req.headers['x-auth-token'] || req.query.admin_token || req.query.token || '';
+    let token = String(rawAuth).startsWith('Bearer ') ? String(rawAuth).replace('Bearer ', '').trim() : String(rawAuth).trim();
+
+    if (!token || token === 'null' || token === 'undefined') {
+      const cookies = parseCookies(req);
+      token = cookies['origami_admin_token'] || '';
     }
 
-    const token = authHeader.replace('Bearer ', '').trim();
-    if (!token) {
+    if (!token || token === 'null' || token === 'undefined') {
       return res.status(401).json({ success: false, error: 'Unauthorized: Please log in' });
     }
 

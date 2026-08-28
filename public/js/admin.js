@@ -25,7 +25,9 @@ function showAdminToast(message, isSuccess = true) {
 
 function getAuthHeaders(isJson = true) {
   const headers = {
-    'Authorization': `Bearer ${adminToken || ''}`
+    'Authorization': `Bearer ${adminToken || ''}`,
+    'x-admin-token': adminToken || '',
+    'x-auth-token': adminToken || ''
   };
   if (isJson) {
     headers['Content-Type'] = 'application/json';
@@ -83,8 +85,9 @@ async function handleLogin(e) {
 
     const data = await res.json();
     if (data.success && data.token) {
-      adminToken = data.token;
+            adminToken = data.token;
       localStorage.setItem('origami_admin_token', adminToken);
+      document.cookie = 'origami_admin_token=' + encodeURIComponent(adminToken) + '; path=/; max-age=2592000; SameSite=Lax';
       document.getElementById('login-modal').classList.add('hidden');
       initAdminData();
       showToast('Sign in successful! 🎉');
@@ -149,7 +152,7 @@ async function fetchOrders() {
     const search = document.getElementById('order-search-input')?.value || '';
     const status = document.getElementById('order-status-filter')?.value || 'all';
 
-    const res = await fetch(`/api/admin/orders?search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`, {
+    const res = await fetch(`/api/admin/orders?search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}&admin_token=${encodeURIComponent(adminToken)}`, {
       headers: getAuthHeaders()
     });
 
