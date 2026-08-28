@@ -4,10 +4,24 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const { initDatabase, dbPath, dbRun, dbGet, dbAll, defaultOrigamiPageData } = require('./database');
+const { initDatabase, dbPath, dbRun, dbGet, dbAll, defaultOrigamiPageData, syncOrdersBackupToDatabase } = require('./database');
 const pathao = require('./pathao');
 const metaCapi = require('./metaCapi');
 const sharp = require('sharp');
+
+// Helper to persistently append orders to fail-safe log
+function recordOrderInBackup(order) {
+  try {
+    const backupPath = path.join(__dirname, 'orders_backup.jsonl');
+    const entry = JSON.stringify({
+      ...order,
+      backed_up_at: new Date().toISOString()
+    });
+    fs.appendFileSync(backupPath, entry + '\n', 'utf8');
+  } catch (err) {
+    console.error('Warning: could not write to orders_backup.jsonl:', err.message);
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -294,6 +308,9 @@ app.post('/api/orders', async (req, res) => {
     const cookies = parseCookies(req);
     const fbp = reqFbp || cookies['_fbp'] || undefined;
     const fbc = reqFbc || cookies['_fbc'] || undefined;
+    const skuId = 'POLYGON-3IN1';
+    const productTitle = product ? product.title : '3-in-1 Folding Measuring Spoon';
+    const sharedEventId = event_id || `order_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
     const result = await dbRun(
       `INSERT INTO orders (
@@ -307,7 +324,7 @@ app.post('/api/orders', async (req, res) => {
         orderNumber,
         product ? product.id : 1,
         product ? product.slug : 'origami-spoon',
-        product ? product.title : 'Origami Spoon Set',
+        productTitle,
         customer_name.trim(),
         cleanPhone,
         address.trim(),
@@ -348,10 +365,6 @@ app.post('/api/orders', async (req, res) => {
       created_at: new Date().toISOString()
     };
     recordOrderInBackup(backupOrderData);
-
-    const skuId = 'POLYGON-3IN1';
-    const productTitle = product ? product.title : '3-in-1 Folding Measuring Spoon';
-    const sharedEventId = event_id || `order_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
     // Trigger Meta Server-Side Conversions API (CAPI) with full parameters
     metaCapi.sendEvent({
