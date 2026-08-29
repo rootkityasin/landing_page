@@ -193,6 +193,19 @@ const dbAll = async (sql, params = []) => {
 
 // Default Landing Page Data
 const defaultOrigamiPageData = {
+  meta: {
+    pageTitle: "Polygons 3-in-1 Folding Measuring Spoon | Smart Kitchen Innovation",
+    pixelId: "1997638254273409",
+    capiToken: "EAAPJ5KufkmcBSQiO1W9ijQx2cSHtPNZCC2aCdkK8ROGyhLH3cIpxIShdNXs8B70PUIxugiSUBA8ZBWCg2bMxB0nPDtLfrOnZCvNVUqbsjqYkaBc4kHLUgNX2J7nyE1HIqYsh2MRC3KSlAVjvTeRPLG74yXnELvOkfsHZBuQosKrtEtveqt3XZB0yYAsM4lvyQyAZDZD",
+    testEventCode: "",
+    metaDescription: "রান্না ও বেকিংয়ে নিখুঁত মাপের জন্য অরিজিনাল ৩-ইন-১ ফোল্ডিং মেজারিং চামচ। মাত্র ২টি ফ্ল্যাট চামচে ৬টি মাপ, ইজি টু ক্লিন ও ক্যাশ অন ডেলিভারি সুবিধা। ৪৫% ডিসকাউন্টে এখনই অর্ডার করুন!",
+    whatsappNumber: "8801353892282"
+  },
+  whatsappNumber: "8801353892282",
+  topBar: {
+    text: "🔥 বিশেষ অফার: সীমিত সময়ের জন্য ৪৫% পর্যন্ত ছাড় + ক্যাশ অন ডেলিভারি!",
+    show: true
+  },
   hero: {
     headline: "রান্না ও বেকিংয়ে নিখুঁত মাপের 3-in-1 ফোল্ডিং মেজারিং চামচ",
     subheadline: "চামচ হারিয়ে যাওয়া বা ড্রয়ারের জটলা শেষ! মাত্র ২টি ফ্ল্যাট চামচে পেয়ে যান মোট ৬টি নিখুঁত পরিমাপ।",
@@ -304,8 +317,12 @@ const defaultOrigamiPageData = {
     }
   ],
   checkout: {
+    title: "আপনার পছন্দের প্যাকেজটি বেছে নিন",
+    subtitle: "২ বা ৩ সেটের অর্ডারে থাকছে সারাদেশে ১০০% ফ্রি হোম ডেলিভারি",
     formTitle: "অর্ডার কনফার্ম করতে আপনার তথ্য দিন",
     formSubtitle: "🔒 Cash on Delivery — পণ্য হাতে পেয়ে চেক করে টাকা পরিশোধ করবেন",
+    deliveryDhaka: 60,
+    deliveryOutside: 130,
     deliveryInsideDhaka: 60,
     deliveryOutsideDhaka: 130
   },
@@ -453,8 +470,7 @@ async function initDatabase() {
     { key: 'pathao_client_secret', value: '' },
     { key: 'pathao_username', value: '' },
     { key: 'pathao_password', value: '' },
-    { key: 'pathao_store_id', value: '' },
-    { key: 'whatsapp_number', value: '8801353892282' }
+    { key: 'pathao_store_id', value: '' }
   ];
 
   for (const s of defaultSettings) {
