@@ -223,29 +223,38 @@ function renderLandingPage(data) {
       }
 
       galleryList = [...new Set(galleryList)];
-      const mainMedia = galleryList[0] || '/images/post1.webp';
+      const mainMedia = galleryList[0] || '/images/post1.jpeg';
       const gridColsClass = galleryList.length <= 3
         ? 'grid-cols-3'
         : (galleryList.length === 4 ? 'grid-cols-4' : 'grid-cols-3 sm:grid-cols-6');
 
       const thumbnailsHtml = galleryList.map((imgSrc, idx) => `
         <button type="button" onclick="switchHeroImg('${imgSrc}', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 ${idx === 0 ? 'border-[#D92143]' : 'border-slate-200'} bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
-          <img src="${imgSrc}" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.webp';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
+          <img src="${imgSrc}" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='/images/post1.jpeg';" class="w-full h-14 object-cover rounded-xl" alt="View ${idx + 1}" />
         </button>
       `).join('');
 
-      heroMediaEl.innerHTML = `
-        <div class="space-y-3">
-          <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[560px]">
-            <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" width="1067" height="1600" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[560px] sm:max-h-[640px] md:max-h-[680px] object-contain mx-auto transition duration-300" />
-            
-          </div>
+      // Check if current DOM already has this exact main image and thumbnails list to prevent flash
+      const currentMainImg = document.getElementById('main-hero-display-img');
+      const currentThumbs = Array.from(heroMediaEl.querySelectorAll('.hero-thumb-btn img')).map(img => img.getAttribute('src'));
+      const isIdentical = currentMainImg && 
+                          currentMainImg.getAttribute('src') === mainMedia &&
+                          currentThumbs.length === galleryList.length &&
+                          currentThumbs.every((src, i) => src === galleryList[i]);
 
-          <!-- Thumbnails switcher -->
-          <div class="grid ${gridColsClass} gap-2">
-            ${thumbnailsHtml}
-          </div>
-        </div>`;
+      if (!isIdentical) {
+        heroMediaEl.innerHTML = `
+          <div class="space-y-3">
+            <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[560px]">
+              <img id="main-hero-display-img" src="${mainMedia}" alt="${data.hero.headline}" width="1067" height="1600" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[560px] sm:max-h-[640px] md:max-h-[680px] object-contain mx-auto transition duration-300" />
+            </div>
+
+            <!-- Thumbnails switcher -->
+            <div class="grid ${gridColsClass} gap-2">
+              ${thumbnailsHtml}
+            </div>
+          </div>`;
+      }
     }
   }
 

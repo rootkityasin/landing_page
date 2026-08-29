@@ -220,30 +220,29 @@
         <div class="lg:col-span-5">
           <div id="hero-media-container" class="relative">
             <div class="space-y-3">
-              <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white">
-                <img id="main-hero-display-img" src="/images/poster1.webp" alt="রান্না ও বেকিংয়ে নিখুঁত মাপের 3-in-1 ফোল্ডিং মেজারিং চামচ" width="650" height="650" style="aspect-ratio: 1/1;" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[460px] object-cover sm:object-contain mx-auto transition duration-500 hover:scale-102" />
-                
+              <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-[#E0C375]/40 bg-white flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[560px]">
+                <img id="main-hero-display-img" src="/images/post1.jpeg" alt="রান্না ও বেকিংয়ে নিখুঁত মাপের 3-in-1 ফোল্ডিং মেজারিং চামচ" width="1067" height="1600" fetchpriority="high" decoding="async" class="w-full h-auto max-h-[560px] sm:max-h-[640px] md:max-h-[680px] object-contain mx-auto transition duration-300" />
               </div>
 
-              <!-- Thumbnails switcher (6 ordered showcase images) -->
-              <div class="grid grid-cols-6 gap-2">
-                <button type="button" onclick="switchHeroImg('/images/poster1.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-[#D92143] bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/poster1.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ১" />
+              <!-- Thumbnails switcher (6 ordered showcase images in 2 rows of 3 on mobile / 6 on desktop) -->
+              <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                <button type="button" onclick="switchHeroImg('/images/post1.jpeg', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-[#D92143] bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
+                  <img src="/images/post1.jpeg" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ১" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/images/poster2.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/poster2.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ২" />
+                <button type="button" onclick="switchHeroImg('/images/post2.png', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
+                  <img src="/images/post2.png" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ২" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/images/poster3.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/poster3.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ৩" />
+                <button type="button" onclick="switchHeroImg('/images/poster1.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
+                  <img src="/images/poster1.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ৩" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/images/poster4.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/poster4.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ৪" />
+                <button type="button" onclick="switchHeroImg('/images/poster2.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
+                  <img src="/images/poster2.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্টার ৪" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/images/post1.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/post1.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্ট ১" />
+                <button type="button" onclick="switchHeroImg('/images/poster3.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
+                  <img src="/images/poster3.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্ট ১" />
                 </button>
-                <button type="button" onclick="switchHeroImg('/images/post2.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#D92143] hover:scale-102">
-                  <img src="/images/post2.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্ট ২" />
+                <button type="button" onclick="switchHeroImg('/images/poster4.webp', this)" class="hero-thumb-btn rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-xs p-0.5 transition hover:border-[#F69D39] hover:scale-102">
+                  <img src="/images/poster4.webp" width="160" height="160" style="aspect-ratio: 1/1;" loading="lazy" decoding="async" class="w-full h-14 object-cover rounded-xl" alt="পোস্ট ২" />
                 </button>
               </div>
             </div>
