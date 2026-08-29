@@ -993,6 +993,23 @@ function syncHeroInputsToData() {
   if (pInput) h.mediaUrl = pInput.value.trim();
   const sInput = document.getElementById('edit-hero-sec-media-url');
   if (sInput) h.secondaryMediaUrl = sInput.value.trim();
+  const pCheck = document.getElementById('edit-hero-show-1');
+  if (pCheck) h.showPrimary = pCheck.checked;
+  const sCheck = document.getElementById('edit-hero-show-2');
+  if (sCheck) h.showSecondary = sCheck.checked;
+
+  const container = document.getElementById('hero-gallery-editor-container');
+  if (container) {
+    const addGallery = [];
+    (h.additionalGallery || []).forEach((item, i) => {
+      const urlInput = document.getElementById(`edit-gallery-url-${i}`);
+      const showCheckbox = document.getElementById(`edit-gallery-show-${i}`);
+      const url = urlInput ? urlInput.value.trim() : (typeof item === 'string' ? item : (item.url || ''));
+      const show = showCheckbox ? showCheckbox.checked : (item.show !== false);
+      if (url) addGallery.push({ url, show });
+    });
+    h.additionalGallery = addGallery;
+  }
 }
 
 function populateHeroImageFields(h) {
