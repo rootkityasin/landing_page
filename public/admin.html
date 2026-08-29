@@ -407,6 +407,15 @@
                 <label class="block font-bold text-indigo-950 text-xs mb-1">Meta Description (Social & Google Search)</label>
                 <textarea id="edit-meta-desc" rows="2" placeholder="Brief SEO description for social sharing and search engines" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 bg-white outline-none text-xs"></textarea>
               </div>
+              <div class="sm:col-span-2 bg-indigo-50/60 p-4 rounded-2xl border border-indigo-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex-1 w-full sm:w-auto">
+                  <label class="block font-bold text-indigo-950 text-xs mb-1">Page Dedicated WhatsApp Number</label>
+                  <input type="text" id="edit-whatsapp-number" placeholder="e.g. 88017XXXXXXXX or 017XXXXXXXX" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 bg-white outline-none font-latin text-xs font-bold text-emerald-700" />
+                </div>
+                <div class="text-[11px] text-indigo-800/80 sm:max-w-xs">
+                  Orders from this landing page will connect directly to this WhatsApp number on the Thank You confirmation page.
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -935,25 +944,19 @@
             </div>
           </div>
 
-          <!-- WhatsApp & Security -->
+          <!-- Admin Security & Password -->
           <div class="border-t border-slate-200 pt-5 space-y-4">
             <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
               <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke-width="1.75"/>
                 <path d="M7 11V7a5 5 0 0110 0v4" stroke-width="1.75"/>
               </svg>
-              <span>Security & Global Support</span>
+              <span>Admin Security & Password</span>
             </h3>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block font-bold text-slate-700 text-xs mb-1">Global Fallback WhatsApp Number</label>
-                <input type="text" id="set-whatsapp-number" placeholder="88017XXXXXXXX" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-latin text-xs" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 text-xs mb-1">New Admin Password</label>
-                <input type="password" id="set-admin-password" placeholder="Leave blank to keep current" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs" />
-              </div>
+            <div class="max-w-md">
+              <label class="block font-bold text-slate-700 text-xs mb-1">New Admin Password</label>
+              <input type="password" id="set-admin-password" placeholder="Leave blank to keep current" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs" />
             </div>
           </div>
 

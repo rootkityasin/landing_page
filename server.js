@@ -404,9 +404,18 @@ app.post('/api/orders', async (req, res) => {
       }
     }).catch(err => console.error('Meta CAPI Purchase Error:', err.message));
 
-    // Get WhatsApp number from settings
-    const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
-    const waNumber = waSetting ? waSetting.value : '8801353892282';
+    // Get WhatsApp number from product page_data first (page-specific), then fallback
+    let waNumber = '';
+    if (product && product.page_data) {
+      try {
+        const pData = typeof product.page_data === 'string' ? JSON.parse(product.page_data) : product.page_data;
+        waNumber = pData.whatsappNumber || pData.whatsapp_number || pData.meta?.whatsappNumber || '';
+      } catch (e) {}
+    }
+    if (!waNumber) {
+      const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
+      waNumber = waSetting ? waSetting.value : (process.env.WHATSAPP_NUMBER || '8801353892282');
+    }
 
     let orderDbId = result.lastID;
     if (!orderDbId || orderDbId === 0) {
@@ -456,8 +465,21 @@ app.get('/api/orders/:id', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Order not found' });
     }
 
-    const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
-    order.whatsapp_number = waSetting ? waSetting.value : '8801353892282';
+    let waNumber = '';
+    if (order.product_slug || order.product_id) {
+      try {
+        const pRow = await dbGet('SELECT page_data FROM products WHERE slug = ? OR id = ? LIMIT 1', [order.product_slug, order.product_id]);
+        if (pRow && pRow.page_data) {
+          const pData = typeof pRow.page_data === 'string' ? JSON.parse(pRow.page_data) : pRow.page_data;
+          waNumber = pData.whatsappNumber || pData.whatsapp_number || pData.meta?.whatsappNumber || '';
+        }
+      } catch (e) {}
+    }
+    if (!waNumber) {
+      const waSetting = await dbGet("SELECT value FROM settings WHERE key = 'whatsapp_number'");
+      waNumber = waSetting ? waSetting.value : (process.env.WHATSAPP_NUMBER || '8801353892282');
+    }
+    order.whatsapp_number = waNumber;
 
     res.json({ success: true, order });
   } catch (err) {

@@ -553,9 +553,13 @@ function populateEditorFields(d) {
   if (!d.reviews) d.reviews = [];
   if (!d.faq) d.faq = [];
 
-  // 1. Meta
+  // 1. Meta & Per-Page Tracking & WhatsApp
   if (document.getElementById('edit-meta-title')) document.getElementById('edit-meta-title').value = d.meta?.pageTitle || '';
-  if (document.getElementById('edit-meta-pixel')) document.getElementById('edit-meta-pixel').value = d.meta?.pixelId || '';
+  if (document.getElementById('edit-meta-pixel')) document.getElementById('edit-meta-pixel').value = d.meta?.pixelId || d.meta?.metaPixelId || '';
+  if (document.getElementById('edit-meta-capi-token')) document.getElementById('edit-meta-capi-token').value = d.meta?.capiToken || d.meta?.metaCapiToken || '';
+  if (document.getElementById('edit-meta-test-code')) document.getElementById('edit-meta-test-code').value = d.meta?.testEventCode || d.meta?.metaTestEventCode || '';
+  if (document.getElementById('edit-meta-desc')) document.getElementById('edit-meta-desc').value = d.meta?.metaDescription || '';
+  if (document.getElementById('edit-whatsapp-number')) document.getElementById('edit-whatsapp-number').value = d.whatsappNumber || d.meta?.whatsappNumber || d.whatsapp_number || '';
 
   // 2. Top bar
   if (document.getElementById('edit-topbar-text')) document.getElementById('edit-topbar-text').value = d.topBar?.text || '';
@@ -1296,9 +1300,26 @@ async function saveCurrentPageData() {
   if (!d.reviews) d.reviews = [];
   if (!d.faq) d.faq = [];
 
-  // 1. Meta
+  // 1. Meta & Per-Page Tracking & WhatsApp
   if (document.getElementById('edit-meta-title')) d.meta.pageTitle = document.getElementById('edit-meta-title').value.trim();
-  if (document.getElementById('edit-meta-pixel')) d.meta.pixelId = document.getElementById('edit-meta-pixel').value.trim();
+  if (document.getElementById('edit-meta-pixel')) {
+    d.meta.pixelId = document.getElementById('edit-meta-pixel').value.trim();
+    d.meta.metaPixelId = d.meta.pixelId;
+  }
+  if (document.getElementById('edit-meta-capi-token')) {
+    d.meta.capiToken = document.getElementById('edit-meta-capi-token').value.trim();
+    d.meta.metaCapiToken = d.meta.capiToken;
+  }
+  if (document.getElementById('edit-meta-test-code')) {
+    d.meta.testEventCode = document.getElementById('edit-meta-test-code').value.trim();
+    d.meta.metaTestEventCode = d.meta.testEventCode;
+  }
+  if (document.getElementById('edit-meta-desc')) d.meta.metaDescription = document.getElementById('edit-meta-desc').value.trim();
+  if (document.getElementById('edit-whatsapp-number')) {
+    const waVal = document.getElementById('edit-whatsapp-number').value.trim();
+    d.whatsappNumber = waVal;
+    if (d.meta) d.meta.whatsappNumber = waVal;
+  }
 
   // 2. Top bar
   if (document.getElementById('edit-topbar-text')) d.topBar.text = document.getElementById('edit-topbar-text').value.trim();
@@ -1532,10 +1553,7 @@ async function loadSettings() {
     document.getElementById('set-pathao-username').value = s.pathao_username || '';
     document.getElementById('set-pathao-password').value = s.pathao_password || '';
     document.getElementById('set-pathao-store-id').value = s.pathao_store_id || '';
-    document.getElementById('set-meta-pixel-id').value = s.meta_pixel_id || '';
-    document.getElementById('set-meta-test-code').value = s.meta_test_event_code || '';
-    document.getElementById('set-meta-capi-token').value = s.meta_capi_token || '';
-    document.getElementById('set-whatsapp-number').value = s.whatsapp_number || '8801353892282';
+// Global settings without redundant fields
   } catch (err) {
     console.error('Error loading settings:', err);
   }
@@ -1550,11 +1568,7 @@ async function handleSaveSettings(e) {
     pathao_client_secret: document.getElementById('set-pathao-client-secret').value.trim(),
     pathao_username: document.getElementById('set-pathao-username').value.trim(),
     pathao_password: document.getElementById('set-pathao-password').value.trim(),
-    pathao_store_id: document.getElementById('set-pathao-store-id').value.trim(),
-    meta_pixel_id: document.getElementById('set-meta-pixel-id').value.trim(),
-    meta_test_event_code: document.getElementById('set-meta-test-code').value.trim(),
-    meta_capi_token: document.getElementById('set-meta-capi-token').value.trim(),
-    whatsapp_number: document.getElementById('set-whatsapp-number').value.trim()
+    pathao_store_id: document.getElementById('set-pathao-store-id').value.trim()
   };
 
   const newPass = document.getElementById('set-admin-password').value.trim();
