@@ -120,17 +120,17 @@ function renderLandingPage(data) {
 
   // 1. Top Urgency Bar
   const topBarEl = document.getElementById('top-urgency-bar');
-  if (data.topBar && data.topBar.show) {
-    topBarEl.classList.remove('hidden');
-    topBarEl.style.backgroundColor = data.theme.topBarBg || '#111827';
-    topBarEl.style.color = data.theme.topBarText || '#ffffff';
-    topBarEl.innerHTML = `
-      <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold tracking-wide">
-        <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
-        <span>${data.topBar.text}</span>
-      </div>`;
-  } else {
-    topBarEl.classList.add('hidden');
+  if (topBarEl) {
+    if (data.topBar && data.topBar.show) {
+      topBarEl.classList.remove('hidden');
+      topBarEl.innerHTML = `
+        <div class="max-w-5xl mx-auto px-4 py-2 flex items-center justify-center gap-2 text-center text-xs sm:text-sm font-medium tracking-wide">
+          <span class="w-2 h-2 rounded-full bg-[#F69D39] live-dot"></span>
+          <span id="top-urgency-text" class="font-normal text-slate-200">${data.topBar.text || '🔥 বিশেষ অফার: সীমিত সময়ের জন্য ৪৫% পর্যন্ত ছাড় + ক্যাশ অন ডেলিভারি!'}</span>
+        </div>`;
+    } else {
+      topBarEl.classList.add('hidden');
+    }
   }
 
   // 2. Hero Section
@@ -1172,12 +1172,6 @@ function updateSynchronized8HourTimer() {
   if (hEl) hEl.innerText = hStr;
   if (mEl) mEl.innerText = mStr;
   if (sEl) sEl.innerText = sStr;
-
-  // Update Top Bar Urgency Banner
-  const urgencyTextEl = document.getElementById('top-urgency-text');
-  if (urgencyTextEl) {
-    urgencyTextEl.innerHTML = `Polygons® Official Store • ৮ ঘণ্টার স্পেশাল অফার — শেষ হতে আর মাত্র <span class="text-[#F69D39] font-bold">${hStr} ঘণ্টা ${mStr} মি: ${sStr} সে:</span> বাকি!`;
-  }
 }
 
 function startFlashCountdown() {
