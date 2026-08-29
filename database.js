@@ -47,8 +47,10 @@ if (isTurso) {
   });
 }
 
-// Native Serverless Turso HTTP Pipeline Executor (Zero Native Dependencies, Works 100% on Vercel/Node/Edge)
-async function executeTursoHttp(sql, params = []) {
+// Native Serverless Turso HTTPS Pipeline Executor (Zero External Dependencies, Built-in https module)
+const https = require('https');
+
+function executeTursoHttps(sql, params = []) {
   const normParams = (Array.isArray(params) ? params : [params]).map(p => {
     if (p === null || p === undefined) return { type: 'null' };
     if (typeof p === 'number') {
@@ -58,69 +60,93 @@ async function executeTursoHttp(sql, params = []) {
     return { type: 'text', value: String(p) };
   });
 
-  const response = await fetch(`${tursoUrl}/v2/pipeline`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${tursoAuthToken}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      requests: [
-        {
-          type: 'execute',
-          stmt: {
-            sql,
-            args: normParams
-          }
+  const parsedUrl = new URL(`${tursoUrl}/v2/pipeline`);
+  const postData = JSON.stringify({
+    requests: [
+      {
+        type: 'execute',
+        stmt: {
+          sql,
+          args: normParams
+        }
+      },
+      { type: 'close' }
+    ]
+  });
+
+  return new Promise((resolve, reject) => {
+    const req = https.request(
+      {
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port || 443,
+        path: parsedUrl.pathname + (parsedUrl.search || ''),
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${tursoAuthToken}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData)
         },
-        { type: 'close' }
-      ]
-    })
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Turso HTTP Error (${response.status}): ${text}`);
-  }
-
-  const data = await response.json();
-  const execResult = data.results && data.results[0];
-  if (execResult && execResult.type === 'error') {
-    throw new Error(`Turso SQL Error: ${execResult.error?.message || JSON.stringify(execResult.error)}`);
-  }
-
-  const result = execResult?.response?.result;
-  if (!result) {
-    return { rows: [], lastID: 0, changes: 0 };
-  }
-
-  const cols = (result.cols || []).map(c => c.name);
-  const rows = (result.rows || []).map(rowArray => {
-    const obj = {};
-    cols.forEach((colName, idx) => {
-      const cell = rowArray[idx];
-      if (!cell || cell.type === 'null') {
-        obj[colName] = null;
-      } else if (cell.type === 'integer' || cell.type === 'float') {
-        obj[colName] = Number(cell.value);
-      } else {
-        obj[colName] = cell.value;
+        timeout: 10000
+      },
+      (res) => {
+        let data = '';
+        res.on('data', chunk => (data += chunk));
+        res.on('end', () => {
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            return reject(new Error(`Turso HTTPS error (${res.statusCode}): ${data}`));
+          }
+          try {
+            const parsed = JSON.parse(data);
+            const execResult = parsed.results && parsed.results[0];
+            if (execResult && execResult.type === 'error') {
+              return reject(new Error(`Turso SQL error: ${execResult.error?.message || JSON.stringify(execResult.error)}`));
+            }
+            const result = execResult?.response?.result;
+            if (!result) {
+              return resolve({ rows: [], lastID: 0, changes: 0 });
+            }
+            const cols = (result.cols || []).map(c => c.name);
+            const rows = (result.rows || []).map(rowArray => {
+              const obj = {};
+              cols.forEach((colName, idx) => {
+                const cell = rowArray[idx];
+                if (!cell || cell.type === 'null') {
+                  obj[colName] = null;
+                } else if (cell.type === 'integer' || cell.type === 'float') {
+                  obj[colName] = Number(cell.value);
+                } else {
+                  obj[colName] = cell.value;
+                }
+              });
+              return obj;
+            });
+            resolve({
+              rows,
+              lastID: result.last_insert_rowid !== null && result.last_insert_rowid !== undefined ? Number(result.last_insert_rowid) : 0,
+              changes: result.affected_row_count || 0
+            });
+          } catch (parseErr) {
+            reject(parseErr);
+          }
+        });
       }
-    });
-    return obj;
-  });
+    );
 
-  return {
-    rows,
-    lastID: result.last_insert_rowid !== null && result.last_insert_rowid !== undefined ? Number(result.last_insert_rowid) : 0,
-    changes: result.affected_row_count || 0
-  };
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('Turso HTTPS request timeout (10s)'));
+    });
+
+    req.on('error', reject);
+    req.write(postData);
+    req.end();
+  });
 }
 
 // Universal dbRun (Works on both Turso and SQLite3)
 const dbRun = async (sql, params = []) => {
   if (isTurso) {
-    const res = await executeTursoHttp(sql, params);
+    const res = await executeTursoHttps(sql, params);
     return {
       lastID: res.lastID,
       changes: res.changes
@@ -138,7 +164,7 @@ const dbRun = async (sql, params = []) => {
 // Universal dbGet (Works on both Turso and SQLite3)
 const dbGet = async (sql, params = []) => {
   if (isTurso) {
-    const res = await executeTursoHttp(sql, params);
+    const res = await executeTursoHttps(sql, params);
     return (res.rows && res.rows.length > 0) ? res.rows[0] : null;
   }
   const normParams = (Array.isArray(params) ? params : [params]).map(p => (p === undefined ? null : p));
@@ -153,7 +179,7 @@ const dbGet = async (sql, params = []) => {
 // Universal dbAll (Works on both Turso and SQLite3)
 const dbAll = async (sql, params = []) => {
   if (isTurso) {
-    const res = await executeTursoHttp(sql, params);
+    const res = await executeTursoHttps(sql, params);
     return res.rows || [];
   }
   const normParams = (Array.isArray(params) ? params : [params]).map(p => (p === undefined ? null : p));
