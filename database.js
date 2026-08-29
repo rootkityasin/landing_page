@@ -328,34 +328,62 @@ const defaultOrigamiPageData = {
   },
   reviews: [
     {
-      name: "Maimuna Nova",
-      location: "Tongi Mirer Bazar",
-      rating: 5,
-      comment: "দারুণ প্রোডাক্ট! রান্না আর কেক বেকিংয়ের সময় চামচ খোঁজার ঝামেলা একদম শেষ। মধু বা ঘি নেওয়ার পর এক টানে মুছে পরিষ্কার করা যায়, একটুও নষ্ট হয় না। ডেলিভারিও দ্রুত পেয়েছি।",
-      verified: true
+        "name": "Maimuna Nova",
+        "location": "Tongi Mirer Bazar",
+        "rating": 5,
+        "date": "৩ দিন আগে",
+        "comment": "প্রথমে ভেবেছিলাম  আর দশটা measuring spoon এর মতোই হবে। কিন্তু হাতে পাওয়ার পর বেশ ভালো লেগেছে।মামনিকে গিফট দিয়েছি ।",
+        "verified": true
     },
     {
-      name: "Farhana Akter Rima",
-      location: "Mirpur 10, Dhaka",
-      rating: 5,
-      comment: "প্রোডাক্টের কোয়ালিটি আসলেই প্রিমিয়াম। ফোল্ডিং খাঁজগুলো বেশ শক্ত আর লিক-প্রুফ। ড্রয়ারে কোনো জায়গা নেয় না বললেই চলে। ১ সেট কিনেছিলাম, এখন আম্মুর কিচেনের জন্য আরেক সেট অর্ডার করলাম।",
-      verified: true
+        "name": "নুসরাত জাহান",
+        "location": "উত্তরা, ঢাকা",
+        "rating": 4,
+        "date": "৫ দিন আগে",
+        "comment": "আমি baking করি, তাই মাপজোক প্রায় প্রতিদিনই লাগে। আগে কয়েকটা spoon আলাদা করে রাখতে হতো। এটা দিয়ে কাজ অনেক সহজ হয়েছে, আর ফ্রিজে লাগিয়ে রাখতে পারি , জিনিসটা বেশ practical .Productটা simple কিন্তু smart। ৩ ধরনের measurement একসাথে পাওয়াটা convenient। বিশেষ করে baking করার সময় খুব কাজে লাগছে। যারা kitchen space বাঁচাতে চান, তাদের ভালো লাগবে মনে হয়।",
+        "verified": true
     },
     {
-      name: "Tanzina Sultana",
-      location: "Chittagong GEC",
-      rating: 5,
-      comment: "প্যাকেজিং খুব সুন্দর ছিল এবং রাইডার ভাই সামনে খুলে চেক করতে দিয়েছেন। কোয়ালিটি দেখে টাকা দিয়েছি। মেজারমেন্টগুলো একুরেট। হাইলি রেকমেন্ডেড!",
-      verified: true
+        "name": "Sumaiya Sharmin",
+        "location": "জিইসি, চট্টগ্রাম",
+        "rating": 3,
+        "date": "১ সপ্তাহ আগে",
+        "comment": "আমার রান্নাঘরের ড্রয়ার সবসময় জিনিসে ভরা থাকে। তাই ভাঁজ করে সমান করে রাখা যায় দেখে নিয়েছিলাম। এখন বুঝতে পারছি জায়গা বাঁচানোর জন্য সুবিধাটা সত্যিই কাজে লাগে। রান্না আর বেকিং দুটোর জন্যই ব্যবহার করছি।",
+        "verified": true
     },
     {
-      name: "Sadia Afrin",
-      location: "Uttara Sector 11",
-      rating: 5,
-      comment: "আমার বেকিংয়ের জন্য পারফেক্ট একটা টুল। আগে মসলার চামচ ধুতে বিরক্তি লাগত, এটা কলের পানির নিচে ধরলেই এক সেকেন্ডে ক্লিন হয়ে যায়।",
-      verified: true
+        "name": "আসমা",
+        "location": "সিলেট সদর",
+        "rating": 5,
+        "date": "১ সপ্তাহ আগে",
+        "comment": "অনলাইনে ভিডিওতে দেখে অর্ডার করেছিলাম, সত্যি বলতে খুব বেশি আশা ছিল না। কিন্তু product হাতে পেয়ে ভালোই লেগেছে। Magnetic feature টা বেশ useful, আর মাপ নেওয়াটাও easy।",
+        "verified": true
+    },
+    {
+        "name": "Nafisa Islam",
+        "location": "Tejgaon Dhaka",
+        "rating": 5,
+        "date": "২ সপ্তাহ আগে",
+        "comment": "যেটা সবচেয়ে ভালো লেগেছে সেটা হলো জায়গা নেয় খুব কম। ধুয়ে ফেলাও সহজ।",
+        "verified": true
+    },
+    {
+        "name": "Pakhi",
+        "location": "Mogbazar",
+        "rating": 4,
+        "date": "২ সপ্তাহ আগে",
+        "comment": "Honestly beshi expectation niye order kori nai 😄 Kintu product ta actually besh kajer. Magnetic howay fridge er pashe lagiye rakhi. Dorkar hole sathe sathei niye use kora jay. Simple but useful ekta jinis.",
+        "verified": true
+    },
+    {
+        "name": "Yasir Araf",
+        "location": "Rangpure",
+        "rating": 5,
+        "date": "২ সপ্তাহ আগে",
+        "comment": "Khubi vlo ekta product ,abr bou er jonno niyechi .",
+        "verified": true
     }
-  ],
+],
   showFaq: true,
   faq: [
     {
