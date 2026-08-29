@@ -1,4 +1,33 @@
-let adminToken = localStorage.getItem('origami_admin_token') || '';
+// Admin Session Timeframe: 1 Hour (3,600,000 ms)
+const ADMIN_SESSION_DURATION = 60 * 60 * 1000;
+
+function getAdminToken() {
+  const token = localStorage.getItem('origami_admin_token') || '';
+  const sessionExpires = Number(localStorage.getItem('origami_admin_session_expires') || 0);
+
+  // If token exists and within the 1-hour active session window
+  if (token && sessionExpires && Date.now() < sessionExpires) {
+    return token;
+  }
+  return '';
+}
+
+function setAdminSession(token) {
+  adminToken = token;
+  const expiresAt = Date.now() + ADMIN_SESSION_DURATION;
+  localStorage.setItem('origami_admin_token', token);
+  localStorage.setItem('origami_admin_session_expires', String(expiresAt));
+  document.cookie = `origami_admin_token=${encodeURIComponent(token)}; path=/; max-age=3600; SameSite=Lax`;
+}
+
+function clearAdminSession() {
+  adminToken = '';
+  localStorage.removeItem('origami_admin_token');
+  localStorage.removeItem('origami_admin_session_expires');
+  document.cookie = 'origami_admin_token=; path=/; max-age=0; SameSite=Lax';
+}
+
+let adminToken = getAdminToken();
 let currentEditingProductId = null;
 let currentEditingPageData = null;
 let debounceTimer = null;
@@ -24,10 +53,11 @@ function showAdminToast(message, isSuccess = true) {
 }
 
 function getAuthHeaders(isJson = true) {
+  const token = adminToken || getAdminToken() || '';
   const headers = {
-    'Authorization': `Bearer ${adminToken || ''}`,
-    'x-admin-token': adminToken || '',
-    'x-auth-token': adminToken || ''
+    'Authorization': `Bearer ${token}`,
+    'x-admin-token': token,
+    'x-auth-token': token
   };
   if (isJson) {
     headers['Content-Type'] = 'application/json';
@@ -36,8 +66,7 @@ function getAuthHeaders(isJson = true) {
 }
 
 function triggerRelogin(msg = 'Please sign in with your admin password.') {
-  localStorage.removeItem('origami_admin_token');
-  adminToken = '';
+  clearAdminSession();
   const modal = document.getElementById('login-modal');
   if (modal) modal.classList.remove('hidden');
   const errorEl = document.getElementById('login-error');
@@ -47,63 +76,77 @@ function triggerRelogin(msg = 'Please sign in with your admin password.') {
   }
 }
 
-// Authentication Flow (Optimistic + Silent Verify)
+// Authentication Flow (Active 1-Hour Session Check)
 async function checkAuth() {
   const modal = document.getElementById('login-modal');
+  adminToken = getAdminToken();
+
   if (!adminToken) {
+    clearAdminSession();
     if (modal) modal.classList.remove('hidden');
     return;
   }
 
-  // If token exists, load admin data immediately for instant responsive UX
+  // Active 1-Hour session: unlock panel immediately without asking for password
   if (modal) modal.classList.add('hidden');
   initAdminData();
 
   try {
     const res = await fetch('/api/admin/verify', { headers: getAuthHeaders() });
     if (res.status === 401) {
-      triggerRelogin('Session expired. Please sign in again.');
+      triggerRelogin('Password changed or session expired. Please sign in again.');
       return;
     }
   } catch (err) {
-    // Keep local data loaded if offline or slow network
+    // Keep local session active if temporary network hiccup
   }
 }
 
 async function handleLogin(e) {
-  e.preventDefault();
+  if (e) e.preventDefault();
   const passInput = document.getElementById('admin-pass-input');
   const errorEl = document.getElementById('login-error');
-  errorEl.classList.add('hidden');
+  if (errorEl) errorEl.classList.add('hidden');
+
+  const enteredPass = (passInput ? passInput.value : '').trim();
+  if (!enteredPass) {
+    if (errorEl) {
+      errorEl.innerText = 'Please enter admin password!';
+      errorEl.classList.remove('hidden');
+    }
+    return;
+  }
 
   try {
     const res = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: passInput.value.trim() })
+      body: JSON.stringify({ password: enteredPass })
     });
 
     const data = await res.json();
     if (data.success && data.token) {
-            adminToken = data.token;
-      localStorage.setItem('origami_admin_token', adminToken);
-      document.cookie = 'origami_admin_token=' + encodeURIComponent(adminToken) + '; path=/; max-age=2592000; SameSite=Lax';
-      document.getElementById('login-modal').classList.add('hidden');
+      setAdminSession(data.token);
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.classList.add('hidden');
       initAdminData();
-      showToast('Sign in successful! 🎉');
+      showToast('Sign in successful! Session active for 1 hour 🎉');
     } else {
-      errorEl.innerText = data.error || 'Invalid password!';
-      errorEl.classList.remove('hidden');
+      if (errorEl) {
+        errorEl.innerText = data.error || 'Invalid password!';
+        errorEl.classList.remove('hidden');
+      }
     }
   } catch (err) {
-    errorEl.innerText = 'Cannot connect to the server.';
-    errorEl.classList.remove('hidden');
+    if (errorEl) {
+      errorEl.innerText = 'Cannot connect to the server.';
+      errorEl.classList.remove('hidden');
+    }
   }
 }
 
 function logoutAdmin() {
-  localStorage.removeItem('origami_admin_token');
-  adminToken = '';
+  clearAdminSession();
   location.reload();
 }
 
@@ -1512,8 +1555,7 @@ async function handleSaveSettings(e) {
   const newPass = document.getElementById('set-admin-password').value.trim();
   if (newPass) {
     settings.admin_password = newPass;
-    adminToken = newPass;
-    localStorage.setItem('origami_admin_token', newPass);
+    setAdminSession(newPass);
   }
 
   try {
