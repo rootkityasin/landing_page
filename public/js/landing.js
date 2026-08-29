@@ -148,12 +148,18 @@ function renderLandingPage(data) {
       const parts = rawHeadline.split('4-in-1');
       heroHeadlineEl.innerHTML = `<span class="block">${parts[0].trim()}</span><span class="block text-[#D92143] pt-0.5 font-black"><span class="font-latin">3-in-1</span>${parts[1]}</span>`;
     } else {
-      heroHeadlineEl.innerText = rawHeadline;
+      if (heroHeadlineEl.innerText.trim() !== rawHeadline.trim()) {
+        heroHeadlineEl.innerText = rawHeadline;
+      }
     }
   }
 
   const heroSubheadlineEl = document.getElementById('hero-subheadline');
-  if (heroSubheadlineEl) heroSubheadlineEl.innerText = data.hero.subheadline;
+  if (heroSubheadlineEl && data.hero?.subheadline) {
+    if (heroSubheadlineEl.innerText.trim() !== data.hero.subheadline.trim()) {
+      heroSubheadlineEl.innerText = data.hero.subheadline;
+    }
+  }
 
   const heroRatingEl = document.getElementById('hero-rating-text');
   if (heroRatingEl) heroRatingEl.innerText = data.hero.ratingText || '৪.৯/৫ রেটিং (১৫০+ ভেরিফাইড রিভিউ)';
@@ -179,13 +185,18 @@ function renderLandingPage(data) {
 
   // Highlights list
   const highlightsEl = document.getElementById('hero-highlights');
-  if (highlightsEl && data.hero.highlights) {
-    highlightsEl.innerHTML = data.hero.highlights.map(hl => `
-      <li class="flex items-start gap-2.5">
-        <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] border border-[#E0C375] flex items-center justify-center flex-shrink-0 mt-0.5 font-black text-xs shadow-2xs">✓</span>
-        <span class="text-[#0F172A] text-sm sm:text-[15px] leading-snug font-medium">${hl}</span>
-      </li>
-    `).join('');
+  if (highlightsEl && Array.isArray(data.hero?.highlights)) {
+    const currentHighlights = Array.from(highlightsEl.querySelectorAll('li span:last-child')).map(s => s.innerText.trim());
+    const isHighlightsIdentical = currentHighlights.length === data.hero.highlights.length &&
+                                 currentHighlights.every((h, i) => h === data.hero.highlights[i].trim());
+    if (!isHighlightsIdentical) {
+      highlightsEl.innerHTML = data.hero.highlights.map(hl => `
+        <li class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-[#FEF5E4] text-[#D92143] border border-[#E0C375] flex items-center justify-center flex-shrink-0 mt-0.5 font-black text-xs shadow-2xs">✓</span>
+          <span class="text-[#0F172A] text-sm sm:text-[15px] leading-snug font-medium">${hl}</span>
+        </li>
+      `).join('');
+    }
   }
 
   // Hero Media
