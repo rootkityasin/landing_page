@@ -220,8 +220,8 @@ const defaultOrigamiPageData = {
     discountBadge: "৪৫% ছাড়",
     ctaText: "এখনই অর্ডার করুন",
     mediaType: "image",
-    mediaUrl: "/images/poster1.webp",
-    secondaryMediaUrl: "/images/poster2.webp",
+    mediaUrl: "/images/post1.jpeg",
+    secondaryMediaUrl: "/images/post2.png",
     showPrimary: true,
     showSecondary: true,
     additionalGallery: [
