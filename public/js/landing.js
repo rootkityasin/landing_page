@@ -415,10 +415,11 @@ function renderLandingPage(data) {
   // 8. FAQs
   const faqSection = document.getElementById('faq-section');
   const faqContainer = document.getElementById('faq-container');
+  const faqWrapperCard = document.getElementById('faq-accordion-card') || (faqContainer ? faqContainer.closest('.bg-white') : null);
+  const isFaqVisible = data.showFaq !== false && data.faqShow !== false;
   const faqList = Array.isArray(data.faq) ? data.faq.filter(item => item && (item.question || item.q)) : [];
-  if (faqSection && faqContainer) {
-    const faqWrapperCard = faqContainer.closest('.bg-white');
-    if (faqList.length === 0) {
+  if (faqContainer) {
+    if (!isFaqVisible || faqList.length === 0) {
       if (faqWrapperCard) faqWrapperCard.classList.add('hidden');
       faqContainer.innerHTML = '';
     } else {

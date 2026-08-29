@@ -671,6 +671,8 @@ function populateEditorFields(d) {
   renderReviewsEditor(d);
 
   // 10. FAQs
+  const isFaqOn = d.showFaq !== false && d.faqShow !== false;
+  updateFaqToggleUI(isFaqOn);
   renderFaqEditor(d);
 }
 
@@ -876,6 +878,41 @@ function deleteFaq(index) {
   if (!currentEditingPageData.faq) return;
   currentEditingPageData.faq.splice(index, 1);
   renderFaqEditor(currentEditingPageData);
+}
+
+function updateFaqToggleUI(isChecked) {
+  const checkbox = document.getElementById('edit-faq-show');
+  const label = document.getElementById('label-faq-show');
+  const btnContainer = document.getElementById('label-faq-toggle-btn');
+  const editorContainer = document.getElementById('faq-editor-container');
+
+  if (checkbox) checkbox.checked = isChecked;
+  if (label) {
+    label.innerText = isChecked ? '👁️ Section ON (Visible)' : '🚫 Section OFF (Hidden)';
+  }
+  if (btnContainer) {
+    if (isChecked) {
+      btnContainer.className = 'flex items-center gap-2 text-xs font-bold cursor-pointer select-none px-3.5 py-1.5 rounded-xl border transition shadow-2xs bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100';
+    } else {
+      btnContainer.className = 'flex items-center gap-2 text-xs font-bold cursor-pointer select-none px-3.5 py-1.5 rounded-xl border transition shadow-2xs bg-rose-50 text-rose-800 border-rose-200 hover:bg-rose-100';
+    }
+  }
+  if (editorContainer) {
+    if (isChecked) {
+      editorContainer.classList.remove('opacity-75');
+    } else {
+      editorContainer.classList.add('opacity-75');
+    }
+  }
+}
+
+async function toggleFaqSectionShow(isChecked) {
+  if (!currentEditingPageData) return;
+  currentEditingPageData.showFaq = isChecked;
+  currentEditingPageData.faqShow = isChecked;
+  updateFaqToggleUI(isChecked);
+  await saveCurrentPageData();
+  showToast(isChecked ? 'FAQ section is now ON (Visible on landing page) 👁️' : 'FAQ section is now OFF (Hidden from landing page) 🚫');
 }
 
 async function toggleHeroPrimaryShow(isChecked) {
@@ -1333,6 +1370,11 @@ async function saveCurrentPageData() {
 
   // 10. FAQs (Directly synced from DOM inputs - completely replaces previous data)
   d.faq = syncFaqsFromDOM();
+  const faqToggleEl = document.getElementById('edit-faq-show');
+  if (faqToggleEl) {
+    d.showFaq = faqToggleEl.checked;
+    d.faqShow = faqToggleEl.checked;
+  }
 
   try {
     const targetId = currentEditingProductId || 1;

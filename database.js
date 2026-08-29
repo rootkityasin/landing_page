@@ -3,7 +3,8 @@ const fs = require('fs');
 const os = require('os');
 
 // Detect Turso Cloud Database URL (for Vercel Serverless / Cloud Persistence)
-const tursoUrl = process.env.TURSO_DATABASE_URL || process.env.LIBSQL_URL || process.env.DATABASE_URL || 'libsql://polygons-db-polygonsbd.aws-ap-south-1.turso.io';
+const rawTursoUrl = process.env.TURSO_DATABASE_URL || process.env.LIBSQL_URL || process.env.DATABASE_URL || 'https://polygons-db-polygonsbd.aws-ap-south-1.turso.io';
+const tursoUrl = (rawTursoUrl || '').replace(/^libsql:\/\//, 'https://');
 const tursoAuthToken = process.env.TURSO_AUTH_TOKEN || process.env.LIBSQL_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODc5NTM3NDgsImlkIjoiMDFhMDRhNTgtYmUwMS03OGVkLThiZTQtOWM4YTZkZmY3MjFkIiwia2lkIjoiN1NSSkd0NTJrdndBYktFVlUwZ3QzU3VvRk92cmdyQkpqc0g0aUZOdTFXdyIsInJpZCI6IjRiZTExM2Y5LTEwMjQtNGUxMi1hMzg1LWY4YzllOTM1NDE1YSJ9.8rbgvUx-0B_OJnxY6_eOguD2AoVtbQP5mn3e74kHvdx3nMUnxmh0NFIsZw-nIT7qxtkd7y1RGxr-KIO51ufeBw';
 
 let db = null;
@@ -11,15 +12,27 @@ let dbPath = path.join(__dirname, 'database.sqlite');
 let isTurso = false;
 let libsqlClient = null;
 
-if (tursoUrl && (tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://') || tursoUrl.startsWith('wss://'))) {
-  isTurso = true;
+if (tursoUrl && tursoAuthToken) {
   try {
-    const { createClient } = require('@libsql/client');
-    libsqlClient = createClient({
-      url: tursoUrl,
-      authToken: tursoAuthToken
-    });
-    console.log('🚀 Connected to Turso Cloud SQLite Database at', tursoUrl);
+    let createClient;
+    try {
+      createClient = require('@libsql/client/http').createClient;
+    } catch (e1) {
+      try {
+        createClient = require('@libsql/client/web').createClient;
+      } catch (e2) {
+        createClient = require('@libsql/client').createClient;
+      }
+    }
+
+    if (typeof createClient === 'function') {
+      libsqlClient = createClient({
+        url: tursoUrl,
+        authToken: tursoAuthToken
+      });
+      isTurso = true;
+      console.log('🚀 Connected to Turso Cloud SQLite Database at', tursoUrl);
+    }
   } catch (err) {
     console.error('Failed to initialize Turso client, falling back to local SQLite:', err.message);
     isTurso = false;
@@ -266,6 +279,7 @@ const defaultOrigamiPageData = {
       verified: true
     }
   ],
+  showFaq: true,
   faq: [
     {
       question: "পণ্য হাতে পেয়ে কি দেখে টাকা দেওয়া যাবে?",

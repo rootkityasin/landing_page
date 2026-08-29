@@ -639,10 +639,21 @@
 
         <!-- 10. FAQs -->
         <div class="editor-section-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-          <h3 class="font-extrabold text-slate-800 text-base flex items-center justify-between border-b pb-2">
-            <span>❓ 10. Frequently Asked Questions (FAQs)</span>
-          </h3>
-          <div id="faq-editor-container" class="space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
+            <div>
+              <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+                <span>❓ 10. Frequently Asked Questions (FAQs)</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">Toggle to show or hide the FAQ section on the live landing page</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label id="label-faq-toggle-btn" class="flex items-center gap-2 text-xs font-bold cursor-pointer select-none px-3.5 py-1.5 rounded-xl border transition shadow-2xs bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100">
+                <input type="checkbox" id="edit-faq-show" checked onchange="toggleFaqSectionShow(this.checked)" class="w-4 h-4 rounded text-emerald-600 cursor-pointer" />
+                <span id="label-faq-show">👁️ Section ON (Visible)</span>
+              </label>
+            </div>
+          </div>
+          <div id="faq-editor-container" class="space-y-3 transition-opacity duration-300">
             <!-- Dynamic FAQs -->
           </div>
         </div>
