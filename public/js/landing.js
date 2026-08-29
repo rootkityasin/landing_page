@@ -1176,11 +1176,57 @@ function startFlashCountdown() {
   setInterval(updateSynchronized8HourTimer, 1000);
 }
 
+// Hide Mobile Sticky Bar when user reaches or is inside the Checkout / Bundle Section
+function setupStickyMobileBarVisibility() {
+  const stickyBar = document.getElementById('sticky-mobile-bar');
+  const checkoutSection = document.getElementById('checkout-section');
+  if (!stickyBar || !checkoutSection) return;
+
+  function updateBarState() {
+    const rect = checkoutSection.getBoundingClientRect();
+    // If top of checkout is above bottom of viewport (user has reached/entered checkout section)
+    if (rect.top <= (window.innerHeight - 50) && rect.bottom >= 0) {
+      stickyBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+    } else if (rect.top > (window.innerHeight - 50)) {
+      // User is above checkout section -> show sticky bar
+      stickyBar.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+    }
+  }
+
+  // IntersectionObserver for modern browsers
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          stickyBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+        } else {
+          const rect = checkoutSection.getBoundingClientRect();
+          if (rect.top > window.innerHeight) {
+            stickyBar.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+          } else {
+            stickyBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+          }
+        }
+      });
+    }, {
+      root: null,
+      threshold: [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
+    });
+
+    observer.observe(checkoutSection);
+  }
+
+  // Realtime scroll listener for instantaneous response
+  window.addEventListener('scroll', updateBarState, { passive: true });
+  window.addEventListener('resize', updateBarState, { passive: true });
+}
+
 // Initial Boot
 document.addEventListener('DOMContentLoaded', () => {
   loadProduct();
   startSocialProofLoop();
   startFlashCountdown();
+  setupStickyMobileBarVisibility();
 
   // Attach form listeners
   const orderForm = document.getElementById('cod-order-form');
