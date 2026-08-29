@@ -734,13 +734,13 @@ function syncReviewsFromDOM() {
   
   const items = container.querySelectorAll('.review-editor-item');
   const reviews = [];
-  items.forEach((item, i) => {
-    const nameEl = document.getElementById(`edit-rev-name-${i}`);
-    const locEl = document.getElementById(`edit-rev-loc-${i}`);
-    const ratingEl = document.getElementById(`edit-rev-rating-${i}`);
-    const verifiedEl = document.getElementById(`edit-rev-verified-${i}`);
-    const dateEl = document.getElementById(`edit-rev-date-${i}`);
-    const commentEl = document.getElementById(`edit-rev-comment-${i}`);
+  items.forEach((item) => {
+    const nameEl = item.querySelector('input[id^="edit-rev-name-"]');
+    const locEl = item.querySelector('input[id^="edit-rev-loc-"]');
+    const ratingEl = item.querySelector('select[id^="edit-rev-rating-"]');
+    const verifiedEl = item.querySelector('input[id^="edit-rev-verified-"]');
+    const dateEl = item.querySelector('input[id^="edit-rev-date-"]');
+    const commentEl = item.querySelector('textarea[id^="edit-rev-comment-"]');
 
     const name = nameEl ? nameEl.value.trim() : '';
     const location = locEl ? locEl.value.trim() : '';
@@ -858,13 +858,13 @@ function syncFaqsFromDOM() {
   
   const items = container.querySelectorAll('.faq-editor-item');
   const faqs = [];
-  items.forEach((item, i) => {
-    const qEl = document.getElementById(`edit-faq-q-${i}`);
-    const aEl = document.getElementById(`edit-faq-a-${i}`);
+  items.forEach((item) => {
+    const qEl = item.querySelector('input[id^="edit-faq-q-"]');
+    const aEl = item.querySelector('textarea[id^="edit-faq-a-"]');
     const q = qEl ? qEl.value.trim() : '';
     const a = aEl ? aEl.value.trim() : '';
     if (q || a) {
-      faqs.push({ question: q, answer: a, q, a });
+      faqs.push({ question: q, answer: a });
     }
   });
 
