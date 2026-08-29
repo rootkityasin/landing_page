@@ -52,13 +52,45 @@ function extractCity(address, deliveryZone) {
 }
 
 class MetaCapi {
-  async sendEvent({ eventName, eventId, eventSourceUrl, userData = {}, customData = {} }) {
-    const pixelId = (await dbGet("SELECT value FROM settings WHERE key = 'meta_pixel_id'"))?.value || process.env.META_PIXEL_ID || '';
-    const accessToken = (await dbGet("SELECT value FROM settings WHERE key = 'meta_capi_token'"))?.value || process.env.META_CAPI_TOKEN || '';
-    const testCode = (await dbGet("SELECT value FROM settings WHERE key = 'meta_test_event_code'"))?.value || process.env.META_TEST_EVENT_CODE || '';
+  async sendEvent({ eventName, eventId, eventSourceUrl, userData = {}, customData = {}, productSlug, productId, pixelId: explicitPixelId, accessToken: explicitAccessToken, testCode: explicitTestCode }) {
+    let pixelId = explicitPixelId || '';
+    let accessToken = explicitAccessToken || '';
+    let testCode = explicitTestCode || '';
+
+    // 1. Check Product-Specific Pixel & CAPI Settings First
+    if ((!pixelId || !accessToken) && (productSlug || productId)) {
+      try {
+        let productRow = null;
+        if (productSlug) {
+          productRow = await dbGet('SELECT page_data FROM products WHERE slug = ? LIMIT 1', [productSlug]);
+        } else if (productId) {
+          productRow = await dbGet('SELECT page_data FROM products WHERE id = ? LIMIT 1', [productId]);
+        }
+        if (productRow && productRow.page_data) {
+          const pageData = typeof productRow.page_data === 'string' ? JSON.parse(productRow.page_data) : productRow.page_data;
+          const meta = pageData?.meta || {};
+          if (!pixelId) pixelId = meta.metaPixelId || meta.pixelId || meta.meta_pixel_id || '';
+          if (!accessToken) accessToken = meta.metaCapiToken || meta.capiToken || meta.meta_capi_token || '';
+          if (!testCode) testCode = meta.metaTestEventCode || meta.testEventCode || meta.metaTestCode || meta.meta_test_event_code || '';
+        }
+      } catch (lookupErr) {
+        // Fall back to global settings
+      }
+    }
+
+    // 2. Fallback to Global Settings & Environment Variables
+    if (!pixelId) {
+      pixelId = (await dbGet("SELECT value FROM settings WHERE key = 'meta_pixel_id'"))?.value || process.env.META_PIXEL_ID || '';
+    }
+    if (!accessToken) {
+      accessToken = (await dbGet("SELECT value FROM settings WHERE key = 'meta_capi_token'"))?.value || process.env.META_CAPI_TOKEN || '';
+    }
+    if (!testCode) {
+      testCode = (await dbGet("SELECT value FROM settings WHERE key = 'meta_test_event_code'"))?.value || process.env.META_TEST_EVENT_CODE || '';
+    }
 
     if (!pixelId || !accessToken) {
-      return { success: true, skipped: true, message: 'Meta CAPI skipped (no token configured).' };
+      return { success: true, skipped: true, message: 'Meta CAPI skipped (no token configured for this page).' };
     }
 
     try {

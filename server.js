@@ -372,6 +372,8 @@ app.post('/api/orders', async (req, res) => {
     metaCapi.sendEvent({
       eventName: 'Purchase',
       eventId: sharedEventId,
+      productSlug: product ? product.slug : 'origami-spoon',
+      productId: product ? product.id : 1,
       eventSourceUrl: req.headers.referer || `https://polygonsbd.90slabs.com/`,
       userData: {
         name: customer_name,
@@ -485,6 +487,8 @@ app.post('/api/tracking/capi-event', async (req, res) => {
     await metaCapi.sendEvent({
       eventName: event_name || 'PageView',
       eventId: event_id,
+      productSlug: body.product_slug || body.slug || undefined,
+      productId: body.product_id || undefined,
       eventSourceUrl: event_source_url || req.headers.referer || 'https://polygonsbd.90slabs.com/',
       userData: {
         ...user_data,

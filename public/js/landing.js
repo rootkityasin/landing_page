@@ -774,6 +774,8 @@ function initMetaPixel(pixelId) {
     body: JSON.stringify({
       event_name: 'ViewContent',
       event_id: viewContentEventId,
+      product_slug: currentProduct?.slug || 'origami-spoon',
+      product_id: currentProduct?.id || 1,
       event_source_url: window.location.href,
       user_data: { fbp, fbc, user_agent: navigator.userAgent },
       custom_data: {
@@ -854,6 +856,8 @@ function fireInitiateCheckout() {
     body: JSON.stringify({
       event_name: 'InitiateCheckout',
       event_id: eventId,
+      product_slug: currentProduct?.slug || 'origami-spoon',
+      product_id: currentProduct?.id || 1,
       event_source_url: window.location.href,
       user_data: userData,
       custom_data: customData

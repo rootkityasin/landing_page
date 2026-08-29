@@ -35,12 +35,17 @@ let debounceTimer = null;
 function showToast(message, isSuccess = true) {
   const toast = document.getElementById('admin-toast');
   const msgEl = document.getElementById('toast-message');
-  const iconEl = document.getElementById('toast-icon');
+  const iconWrap = document.getElementById('toast-icon-wrap') || document.getElementById('toast-icon');
 
   if (!toast || !msgEl) return;
-  msgEl.innerText = message;
-  if (iconEl) iconEl.innerText = isSuccess ? '✓' : '⚠️';
-  toast.className = `fixed bottom-6 right-6 z-50 ${isSuccess ? 'bg-slate-900 border-emerald-500' : 'bg-rose-900 border-rose-500'} text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border text-sm font-semibold transition transform duration-300`;
+  msgEl.innerText = message.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}]/gu, '').trim();
+  if (iconWrap) {
+    iconWrap.className = `w-5 h-5 flex items-center justify-center ${isSuccess ? 'text-emerald-400' : 'text-rose-400'}`;
+    iconWrap.innerHTML = isSuccess 
+      ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`
+      : `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+  }
+  toast.className = `fixed bottom-6 right-6 z-50 ${isSuccess ? 'bg-slate-900 border-slate-700' : 'bg-rose-950 border-rose-800'} text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border text-sm font-semibold transition transform duration-300`;
   toast.classList.remove('hidden');
 
   setTimeout(() => {
@@ -130,7 +135,7 @@ async function handleLogin(e) {
       const modal = document.getElementById('login-modal');
       if (modal) modal.classList.add('hidden');
       initAdminData();
-      showToast('Sign in successful! Session active for 1 hour 🎉');
+      showToast('Sign in successful. Session active for 1 hour.');
     } else {
       if (errorEl) {
         errorEl.innerText = data.error || 'Invalid password!';
@@ -245,7 +250,7 @@ async function fetchOrders() {
           <td class="p-4 align-top">
             <div class="font-bold text-slate-800">${o.customer_name}</div>
             <div class="text-xs font-semibold text-slate-600 font-latin mt-0.5">
-              <a href="tel:${o.phone}" class="text-emerald-600 hover:underline">📞 ${o.phone}</a>
+              <a href="tel:${o.phone}" class="text-emerald-600 hover:underline font-bold">${o.phone}</a>
               <a href="https://wa.me/88${o.phone}" target="_blank" class="ml-2 text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded text-[11px]">WhatsApp</a>
             </div>
             <div class="text-xs text-slate-500 mt-1 max-w-xs leading-relaxed">${o.address}</div>
@@ -260,7 +265,7 @@ async function fetchOrders() {
                 o.color_variant === 'Mixed' ? 'bg-amber-100 text-amber-900 border border-amber-300' :
                 'bg-rose-100 text-rose-800 border border-rose-200'
               }">
-                ${o.color_variant === 'Black' ? '⚫ Black' : o.color_variant === 'Mixed' ? '🎨 Mixed Combo' : '🔴 Maroon Red'}
+                ${o.color_variant === 'Black' ? 'Black' : o.color_variant === 'Mixed' ? 'Mixed Combo' : 'Maroon Red'}
               </span>
             </div>
           </td>
@@ -278,11 +283,11 @@ async function fetchOrders() {
               o.order_status === 'delivered' ? 'bg-emerald-50 text-emerald-800 border-emerald-300' :
               'bg-slate-100 text-slate-700'
             }">
-              <option value="pending" ${o.order_status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-              <option value="confirmed" ${o.order_status === 'confirmed' ? 'selected' : ''}>✓ Confirmed</option>
-              <option value="dispatched" ${o.order_status === 'dispatched' ? 'selected' : ''}>🚚 Dispatched</option>
-              <option value="delivered" ${o.order_status === 'delivered' ? 'selected' : ''}>🎉 Delivered</option>
-              <option value="cancelled" ${o.order_status === 'cancelled' ? 'selected' : ''}>✕ Cancelled</option>
+              <option value="pending" ${o.order_status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="confirmed" ${o.order_status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="dispatched" ${o.order_status === 'dispatched' ? 'selected' : ''}>Dispatched</option>
+              <option value="delivered" ${o.order_status === 'delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="cancelled" ${o.order_status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
             </select>
           </td>
 
@@ -295,7 +300,7 @@ async function fetchOrders() {
               </div>
             ` : `
               <button onclick="dispatchOrderToPathao(${o.id})" class="bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center justify-center gap-1 w-full transition">
-                <span>🚚 Pathao Dispatch</span>
+                <span>Dispatch to Pathao</span>
               </button>
             `}
           </td>
@@ -346,7 +351,7 @@ async function dispatchOrderToPathao(orderId) {
 
     const data = await res.json();
     if (data.success) {
-      showToast(`✅ Pathao Consignment Created! ID: ${data.consignment_id}`);
+      showToast(`Pathao Consignment Created! ID: ${data.consignment_id}`);
       // Automatically show 'all' orders so the newly dispatched order remains 100% visible with its tracking code badge!
       const filterEl = document.getElementById('order-status-filter');
       if (filterEl && filterEl.value === 'pending') {
@@ -388,7 +393,7 @@ async function fetchProducts() {
             <div class="flex items-center gap-2 bg-slate-100 p-2 rounded-xl border border-slate-200 max-w-md">
               <span class="text-xs text-slate-600 truncate flex-1">${pageUrl}</span>
               <button onclick="copyToClipboard('${pageUrl}')" class="bg-white hover:bg-slate-200 text-slate-800 text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 transition flex items-center gap-1 flex-shrink-0">
-                📋 Copy Link
+                Copy Link
               </button>
             </div>
           </td>
@@ -396,7 +401,7 @@ async function fetchProducts() {
           <td class="p-4">
             ${p.is_default ? `
               <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full">
-                ⭐ Homepage (Root URL /)
+                Homepage (Default)
               </span>
             ` : `
               <button onclick="setDefaultProduct(${p.id})" class="text-xs font-bold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 px-3 py-1 rounded-full border border-slate-200 transition">
@@ -407,14 +412,14 @@ async function fetchProducts() {
 
           <td class="p-4 text-right space-x-1">
             <a href="/p/${p.slug}" target="_blank" class="inline-block bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-3 py-1.5 rounded-xl transition">
-              👁️ View
+              View
             </a>
             <button onclick="openEditorForProduct(${p.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition">
-              ✏️ Edit Page
+              Edit Page
             </button>
             ${!p.is_default ? `
               <button onclick="deleteProduct(${p.id})" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs px-2.5 py-1.5 rounded-xl transition">
-                🗑️
+                Delete
               </button>
             ` : ''}
           </td>
@@ -533,7 +538,7 @@ async function setQuickImage(targetInputId, previewImgId, url) {
   if (inputEl) inputEl.value = url;
   if (imgEl) imgEl.src = url;
   await saveCurrentPageData();
-  showToast('Image updated & saved! 🎉');
+  showToast('Image updated and saved successfully.');
 }
 
 function populateEditorFields(d) {
@@ -574,7 +579,7 @@ function populateEditorFields(d) {
   if (document.getElementById('edit-hero-show-1')) {
     document.getElementById('edit-hero-show-1').checked = show1;
     const label1 = document.getElementById('label-hero-show-1');
-    if (label1) label1.innerText = show1 ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+    if (label1) label1.innerText = show1 ? 'Visible on Site' : 'Hidden on Site';
   }
 
   // Secondary Image 2
@@ -585,7 +590,7 @@ function populateEditorFields(d) {
   if (document.getElementById('edit-hero-show-2')) {
     document.getElementById('edit-hero-show-2').checked = show2;
     const label2 = document.getElementById('label-hero-show-2');
-    if (label2) label2.innerText = show2 ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+    if (label2) label2.innerText = show2 ? 'Visible on Site' : 'Hidden on Site';
   }
 
   // Additional Gallery Items
@@ -614,7 +619,7 @@ function populateEditorFields(d) {
   // 5. Video Demo Section
   if (!d.videoDemo) {
     d.videoDemo = {
-      badge: "🎥 ভিডিও ডেমোস্ট্রেশন",
+      badge: "ভিডিও ডেমোস্ট্রেশন",
       title: "ভিডিওতে দেখুন এটি কীভাবে কাজ করে ও সহজে ব্যবহার করবেন",
       subtitle: "মাত্র কয়েক সেকেন্ডে নিখুঁত পরিমাপ ও ব্যবহারের সহজ পদ্ধতি সরাসরি ভিডিওতে দেখে নিন",
       videoUrl: "/uploads/media-1787674998296-587000979.mp4",
@@ -669,15 +674,15 @@ function populateEditorFields(d) {
   bundlesContainer.innerHTML = (d.bundles || []).map((b, i) => `
     <div class="bundle-editor-item bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
       <div class="flex items-center justify-between flex-wrap gap-2">
-        <span class="font-black text-slate-800 text-xs">📦 Package #${i + 1} (${b.id})</span>
+        <span class="font-black text-slate-800 text-xs">Package #${i + 1} (${b.id})</span>
         <div class="flex items-center gap-3">
           <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-pointer">
             <input type="checkbox" id="edit-bundle-popular-${i}" ${b.isPopular ? 'checked' : ''} class="rounded text-[#D92143]" />
-            <span>⭐ Highlight Best Value</span>
+            <span>Highlight Best Value</span>
           </label>
           <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-pointer">
             <input type="checkbox" id="edit-bundle-free-${i}" ${b.freeDelivery ? 'checked' : ''} class="rounded text-emerald-600" />
-            <span>🚚 Free Delivery</span>
+            <span>Free Delivery</span>
           </label>
         </div>
       </div>
@@ -688,7 +693,7 @@ function populateEditorFields(d) {
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-600 mb-1">Top Badge Tag</label>
-          <input type="text" id="edit-bundle-badge-${i}" value="${(b.badge || '').replace(/"/g, '&quot;')}" placeholder="e.g. ⭐ Best Offer + Free Delivery" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-[#D92143] bg-white" />
+          <input type="text" id="edit-bundle-badge-${i}" value="${(b.badge || '').replace(/"/g, '&quot;')}" placeholder="e.g. Best Offer + Free Delivery" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-[#D92143] bg-white" />
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-600 mb-1">Price (৳)</label>
@@ -763,10 +768,10 @@ function renderReviewsEditor(d) {
         <div class="review-editor-item bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 relative shadow-2xs">
           <div class="flex items-center justify-between pb-1 border-b border-slate-200">
             <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-              <span>⭐ Review #${i + 1}</span>
+              <span>Review #${i + 1}</span>
             </span>
             <button type="button" onclick="deleteReview(${i})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 transition hover:bg-rose-100">
-              ✕ Delete
+              Delete
             </button>
           </div>
 
@@ -806,14 +811,14 @@ function renderReviewsEditor(d) {
           <div class="flex items-center gap-2 pt-0.5">
             <input type="checkbox" id="edit-rev-verified-${i}" ${rev.verified !== false ? 'checked' : ''} class="rounded text-emerald-600 w-3.5 h-3.5" />
             <label for="edit-rev-verified-${i}" class="text-[11px] font-bold text-slate-600 cursor-pointer">
-              ✓ Show Verified Customer Badge
+              Show Verified Customer Badge
             </label>
           </div>
         </div>
       `).join('')}
 
       <button type="button" onclick="addReviewItem()" class="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-2 hover:border-slate-400 shadow-2xs">
-        <span class="text-emerald-600 font-black text-sm">➕</span>
+        
         <span>+ Add New Customer Review</span>
       </button>
     </div>
@@ -877,10 +882,10 @@ function renderFaqEditor(d) {
         <div class="faq-editor-item bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5 relative shadow-2xs">
           <div class="flex items-center justify-between pb-1 border-b border-slate-200">
             <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-              <span>❓ FAQ #${i + 1}</span>
+              <span>FAQ #${i + 1}</span>
             </span>
             <button type="button" onclick="deleteFaq(${i})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 transition hover:bg-rose-100">
-              ✕ Delete
+              Delete
             </button>
           </div>
           <div>
@@ -895,7 +900,7 @@ function renderFaqEditor(d) {
       `).join('')}
 
       <button type="button" onclick="addFaqItem()" class="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl border-2 border-dashed border-slate-300 transition flex items-center justify-center gap-2 hover:border-slate-400 shadow-2xs">
-        <span class="text-emerald-600 font-black text-sm">➕</span>
+        <span class="text-emerald-600 font-black text-sm">+</span>
         <span>+ Add New FAQ Item</span>
       </button>
     </div>
@@ -931,7 +936,7 @@ function updateFaqToggleUI(isChecked) {
 
   if (checkbox) checkbox.checked = isChecked;
   if (label) {
-    label.innerText = isChecked ? '👁️ Section ON (Visible)' : '🚫 Section OFF (Hidden)';
+    label.innerText = isChecked ? 'Section Visible' : 'Section Hidden';
   }
   if (btnContainer) {
     if (isChecked) {
@@ -955,25 +960,25 @@ async function toggleFaqSectionShow(isChecked) {
   currentEditingPageData.faqShow = isChecked;
   updateFaqToggleUI(isChecked);
   await saveCurrentPageData();
-  showToast(isChecked ? 'FAQ section is now ON (Visible on landing page) 👁️' : 'FAQ section is now OFF (Hidden from landing page) 🚫');
+  showToast(isChecked ? 'FAQ section is now visible on landing page' : 'FAQ section is now hidden from landing page');
 }
 
 async function toggleHeroPrimaryShow(isChecked) {
   if (!currentEditingPageData?.hero) return;
   currentEditingPageData.hero.showPrimary = isChecked;
   const label = document.getElementById('label-hero-show-1');
-  if (label) label.innerText = isChecked ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+  if (label) label.innerText = isChecked ? 'Visible on Site' : 'Hidden on Site';
   await saveCurrentPageData();
-  showToast(isChecked ? 'Primary image is now VISIBLE on site 👁️' : 'Primary image is now HIDDEN on site 🚫');
+  showToast(isChecked ? 'Primary image is now visible on site.' : 'Primary image is now hidden from site.');
 }
 
 async function toggleHeroSecondaryShow(isChecked) {
   if (!currentEditingPageData?.hero) return;
   currentEditingPageData.hero.showSecondary = isChecked;
   const label = document.getElementById('label-hero-show-2');
-  if (label) label.innerText = isChecked ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+  if (label) label.innerText = isChecked ? 'Visible on Site' : 'Hidden on Site';
   await saveCurrentPageData();
-  showToast(isChecked ? 'Secondary image is now VISIBLE on site 👁️' : 'Secondary image is now HIDDEN on site 🚫');
+  showToast(isChecked ? 'Secondary image is now visible on site.' : 'Secondary image is now hidden from site.');
 }
 
 // Synchronize all Hero Image inputs before reordering or saving
@@ -996,7 +1001,7 @@ function populateHeroImageFields(h) {
   if (pInput) pInput.value = h.mediaUrl || '';
   if (pImg) pImg.src = h.mediaUrl || '/images/post1.jpeg';
   if (pCheck) pCheck.checked = h.showPrimary !== false;
-  if (pLabel) pLabel.innerText = h.showPrimary !== false ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+  if (pLabel) pLabel.innerText = h.showPrimary !== false ? 'Visible on Site' : 'Hidden on Site';
 
   const sInput = document.getElementById('edit-hero-sec-media-url');
   const sImg = document.getElementById('hero-sec-preview-img');
@@ -1006,7 +1011,7 @@ function populateHeroImageFields(h) {
   if (sInput) sInput.value = h.secondaryMediaUrl || '';
   if (sImg) sImg.src = h.secondaryMediaUrl || '/images/post2.png';
   if (sCheck) sCheck.checked = h.showSecondary !== false;
-  if (sLabel) sLabel.innerText = h.showSecondary !== false ? '👁️ Shown on Site' : '🚫 Hidden on Site';
+  if (sLabel) sLabel.innerText = h.showSecondary !== false ? 'Visible on Site' : 'Hidden on Site';
 }
 
 // Move Any Image Up or Down Across Entire Showcase List
@@ -1044,7 +1049,7 @@ async function moveHeroImage(fromIndex, offset) {
 
   // Auto-save immediately to database
   await saveCurrentPageData();
-  showToast(`📸 Photo moved to Position #${targetIndex + 1}! Saved successfully! 🎉`);
+  showToast(`Photo moved to Position #${targetIndex + 1}. Saved successfully.`);
 }
 
 function renderHeroGalleryEditor() {
@@ -1072,7 +1077,7 @@ function renderHeroGalleryEditor() {
           <div class="flex items-center gap-2">
             <span class="bg-[#FEF5E4] text-[#D92143] font-black text-xs px-2.5 py-1 rounded-lg border border-[#E0C375]/50">Position #${currentPos}</span>
             <span class="font-bold text-slate-800 text-xs">
-              📸 Extra Showcase Image
+              Extra Showcase Image
             </span>
           </div>
           <div class="flex items-center gap-2 flex-wrap">
@@ -1089,11 +1094,11 @@ function renderHeroGalleryEditor() {
             <!-- Show / Hide Toggle Switch -->
             <label class="flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-700 select-none bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:bg-slate-50 transition">
               <input type="checkbox" id="edit-gallery-show-${i}" ${isShown ? 'checked' : ''} onchange="toggleHeroGalleryItemShow(${i}, this.checked)" class="rounded text-[#D92143] cursor-pointer" />
-              <span>${isShown ? '👁️ Shown on Site' : '🚫 Hidden on Site'}</span>
+              <span>${isShown ? 'Visible on Site' : 'Hidden on Site'}</span>
             </label>
             <!-- Delete Button -->
             <button type="button" onclick="removeHeroGalleryItem(${i})" class="text-rose-600 hover:text-rose-800 text-xs font-bold transition px-1.5 py-1">
-              ✕ Delete
+              Delete
             </button>
           </div>
         </div>
@@ -1135,7 +1140,7 @@ async function addHeroGalleryItem() {
   });
   renderHeroGalleryEditor();
   await saveCurrentPageData();
-  showToast('New extra showcase image slot added! 🎉');
+  showToast('New showcase image slot added.');
 }
 
 async function removeHeroGalleryItem(idx) {
@@ -1144,7 +1149,7 @@ async function removeHeroGalleryItem(idx) {
   currentEditingPageData.hero.additionalGallery.splice(idx, 1);
   renderHeroGalleryEditor();
   await saveCurrentPageData();
-  showToast('Showcase image removed! 🗑️');
+  showToast('Showcase image removed.');
 }
 
 async function toggleHeroGalleryItemShow(idx, isChecked) {
@@ -1152,7 +1157,7 @@ async function toggleHeroGalleryItemShow(idx, isChecked) {
   currentEditingPageData.hero.additionalGallery[idx].show = isChecked;
   renderHeroGalleryEditor();
   await saveCurrentPageData();
-  showToast(isChecked ? 'Image is now VISIBLE on site 👁️' : 'Image is now HIDDEN on site 🚫');
+  showToast(isChecked ? 'Image is now visible on site.' : 'Image is now hidden from site.');
 }
 
 async function onGalleryUrlChange(idx, val) {
@@ -1246,7 +1251,7 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
       data = JSON.parse(text);
     } catch (e) {
       if (res.status === 413 || text.includes('Request Entity Too Large') || text.includes('413')) {
-        alert('⚠️ File size exceeds server limit (Request Entity Too Large). Please choose a smaller image.');
+        alert('File size exceeds server limit. Please choose a smaller image.');
         return;
       }
       alert('Server Error (' + res.status + '): ' + text.substring(0, 120));
@@ -1265,7 +1270,7 @@ async function uploadMediaFile(inputEl, targetInputId, previewImgId) {
       }
       // Auto-save immediately to database
       await saveCurrentPageData();
-      showToast('✅ Image uploaded and saved successfully!');
+      showToast('Image uploaded and saved successfully.');
     } else {
       alert('Upload failed: ' + (data.error || 'Unknown error'));
     }
@@ -1437,7 +1442,7 @@ async function saveCurrentPageData() {
 
     const data = await res.json();
     if (data.success) {
-      showToast('✅ All section changes saved to live page!');
+      showToast('All section changes saved to live page.');
     } else {
       showToast(data.error || 'Failed to save changes', false);
     }
@@ -1468,7 +1473,7 @@ async function exportDatabase() {
     a.click();
     a.remove();
     window.URL.revokeObjectURL(downloadUrl);
-    showToast('Database snapshot downloaded successfully! 💾');
+    showToast('Database snapshot downloaded successfully.');
   } catch (err) {
     alert('Export error: ' + err.message);
   }
@@ -1497,7 +1502,7 @@ async function importDatabase(inputEl) {
 
     const data = await res.json();
     if (data.success) {
-      showToast('Database imported & restored successfully! 🚀');
+      showToast('Database imported and restored successfully.');
       setTimeout(() => {
         window.location.reload();
       }, 1200);
@@ -1694,7 +1699,7 @@ function uploadVideoFile(inputEl, targetInputId) {
       data = JSON.parse(text);
     } catch (e) {
       if (xhr.status === 413 || text.includes('Request Entity Too Large') || text.includes('413')) {
-        alert(`⚠️ File size (${fileSizeMB}MB) exceeds server limit (413 Request Entity Too Large).\n\n💡 Easy Solutions:\n1. Paste a YouTube or Shorts link into the Video Source box (fastest & no storage limit).\n2. Or compress the video file to under 25MB before uploading.`);
+        alert(`File size (${fileSizeMB}MB) exceeds server limit (413 Request Entity Too Large).\n\nSolutions:\n1. Paste a YouTube or Shorts link into the Video Source box (fastest & no storage limit).\n2. Or compress the video file to under 25MB before uploading.`);
         return;
       }
       alert(`Server Error (${xhr.status}): ${text.substring(0, 150)}`);
@@ -1706,7 +1711,7 @@ function uploadVideoFile(inputEl, targetInputId) {
         targetInput.value = data.url;
       }
       previewAdminVideo();
-      showToast('✅ Video uploaded successfully!');
+      showToast('Video uploaded successfully.');
       saveCurrentPageData();
     } else {
       alert('Video upload failed: ' + (data.error || 'Unknown error'));
