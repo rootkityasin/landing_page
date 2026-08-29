@@ -297,9 +297,25 @@ app.post('/api/orders', async (req, res) => {
       quantity = Number(selectedBundle.quantity);
     }
 
+    let deliveryDhakaRate = 60;
+    let deliveryOutsideRate = 130;
+    if (product && product.page_data) {
+      try {
+        const pData = typeof product.page_data === 'string' ? JSON.parse(product.page_data) : product.page_data;
+        if (pData.checkout) {
+          if (pData.checkout.deliveryDhaka !== undefined && pData.checkout.deliveryDhaka !== '') {
+            deliveryDhakaRate = Number(pData.checkout.deliveryDhaka);
+          }
+          if (pData.checkout.deliveryOutside !== undefined && pData.checkout.deliveryOutside !== '') {
+            deliveryOutsideRate = Number(pData.checkout.deliveryOutside);
+          }
+        }
+      } catch (e) {}
+    }
+
     const itemPrice = Number(selectedBundle.price);
     const isFreeDelivery = (selectedBundle.id === 'bundle_2' || selectedBundle.id === 'bundle_3' || selectedBundle.freeDelivery);
-    const deliveryCharge = isFreeDelivery ? 0 : (delivery_zone === 'dhaka_outside' ? 130 : 60);
+    const deliveryCharge = isFreeDelivery ? 0 : (delivery_zone === 'dhaka_outside' ? deliveryOutsideRate : deliveryDhakaRate);
     const totalAmount = itemPrice + deliveryCharge;
     const chosenColor = color_variant || 'Red';
 
