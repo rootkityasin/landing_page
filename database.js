@@ -9,37 +9,11 @@ const tursoAuthToken = process.env.TURSO_AUTH_TOKEN || process.env.LIBSQL_AUTH_T
 
 let db = null;
 let dbPath = path.join(__dirname, 'database.sqlite');
-let isTurso = false;
-let libsqlClient = null;
+const isTurso = !!(tursoUrl && tursoAuthToken);
 
-if (tursoUrl && tursoAuthToken) {
-  try {
-    let createClient;
-    try {
-      createClient = require('@libsql/client/http').createClient;
-    } catch (e1) {
-      try {
-        createClient = require('@libsql/client/web').createClient;
-      } catch (e2) {
-        createClient = require('@libsql/client').createClient;
-      }
-    }
-
-    if (typeof createClient === 'function') {
-      libsqlClient = createClient({
-        url: tursoUrl,
-        authToken: tursoAuthToken
-      });
-      isTurso = true;
-      console.log('🚀 Connected to Turso Cloud SQLite Database at', tursoUrl);
-    }
-  } catch (err) {
-    console.error('Failed to initialize Turso client, falling back to local SQLite:', err.message);
-    isTurso = false;
-  }
-}
-
-if (!isTurso) {
+if (isTurso) {
+  console.log('🚀 Connected to Turso Cloud SQLite Database at', tursoUrl);
+} else {
   const sqlite3 = require('sqlite3').verbose();
   const isVercel = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION);
 
@@ -73,23 +47,86 @@ if (!isTurso) {
   });
 }
 
-// Helper for normalizing parameters
-const normalizeParams = (params) => {
-  if (!params) return [];
-  const arr = Array.isArray(params) ? params : [params];
-  return arr.map(p => (p === undefined ? null : p));
-};
+// Native Serverless Turso HTTP Pipeline Executor (Zero Native Dependencies, Works 100% on Vercel/Node/Edge)
+async function executeTursoHttp(sql, params = []) {
+  const normParams = (Array.isArray(params) ? params : [params]).map(p => {
+    if (p === null || p === undefined) return { type: 'null' };
+    if (typeof p === 'number') {
+      return Number.isInteger(p) ? { type: 'integer', value: String(p) } : { type: 'float', value: p };
+    }
+    if (typeof p === 'boolean') return { type: 'integer', value: p ? '1' : '0' };
+    return { type: 'text', value: String(p) };
+  });
+
+  const response = await fetch(`${tursoUrl}/v2/pipeline`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${tursoAuthToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      requests: [
+        {
+          type: 'execute',
+          stmt: {
+            sql,
+            args: normParams
+          }
+        },
+        { type: 'close' }
+      ]
+    })
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Turso HTTP Error (${response.status}): ${text}`);
+  }
+
+  const data = await response.json();
+  const execResult = data.results && data.results[0];
+  if (execResult && execResult.type === 'error') {
+    throw new Error(`Turso SQL Error: ${execResult.error?.message || JSON.stringify(execResult.error)}`);
+  }
+
+  const result = execResult?.response?.result;
+  if (!result) {
+    return { rows: [], lastID: 0, changes: 0 };
+  }
+
+  const cols = (result.cols || []).map(c => c.name);
+  const rows = (result.rows || []).map(rowArray => {
+    const obj = {};
+    cols.forEach((colName, idx) => {
+      const cell = rowArray[idx];
+      if (!cell || cell.type === 'null') {
+        obj[colName] = null;
+      } else if (cell.type === 'integer' || cell.type === 'float') {
+        obj[colName] = Number(cell.value);
+      } else {
+        obj[colName] = cell.value;
+      }
+    });
+    return obj;
+  });
+
+  return {
+    rows,
+    lastID: result.last_insert_rowid !== null && result.last_insert_rowid !== undefined ? Number(result.last_insert_rowid) : 0,
+    changes: result.affected_row_count || 0
+  };
+}
 
 // Universal dbRun (Works on both Turso and SQLite3)
 const dbRun = async (sql, params = []) => {
-  const normParams = normalizeParams(params);
-  if (isTurso && libsqlClient) {
-    const res = await libsqlClient.execute({ sql, args: normParams });
+  if (isTurso) {
+    const res = await executeTursoHttp(sql, params);
     return {
-      lastID: res.lastInsertRowid !== undefined ? Number(res.lastInsertRowid) : 0,
-      changes: res.rowsAffected || 0
+      lastID: res.lastID,
+      changes: res.changes
     };
   }
+  const normParams = (Array.isArray(params) ? params : [params]).map(p => (p === undefined ? null : p));
   return new Promise((resolve, reject) => {
     db.run(sql, normParams, function (err) {
       if (err) reject(err);
@@ -100,14 +137,11 @@ const dbRun = async (sql, params = []) => {
 
 // Universal dbGet (Works on both Turso and SQLite3)
 const dbGet = async (sql, params = []) => {
-  const normParams = normalizeParams(params);
-  if (isTurso && libsqlClient) {
-    const res = await libsqlClient.execute({ sql, args: normParams });
-    if (res.rows && res.rows.length > 0) {
-      return res.rows[0];
-    }
-    return null;
+  if (isTurso) {
+    const res = await executeTursoHttp(sql, params);
+    return (res.rows && res.rows.length > 0) ? res.rows[0] : null;
   }
+  const normParams = (Array.isArray(params) ? params : [params]).map(p => (p === undefined ? null : p));
   return new Promise((resolve, reject) => {
     db.get(sql, normParams, (err, row) => {
       if (err) reject(err);
@@ -118,11 +152,11 @@ const dbGet = async (sql, params = []) => {
 
 // Universal dbAll (Works on both Turso and SQLite3)
 const dbAll = async (sql, params = []) => {
-  const normParams = normalizeParams(params);
-  if (isTurso && libsqlClient) {
-    const res = await libsqlClient.execute({ sql, args: normParams });
+  if (isTurso) {
+    const res = await executeTursoHttp(sql, params);
     return res.rows || [];
   }
+  const normParams = (Array.isArray(params) ? params : [params]).map(p => (p === undefined ? null : p));
   return new Promise((resolve, reject) => {
     db.all(sql, normParams, (err, rows) => {
       if (err) reject(err);
