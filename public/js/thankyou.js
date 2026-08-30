@@ -110,6 +110,16 @@ function renderOrderDetails(order) {
   const waBtn = document.getElementById('whatsapp-confirm-btn');
   if (waBtn) {
     waBtn.href = 'https://wa.me/' + waNumber + '?text=' + waMessage;
+    waBtn.addEventListener('click', () => {
+      if (window.fbq) {
+        fbq('track', 'Contact', {
+          content_name: 'WhatsApp Confirmation',
+          content_category: 'Messaging',
+          value: Number(order.total_amount) || 0,
+          currency: 'BDT'
+        });
+      }
+    });
   }
 }
 
