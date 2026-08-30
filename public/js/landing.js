@@ -2,7 +2,13 @@
 function getCookie(name) {
   try {
     const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-    return match ? decodeURIComponent(match[3]) : '';
+    if (!match) return '';
+    const rawVal = match[3];
+    try {
+      return decodeURIComponent(rawVal);
+    } catch (e) {
+      return rawVal;
+    }
   } catch (e) {
     return '';
   }
@@ -12,12 +18,18 @@ function ensureFbcCookie() {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const fbclid = urlParams.get('fbclid');
-    if (fbclid) {
+    if (fbclid && typeof fbclid === 'string' && fbclid.trim().length > 5) {
+      const cleanFbclid = fbclid.trim();
+      try {
+        sessionStorage.setItem('fb_fbclid', cleanFbclid);
+        localStorage.setItem('fb_fbclid', cleanFbclid);
+      } catch (e) {}
+
       const existingFbc = getCookie('_fbc');
-      if (!existingFbc || !existingFbc.includes(fbclid)) {
+      if (!existingFbc || !existingFbc.endsWith('.' + cleanFbclid)) {
         const creationTime = Date.now();
-        const fbcValue = `fb.1.${creationTime}.${fbclid}`;
-        document.cookie = `_fbc=${encodeURIComponent(fbcValue)};path=/;max-age=${90 * 24 * 60 * 60};SameSite=Lax`;
+        const fbcValue = 'fb.1.' + creationTime + '.' + cleanFbclid;
+        document.cookie = '_fbc=' + fbcValue + ';path=/;max-age=' + (90 * 24 * 60 * 60) + ';SameSite=Lax';
       }
     }
   } catch (e) {}
@@ -26,8 +38,27 @@ ensureFbcCookie();
 
 function getFacebookCookies() {
   ensureFbcCookie();
-  const fbp = getCookie('_fbp') || undefined;
-  const fbc = getCookie('_fbc') || undefined;
+  let fbp = getCookie('_fbp') || undefined;
+  let fbc = getCookie('_fbc') || undefined;
+
+  // Fallback to persistent storage if cookie is blocked or lost
+  if (!fbc) {
+    try {
+      const storedFbclid = sessionStorage.getItem('fb_fbclid') || localStorage.getItem('fb_fbclid');
+      if (storedFbclid && storedFbclid.trim().length > 5) {
+        fbc = 'fb.1.' + Date.now() + '.' + storedFbclid.trim();
+      }
+    } catch (e) {}
+  }
+
+  // Validate format before returning
+  if (fbc && !/^fb\.\d+\.\d+\..+$/.test(fbc)) {
+    fbc = undefined;
+  }
+  if (fbp && !/^fb\.\d+\.\d+\..+$/.test(fbp)) {
+    fbp = undefined;
+  }
+
   return { fbp, fbc };
 }
 

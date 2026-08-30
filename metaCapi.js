@@ -51,6 +51,49 @@ function extractCity(address, deliveryZone) {
   return undefined;
 }
 
+function sanitizeFbc(rawFbc, creationFallback = Date.now()) {
+  if (!rawFbc || typeof rawFbc !== 'string') return undefined;
+  let clean = rawFbc.trim();
+  if (!clean || clean === 'undefined' || clean === 'null' || clean === '[object Object]') return undefined;
+  
+  if (clean.includes('%')) {
+    try { clean = decodeURIComponent(clean); } catch (e) {}
+  }
+
+  // Standard Meta fbc format: fb.{subdomainIndex}.{creationTime}.{fbclid}
+  const parts = clean.split('.');
+  if (parts.length >= 4 && parts[0] === 'fb' && /^\d+$/.test(parts[1]) && /^\d{10,14}$/.test(parts[2])) {
+    const fbclidPart = parts.slice(3).join('.');
+    if (fbclidPart && fbclidPart.length > 5 && !fbclidPart.includes(' ')) {
+      return `fb.${parts[1]}.${parts[2]}.${fbclidPart}`;
+    }
+  }
+
+  // If raw fbclid was passed (e.g. without fb.1. prefix)
+  if (clean.length > 5 && !clean.includes(' ') && !clean.includes('.')) {
+    return `fb.1.${creationFallback}.${clean}`;
+  }
+
+  return undefined;
+}
+
+function sanitizeFbp(rawFbp) {
+  if (!rawFbp || typeof rawFbp !== 'string') return undefined;
+  let clean = rawFbp.trim();
+  if (!clean || clean === 'undefined' || clean === 'null' || clean === '[object Object]') return undefined;
+  
+  if (clean.includes('%')) {
+    try { clean = decodeURIComponent(clean); } catch (e) {}
+  }
+
+  // Standard Meta fbp format: fb.{subdomainIndex}.{creationTime}.{randomNumber}
+  const parts = clean.split('.');
+  if (parts.length >= 4 && parts[0] === 'fb' && /^\d+$/.test(parts[1]) && /^\d{10,14}$/.test(parts[2])) {
+    return clean;
+  }
+  return undefined;
+}
+
 class MetaCapi {
   async sendEvent({ eventName, eventId, eventSourceUrl, userData = {}, customData = {}, productSlug, productId, pixelId: explicitPixelId, accessToken: explicitAccessToken, testCode: explicitTestCode }) {
     let pixelId = explicitPixelId || '';
@@ -134,11 +177,14 @@ class MetaCapi {
         user_data.client_user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
       }
 
-      if (userData.fbp) {
-        user_data.fbp = userData.fbp;
+      const cleanFbp = sanitizeFbp(userData.fbp);
+      const cleanFbc = sanitizeFbc(userData.fbc);
+
+      if (cleanFbp) {
+        user_data.fbp = cleanFbp;
       }
-      if (userData.fbc) {
-        user_data.fbc = userData.fbc;
+      if (cleanFbc) {
+        user_data.fbc = cleanFbc;
       }
 
       // 3. Structured Custom Data (E-commerce parameters)

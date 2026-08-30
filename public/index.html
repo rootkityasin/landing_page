@@ -45,11 +45,22 @@
     // Send matching PageView CAPI event to server with exact same eventID for 100% deduplication
     (function sendPageViewCapi() {
       function getCookie(name) {
-        var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-        return v ? v[2] : null;
+        try {
+          var match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'));
+          return match ? decodeURIComponent(match[2]) : null;
+        } catch (e) { return null; }
       }
-      var fbp = getCookie('_fbp');
-      var fbc = getCookie('_fbc');
+      var fbp = getCookie('_fbp') || undefined;
+      var fbc = getCookie('_fbc') || undefined;
+
+      try {
+        var urlParams = new URLSearchParams(window.location.search);
+        var fbclid = urlParams.get('fbclid');
+        if (fbclid && !fbc) {
+          fbc = 'fb.1.' + Date.now() + '.' + fbclid.trim();
+        }
+      } catch (e) {}
+
       var payload = JSON.stringify({
         event_name: 'PageView',
         event_id: window.pageViewEventId,

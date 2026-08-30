@@ -324,8 +324,20 @@ app.post('/api/orders', async (req, res) => {
     const userAgent = getRealUserAgent(req, req.body.user_agent);
 
     const cookies = parseCookies(req);
-    const fbp = reqFbp || cookies['_fbp'] || undefined;
-    const fbc = reqFbc || cookies['_fbc'] || undefined;
+    let fbp = reqFbp || cookies['_fbp'] || undefined;
+    let fbc = reqFbc || cookies['_fbc'] || undefined;
+
+    // Fallback to referer URL fbclid if fbc is missing
+    if (!fbc && req.headers.referer) {
+      try {
+        const refUrl = new URL(req.headers.referer);
+        const refFbclid = refUrl.searchParams.get('fbclid');
+        if (refFbclid && refFbclid.trim().length > 5) {
+          fbc = `fb.1.${Date.now()}.${refFbclid.trim()}`;
+        }
+      } catch (e) {}
+    }
+
     const skuId = 'POLYGON-3IN1';
     const productTitle = product ? product.title : '3-in-1 Folding Measuring Spoon';
     const sharedEventId = event_id || `order_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
@@ -519,8 +531,19 @@ app.post('/api/tracking/capi-event', async (req, res) => {
     const ip = getRealClientIp(req, user_data.ip || user_data.client_ip);
     const userAgent = getRealUserAgent(req, user_data.user_agent || user_data.userAgent);
 
-    const fbp = user_data.fbp || cookies['_fbp'] || undefined;
-    const fbc = user_data.fbc || cookies['_fbc'] || undefined;
+    let fbp = user_data.fbp || cookies['_fbp'] || undefined;
+    let fbc = user_data.fbc || cookies['_fbc'] || undefined;
+
+    // Fallback to event_source_url or referer URL fbclid if fbc is missing
+    if (!fbc && (event_source_url || req.headers.referer)) {
+      try {
+        const srcUrl = new URL(event_source_url || req.headers.referer);
+        const srcFbclid = srcUrl.searchParams.get('fbclid');
+        if (srcFbclid && srcFbclid.trim().length > 5) {
+          fbc = `fb.1.${Date.now()}.${srcFbclid.trim()}`;
+        }
+      } catch (e) {}
+    }
 
     await metaCapi.sendEvent({
       eventName: event_name || 'PageView',
