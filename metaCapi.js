@@ -51,6 +51,27 @@ function extractCity(address, deliveryZone) {
   return undefined;
 }
 
+function extractZip(address, city) {
+  if (address && typeof address === 'string') {
+    const zipMatch = address.match(/\b(1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|4[0-9]{3}|5[0-9]{3}|6[0-9]{3}|7[0-9]{3}|8[0-9]{3}|9[0-9]{3})\b/);
+    if (zipMatch) return zipMatch[1];
+  }
+  const cityZipMap = {
+    'dhaka': '1000',
+    'chittagong': '4000',
+    'sylhet': '3100',
+    'rajshahi': '6000',
+    'khulna': '9000',
+    'barisal': '8200',
+    'rangpur': '5400',
+    'mymensingh': '2200',
+    'gazipur': '1700',
+    'narayanganj': '1400',
+    'comilla': '3500'
+  };
+  return city ? cityZipMap[city] : undefined;
+}
+
 function sanitizeFbc(rawFbc, creationFallback = Date.now()) {
   if (!rawFbc || typeof rawFbc !== 'string') return undefined;
   let clean = rawFbc.trim();
@@ -139,12 +160,13 @@ class MetaCapi {
     try {
       const { fn, ln } = extractNames(userData.name || userData.first_name);
       const city = userData.city || extractCity(userData.address, userData.delivery_zone);
+      const zip = userData.zip || userData.postal_code || extractZip(userData.address, city);
       const phoneHash = normalizePhone(userData.phone);
       const externalId = userData.external_id ? hashData(userData.external_id) : (phoneHash || undefined);
 
       const user_data = {};
 
-      // 1. Hashed Personal Identifiers
+      // 1. Hashed Personal Identifiers (Event Match Quality Maximizers)
       if (fn) user_data.fn = hashData(fn);
       if (ln || userData.last_name || userData.surname) {
         user_data.ln = hashData(ln || userData.last_name || userData.surname);
@@ -154,6 +176,9 @@ class MetaCapi {
       if (city) {
         user_data.ct = hashData(city);
         user_data.st = hashData(city);
+      }
+      if (zip) {
+        user_data.zp = hashData(zip);
       }
       user_data.country = hashData('bd');
       if (externalId) user_data.external_id = externalId;

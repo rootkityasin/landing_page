@@ -849,12 +849,31 @@ function initMetaPixel(pixelId) {
   }).catch(() => {});
 }
 
-// Fire InitiateCheckout once
-function fireInitiateCheckout() {
-  if (initiateCheckoutFired) return;
-  initiateCheckoutFired = true;
+let initiateCheckoutEventId = null;
+let initiateCheckoutSentWithPhone = false;
 
-  const eventId = 'init_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+// Fire InitiateCheckout and Enrich with Customer Data for High Event Match Quality (EMQ)
+function fireInitiateCheckout(isEnrichment = false) {
+  const nameInput = document.getElementById('cust-name');
+  const phoneInput = document.getElementById('cust-phone');
+  const addressInput = document.getElementById('cust-address');
+
+  const rawPhone = (phoneInput?.value || '').trim();
+  const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+  const hasValidPhone = cleanPhone.length >= 10;
+
+  // Prevent redundant un-enriched fires or redundant enriched fires
+  if (!isEnrichment && initiateCheckoutFired) return;
+  if (isEnrichment && initiateCheckoutSentWithPhone) return;
+
+  if (!initiateCheckoutEventId) {
+    initiateCheckoutEventId = 'init_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  }
+  initiateCheckoutFired = true;
+  if (hasValidPhone) {
+    initiateCheckoutSentWithPhone = true;
+  }
+
   const quantity = selectedBundle?.id === 'bundle_3' ? 3 : (selectedBundle?.id === 'bundle_2' ? 2 : 1);
   const itemPrice = Number(selectedBundle?.price) || 666;
   const isFreeDelivery = (selectedBundle?.id === 'bundle_2' || selectedBundle?.id === 'bundle_3');
@@ -879,20 +898,17 @@ function fireInitiateCheckout() {
     content_name: productTitle
   };
 
-  // 1. Browser Meta Pixel
-  if (window.fbq) {
-    fbq('track', 'InitiateCheckout', customData, { eventID: eventId });
+  // 1. Browser Meta Pixel (Fire on first trigger)
+  if (window.fbq && !isEnrichment) {
+    fbq('track', 'InitiateCheckout', customData, { eventID: initiateCheckoutEventId });
   }
 
-  // 2. Read available customer & cookies
-  const nameInput = document.getElementById('cust-name');
-  const phoneInput = document.getElementById('cust-phone');
-  const addressInput = document.getElementById('cust-address');
+  // 2. Read available customer details & cookies
   const { fbp, fbc } = getFacebookCookies();
 
   const userData = {
     name: nameInput?.value?.trim() || undefined,
-    phone: phoneInput?.value?.trim() || undefined,
+    phone: hasValidPhone ? cleanPhone : undefined,
     address: addressInput?.value?.trim() || undefined,
     delivery_zone: selectedZone,
     fbp: fbp,
@@ -900,19 +916,20 @@ function fireInitiateCheckout() {
     user_agent: navigator.userAgent
   };
 
-  // 3. Relay to server-side Meta CAPI with the exact same eventId & customData
+  // 3. Relay to server-side Meta CAPI with full user parameters for maximum Event Match Quality
   fetch('/api/tracking/capi-event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       event_name: 'InitiateCheckout',
-      event_id: eventId,
+      event_id: initiateCheckoutEventId,
       product_slug: currentProduct?.slug || 'origami-spoon',
       product_id: currentProduct?.id || 1,
       event_source_url: window.location.href,
       user_data: userData,
       custom_data: customData
-    })
+    }),
+    keepalive: true
   }).catch(() => {});
 }
 
@@ -1282,8 +1299,35 @@ document.addEventListener('DOMContentLoaded', () => {
   // Detect first input to fire InitiateCheckout
   const inputs = document.querySelectorAll('#cod-order-form input, #cod-order-form textarea');
   inputs.forEach(inp => {
-    inp.addEventListener('focus', fireInitiateCheckout, { once: true });
+    inp.addEventListener('focus', () => fireInitiateCheckout(false), { once: true });
   });
+
+  // Real-time parameter enrichment for Meta Event Match Quality (EMQ)
+  let enrichTimeout = null;
+  function triggerEnrichedCheckout() {
+    clearTimeout(enrichTimeout);
+    enrichTimeout = setTimeout(() => {
+      const phoneInput = document.getElementById('cust-phone');
+      const cleanPhone = (phoneInput?.value || '').replace(/[^0-9]/g, '');
+      if (cleanPhone.length >= 10) {
+        fireInitiateCheckout(true);
+      }
+    }, 300);
+  }
+
+  const phoneEl = document.getElementById('cust-phone');
+  if (phoneEl) {
+    phoneEl.addEventListener('input', triggerEnrichedCheckout);
+    phoneEl.addEventListener('blur', triggerEnrichedCheckout);
+  }
+  const nameEl = document.getElementById('cust-name');
+  if (nameEl) {
+    nameEl.addEventListener('blur', triggerEnrichedCheckout);
+  }
+  const addressEl = document.getElementById('cust-address');
+  if (addressEl) {
+    addressEl.addEventListener('blur', triggerEnrichedCheckout);
+  }
 });
 
 
