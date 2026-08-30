@@ -46,19 +46,38 @@ function parseCookies(req) {
 }
 
 function getRealClientIp(req, clientProvidedIp) {
-  if (clientProvidedIp && clientProvidedIp !== '::1' && clientProvidedIp !== '127.0.0.1' && clientProvidedIp !== 'localhost') {
-    return String(clientProvidedIp).split(',')[0].trim();
-  }
-  const cf = req.headers['cf-connecting-ip'];
-  if (cf) return String(cf).trim();
-  const xReal = req.headers['x-real-ip'];
-  if (xReal) return String(xReal).trim();
-  const xff = req.headers['x-forwarded-for'];
-  if (xff) return String(xff).split(',')[0].trim();
-  const sock = req.socket?.remoteAddress;
-  if (sock && sock !== '::1' && sock !== '127.0.0.1') {
-    return String(sock).replace(/^.*:/, '').trim();
-  }
+  const sanitizeIp = (raw) => {
+    if (!raw || typeof raw !== 'string') return null;
+    let ip = raw.split(',')[0].trim();
+    if (ip.startsWith('::ffff:') && ip.includes('.')) {
+      ip = ip.replace('::ffff:', '');
+    }
+    if (ip === '::1' || ip === '127.0.0.1' || ip === 'localhost') {
+      return null;
+    }
+    return ip;
+  };
+
+  // 1. Cloudflare IPv6 / IPv4 (Preferred by Meta)
+  const cf = sanitizeIp(req.headers['cf-connecting-ip']);
+  if (cf) return cf;
+
+  // 2. Client provided IP from beacon
+  const clientIp = sanitizeIp(clientProvidedIp);
+  if (clientIp) return clientIp;
+
+  // 3. X-Real-IP
+  const xReal = sanitizeIp(req.headers['x-real-ip']);
+  if (xReal) return xReal;
+
+  // 4. X-Forwarded-For
+  const xff = sanitizeIp(req.headers['x-forwarded-for']);
+  if (xff) return xff;
+
+  // 5. Socket remoteAddress
+  const sock = sanitizeIp(req.socket?.remoteAddress);
+  if (sock) return sock;
+
   return '103.100.100.1';
 }
 
