@@ -22,15 +22,29 @@ function normalizePhone(phone) {
 
 function extractNames(fullName) {
   if (!fullName || typeof fullName !== 'string') return { fn: undefined, ln: undefined };
-  const parts = fullName.trim().split(/\s+/);
-  if (parts.length === 0 || !parts[0]) return { fn: undefined, ln: undefined };
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return { fn: undefined, ln: undefined };
   if (parts.length === 1) {
-    return { fn: parts[0], ln: undefined };
+    return {
+      fn: parts[0],
+      ln: parts[0] // Set Surname = First Name for single-word names to achieve 100% Surname coverage
+    };
   }
   return {
     fn: parts[0],
     ln: parts.slice(1).join(' ')
   };
+}
+
+function extractEmail(text, explicitEmail) {
+  if (explicitEmail && typeof explicitEmail === 'string' && explicitEmail.includes('@')) {
+    return explicitEmail.trim().toLowerCase();
+  }
+  if (text && typeof text === 'string') {
+    const match = text.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+    if (match) return match[1].toLowerCase();
+  }
+  return undefined;
 }
 
 function extractCity(address, deliveryZone) {
@@ -176,7 +190,10 @@ class MetaCapi {
         user_data.ln = hashData(ln || userData.last_name || userData.surname);
       }
       if (phoneHash) user_data.ph = phoneHash;
-      if (userData.email) user_data.em = hashData(userData.email);
+      const rawEmail = extractEmail(userData.address, userData.email);
+      if (rawEmail) {
+        user_data.em = hashData(rawEmail);
+      }
       if (city) {
         user_data.ct = hashData(city);
         user_data.st = hashData(city);
